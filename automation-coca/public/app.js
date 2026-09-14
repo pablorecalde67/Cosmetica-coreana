@@ -4,7 +4,7 @@ const queueEl = document.getElementById('queue');
 
 const STATUS_LABEL = {
   pending_price: 'Falta precio',
-  ready: 'Publicando...',
+  ready: 'Listo para publicar',
   published: 'Publicado ✅',
   error: 'Error al publicar',
 };
@@ -46,44 +46,7 @@ function renderCard(item) {
   badge.className = `badge ${item.status}`;
   badge.textContent = `${STATUS_LABEL[item.status]} · ${item.source === 'whatsapp' ? 'WhatsApp' : 'Manual'}`;
 
-  const desc = document.createElement('textarea');
-  desc.placeholder = 'Descripción para el posteo...';
-  desc.value = item.description || '';
-  desc.disabled = item.status === 'published';
-
-  const priceRow = document.createElement('div');
-  priceRow.className = 'price-row';
-
-  const priceInput = document.createElement('input');
-  priceInput.type = 'number';
-  priceInput.min = '0';
-  priceInput.step = '0.01';
-  priceInput.placeholder = 'Precio $';
-  if (item.price != null) priceInput.value = item.price;
-  priceInput.disabled = item.status === 'published';
-
-  const publishBtn = document.createElement('button');
-  publishBtn.textContent = item.status === 'error' ? 'Reintentar publicar' : 'Guardar y publicar';
-  publishBtn.disabled = item.status === 'published';
-  publishBtn.onclick = async () => {
-    if (!priceInput.value) {
-      alert('Poné un precio antes de publicar.');
-      return;
-    }
-    publishBtn.disabled = true;
-    publishBtn.textContent = 'Publicando...';
-    try {
-      const res = await fetch(`/api/queue/${item.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: desc.value, price: priceInput.value }),
-      });
-      if (!res.ok) throw new Error((await res.json()).error);
-    } catch (err) {
-      alert('Error: ' + err.message);
-    }
-    fetchQueue();
-  };
+  fields.appendChild(badge);
 
   const deleteBtn = document.createElement('button');
   deleteBtn.className = 'secondary';
@@ -94,21 +57,110 @@ function renderCard(item) {
     fetchQueue();
   };
 
-  priceRow.append(priceInput, publishBtn, deleteBtn);
-  fields.append(badge, desc, priceRow);
+  if (item.status === 'pending_price') {
+    const desc = document.createElement('textarea');
+    desc.placeholder = 'Descripción para el posteo...';
+    desc.value = item.description || '';
 
-  if (item.status === 'error' && item.error) {
-    const errText = document.createElement('p');
-    errText.className = 'error-text';
-    errText.textContent = item.error;
-    fields.appendChild(errText);
-  }
+    const priceRow = document.createElement('div');
+    priceRow.className = 'price-row';
 
-  if (item.status === 'published') {
-    const links = document.createElement('p');
-    links.style.fontSize = '0.85rem';
-    links.textContent = 'Ya está publicado en Instagram y Facebook.';
-    fields.appendChild(links);
+    const priceInput = document.createElement('input');
+    priceInput.type = 'number';
+    priceInput.min = '0';
+    priceInput.step = '0.01';
+    priceInput.placeholder = 'Precio $';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Guardar precio';
+    saveBtn.onclick = async () => {
+      if (!priceInput.value) {
+        alert('Poné un precio antes de guardar.');
+        return;
+      }
+      saveBtn.disabled = true;
+      try {
+        const res = await fetch(`/api/queue/${item.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description: desc.value, price: priceInput.value }),
+        });
+        if (!res.ok) throw new Error((await res.json()).error);
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+      fetchQueue();
+    };
+
+    priceRow.append(priceInput, saveBtn, deleteBtn);
+    fields.append(desc, priceRow);
+  } else {
+    // ready / error / published: ya tiene precio. Mostramos el texto final
+    // para copiar y publicar a mano en Meta Business Suite.
+    const captionBox = document.createElement('textarea');
+    captionBox.value = item.finalCaption || '';
+    captionBox.readOnly = true;
+    fields.appendChild(captionBox);
+
+    if (item.status !== 'published') {
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = '📋 Copiar texto';
+      copyBtn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(item.finalCaption || '');
+          copyBtn.textContent = '✅ Copiado';
+          setTimeout(() => (copyBtn.textContent = '📋 Copiar texto'), 1800);
+        } catch {
+          alert('No se pudo copiar. Mantené presionado el texto de arriba para copiarlo manualmente.');
+        }
+      };
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = `/media/${item.mediaFile}`;
+      downloadLink.download = item.mediaFile;
+      downloadLink.textContent = '⬇️ Descargar archivo';
+      downloadLink.style.alignSelf = 'center';
+
+      const businessSuiteLink = document.createElement('a');
+      businessSuiteLink.href = 'https://business.facebook.com/latest/composer';
+      businessSuiteLink.target = '_blank';
+      businessSuiteLink.rel = 'noopener';
+      businessSuiteLink.textContent = '↗️ Abrir Meta Business Suite';
+      businessSuiteLink.style.alignSelf = 'center';
+
+      const markBtn = document.createElement('button');
+      markBtn.textContent = 'Ya lo publiqué ✅';
+      markBtn.onclick = async () => {
+        markBtn.disabled = true;
+        try {
+          const res = await fetch(`/api/queue/${item.id}/mark-published`, { method: 'POST' });
+          if (!res.ok) throw new Error((await res.json()).error);
+        } catch (err) {
+          alert('Error: ' + err.message);
+        }
+        fetchQueue();
+      };
+
+      row.append(copyBtn, downloadLink, businessSuiteLink, markBtn, deleteBtn);
+      fields.appendChild(row);
+    }
+
+    if (item.status === 'error' && item.error) {
+      const errText = document.createElement('p');
+      errText.className = 'error-text';
+      errText.textContent = item.error;
+      fields.appendChild(errText);
+    }
+
+    if (item.status === 'published') {
+      const links = document.createElement('p');
+      links.style.fontSize = '0.85rem';
+      links.textContent = 'Marcado como publicado.';
+      fields.appendChild(links);
+    }
   }
 
   card.append(preview, fields);

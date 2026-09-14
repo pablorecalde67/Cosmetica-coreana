@@ -5,41 +5,32 @@ Servicio que:
 1. Recibe automáticamente las fotos/videos que llegan por WhatsApp (canales/chats que vos elijas).
 2. Te avisa por WhatsApp cuando hay contenido nuevo esperando precio.
 3. Vos entrás al panel web, ponés precio y descripción.
-4. Apenas guardás el precio, se publica solo en Instagram y en la página de Facebook "COCA".
+4. El panel te arma el texto final (descripción + precio + hashtags) listo para copiar, y vos lo publicás con un clic en **Meta Business Suite** — la app oficial de Meta para manejar Instagram y Facebook juntos, sin nada técnico.
 
 También podés arrastrar fotos/videos manuales directamente en el panel (no todo tiene que venir de WhatsApp).
+
+> Existe una versión que publica 100% sola (sin que tengas que apretar nada en Business Suite), pero requiere crear una app en Meta for Developers y sacar tokens de la API — un trámite bastante más largo. Quedó armada y lista en `src/meta.js` por si más adelante querés dar ese paso (ver **"Modo 100% automático"** al final). Por ahora el sistema usa el camino corto.
 
 ## Lo que tenés que hacer VOS antes de que esto funcione
 
 Esto no lo puede hacer un asistente de código por vos porque Meta y WhatsApp exigen que sea el dueño real de las cuentas quien las cree y autorice.
 
-### 1. Crear las páginas "COCA"
+### 1. Crear las páginas y vincularlas en Meta Business Suite
 
-- Creá una **Página de Facebook** llamada `COCA`.
-- Creá (o convertí) una cuenta de **Instagram** llamada `COCA` en cuenta **Profesional → Creador de contenido/Empresa**, y vinculala a esa Página de Facebook (Instagram → Configuración → Cuentas vinculadas).
-
-### 2. Crear la app de Meta for Developers
-
-1. Entrá a https://developers.facebook.com/apps y creá una app de tipo "Empresa".
-2. Agregale los productos **Facebook Login for Business** y **Instagram Graph API**.
-3. Generá un **token de acceso de la Página** con estos permisos:
-   `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `instagram_basic`, `instagram_content_publish`.
-4. Convertí ese token en uno de **larga duración** (60 días) con el "Access Token Debugger/Extender" de Meta, o configurá una app revisada para tokens permanentes de página.
-5. Anotá:
-   - `META_ACCESS_TOKEN` = el token de la página.
-   - `META_PAGE_ID` = ID de la página de Facebook COCA.
-   - `META_IG_USER_ID` = ID de la cuenta de Instagram Business vinculada (se obtiene con `GET /{page-id}?fields=instagram_business_account&access_token=...`).
+- Creá una **Página de Facebook** (ya tenés: COCA Beauty).
+- Creá una cuenta de **Instagram profesional** (ya tenés: CocabeautyCDE) y vinculala a esa Página.
+- Entrá a **business.facebook.com**, iniciá sesión, y confirmá que ahí aparecen las dos cuentas conectadas (Página + Instagram). Si no aparecen, desde ahí mismo hay un botón para conectarlas — es todo con clics normales, sin tokens.
 
 > Nota sobre "viralizar entre mujeres desde 12 años": las publicaciones orgánicas (posts normales) no tienen segmentación por edad/género — eso solo existe en anuncios pagos (Meta Ads), y Meta restringe fuerte la publicidad a menores. Lo que este servicio automatiza es la constancia y calidad de la publicación (buenos hashtags, formato Reels, horarios), que es lo que realmente ayuda al alcance orgánico. Si más adelante querés sumar anuncios pagos segmentados, es un paso aparte (cuenta publicitaria + presupuesto).
 
-### 3. Deploy en Railway
+### 2. Deploy en Railway
 
 1. Subí este repo (o al menos la carpeta `automation-coca/`) a Railway como un nuevo proyecto Node.
 2. Agregá un **volumen persistente** montado en `/app/automation-coca/data` (para no perder la sesión de WhatsApp ni el historial al reiniciar).
-3. Cargá las variables de entorno de `.env.example` en Railway (con tus valores reales).
+3. Cargá las variables de `.env.example` (para el modo simple, con dejar `WHATSAPP_OWNER_NUMBER` y `COCA_HASHTAGS` alcanza; el resto son solo para el modo 100% automático).
 4. Una vez deployado, copiá la URL pública que te da Railway y ponela en `PUBLIC_BASE_URL`.
 
-### 4. Conectar tu WhatsApp
+### 3. Conectar tu WhatsApp
 
 1. Abrí `https://TU-URL-DE-RAILWAY/whatsapp-setup`.
 2. Escaneá el código QR desde el WhatsApp del número que sigue tus canales (WhatsApp → Dispositivos vinculados → Vincular dispositivo).
@@ -63,9 +54,23 @@ npm start
 ## Cómo queda el flujo del día a día
 
 1. Te llega una foto/video por un canal de WhatsApp que estás siguiendo → el bot la descarga sola y te manda un WhatsApp: "🆕 Llegó contenido nuevo para COCA, poné el precio: [link]".
-2. Abrís el link (o el panel), ves la foto/video, escribís la descripción y el precio.
-3. Al guardar, se publica automáticamente en Instagram (como Reel si es video, o foto) y en la Página de Facebook COCA, con el precio y los hashtags incluidos en el texto.
-4. Si algo falla (token vencido, etc.), la tarjeta queda marcada en rojo con el motivo y un botón para reintentar.
+2. Abrís el link (o el panel), ves la foto/video, escribís la descripción y el precio, tocás **Guardar precio**.
+3. La tarjeta pasa a "Listo para publicar" con el texto final armado (descripción + precio + hashtags).
+4. Tocás **Copiar texto**, **Descargar archivo** y **Abrir Meta Business Suite** (te lleva directo al compositor). Pegás el texto, subís el archivo descargado, publicás en Instagram y Facebook desde ahí.
+5. Volvés al panel y tocás **Ya lo publiqué ✅** para sacarlo de la cola.
+
+## Modo 100% automático (opcional, más adelante)
+
+Si en algún momento querés que se publique solo, sin el paso de Business Suite:
+
+1. Creá una app en https://developers.facebook.com/apps (tipo "Otro" → caso de uso "Empresa").
+2. Agregale el producto **Instagram Graph API** (y **Facebook Login for Business** si aparece disponible).
+3. Sacá un token con los permisos `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `instagram_basic`, `instagram_content_publish` (desde el Explorador de Graph API o desde la guía de configuración que trae el producto de Instagram dentro de la app).
+4. Convertilo en token de larga duración y cargá en Railway:
+   - `META_ACCESS_TOKEN` = el token de la página.
+   - `META_PAGE_ID` = ID de la Página.
+   - `META_IG_USER_ID` = ID de la cuenta de Instagram Business (`GET /{page-id}?fields=instagram_business_account&access_token=...`).
+5. Con esas tres variables cargadas, el panel vuelve a publicar solo apenas guardás el precio — no hace falta cambiar nada más en el código.
 
 ## Estructura
 
@@ -76,8 +81,8 @@ automation-coca/
     config.js           variables de entorno
     store.js             cola de contenido (archivo JSON)
     whatsapp.js           bot de WhatsApp (Baileys)
-    meta.js                publicación en Instagram/Facebook (Graph API)
+    meta.js                publicación en Instagram/Facebook (Graph API, modo automático opcional)
     routes/api.js           endpoints del panel
     routes/whatsappSetup.js  página con el QR de conexión
-  public/                 panel web (drag&drop + cola + precio)
+  public/                 panel web (drag&drop + cola + precio + copiar/publicar)
 ```

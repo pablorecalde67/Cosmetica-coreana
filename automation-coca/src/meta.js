@@ -3,7 +3,7 @@ import { config, isMetaConfigured, isPublicUrlConfigured } from './config.js';
 
 const GRAPH_URL = 'https://graph.facebook.com/v20.0';
 
-function buildCaption(item) {
+export function buildCaption(item) {
   const price = item.price != null ? `\n\n💰 Precio: $${item.price}` : '';
   const hashtags = config.cocaHashtags.map((h) => `#${h}`).join(' ');
   return `${item.description}${price}\n\n${hashtags}`.trim();

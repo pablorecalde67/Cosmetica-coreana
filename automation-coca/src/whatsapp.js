@@ -91,15 +91,16 @@ export async function startWhatsapp() {
       if (!msg.message || msg.key.fromMe) continue;
 
       const chatJid = msg.key.remoteJid;
+      if (chatJid === 'status@broadcast') continue;
 
-      // Con la lista de chats vacía, sólo logueamos los JIDs para que el
-      // dueño pueda copiar el que le interesa a WHATSAPP_MONITORED_CHATS.
-      if (config.whatsappMonitoredChats.length === 0) {
-        console.log(`[whatsapp] Mensaje recibido de chat/canal: ${chatJid}`);
-        continue;
-      }
+      // Por defecto se procesa cualquier chat/canal. Si WHATSAPP_MONITORED_CHATS
+      // tiene algo cargado, sólo se procesan esos (para restringir más adelante).
+      const isMonitored =
+        config.whatsappMonitoredChats.length === 0 ||
+        config.whatsappMonitoredChats.includes(chatJid);
+      if (!isMonitored) continue;
 
-      if (!config.whatsappMonitoredChats.includes(chatJid)) continue;
+      console.log(`[whatsapp] Mensaje recibido de chat/canal: ${chatJid}`);
 
       const media = extractMedia(msg.message);
       if (!media) continue;

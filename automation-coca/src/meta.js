@@ -3,54 +3,78 @@ import { config, isMetaConfigured, isPublicUrlConfigured } from './config.js';
 
 const GRAPH_URL = 'https://graph.facebook.com/v20.0';
 
+export function buildBuyLink(item) {
+  if (!config.whatsappOwnerNumber) return '';
+  const text = `Hola! Quiero comprar: ${item.description}${item.price != null ? ` - $${item.price}` : ''}`;
+  return `https://wa.me/${config.whatsappOwnerNumber}?text=${encodeURIComponent(text)}`;
+}
+
 export function buildCaption(item) {
   const price = item.price != null ? `\n\n💰 Precio: $${item.price}` : '';
   const hashtags = config.cocaHashtags.map((h) => `#${h}`).join(' ');
-  return `${item.description}${price}\n\n${hashtags}`.trim();
+  const buyLink = buildBuyLink(item);
+  const buyLine = buyLink ? `\n\n😍 LO QUIERO COMPRAR YA 👉 ${buyLink}` : '';
+  return `${item.description}${price}${buyLine}\n\n${hashtags}`.trim();
 }
 
-function mediaUrl(item) {
-  return `${config.publicBaseUrl}/media/${item.mediaFile}`;
+function mediaUrl(file) {
+  return `${config.publicBaseUrl}/media/${file}`;
 }
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function publishToInstagram(item) {
-  const caption = buildCaption(item);
-  const url = mediaUrl(item);
+async function waitUntilFinished(creationId) {
+  for (let i = 0; i < 30; i++) {
+    const { data: status } = await axios.get(`${GRAPH_URL}/${creationId}`, {
+      params: { fields: 'status_code', access_token: config.metaAccessToken },
+    });
+    if (status.status_code === 'FINISHED') return;
+    if (status.status_code === 'ERROR') {
+      throw new Error('Instagram no pudo procesar uno de los archivos.');
+    }
+    await sleep(4000);
+  }
+}
 
-  const createParams = {
-    caption,
-    access_token: config.metaAccessToken,
-  };
-  if (item.mediaType === 'video') {
-    createParams.media_type = 'REELS';
-    createParams.video_url = url;
+async function createIgMediaContainer(media, { asCarouselItem }) {
+  const url = mediaUrl(media.file);
+  const params = { access_token: config.metaAccessToken };
+  if (asCarouselItem) params.is_carousel_item = true;
+
+  if (media.type === 'video') {
+    params.media_type = asCarouselItem ? 'VIDEO' : 'REELS';
+    params.video_url = url;
   } else {
-    createParams.image_url = url;
+    params.image_url = url;
   }
 
-  const { data: created } = await axios.post(
-    `${GRAPH_URL}/${config.metaIgUserId}/media`,
-    null,
-    { params: createParams },
-  );
-  const creationId = created.id;
+  const { data } = await axios.post(`${GRAPH_URL}/${config.metaIgUserId}/media`, null, { params });
+  if (media.type === 'video') await waitUntilFinished(data.id);
+  return data.id;
+}
 
-  if (item.mediaType === 'video') {
-    // Los videos/reels se procesan de forma asincronica del lado de Meta.
-    for (let i = 0; i < 30; i++) {
-      const { data: status } = await axios.get(`${GRAPH_URL}/${creationId}`, {
-        params: { fields: 'status_code', access_token: config.metaAccessToken },
-      });
-      if (status.status_code === 'FINISHED') break;
-      if (status.status_code === 'ERROR') {
-        throw new Error('Instagram no pudo procesar el video.');
-      }
-      await sleep(4000);
+async function publishToInstagram(item) {
+  const caption = buildCaption(item);
+  let creationId;
+
+  if (item.media.length > 1) {
+    const childIds = [];
+    for (const media of item.media) {
+      childIds.push(await createIgMediaContainer(media, { asCarouselItem: true }));
     }
+    const { data } = await axios.post(`${GRAPH_URL}/${config.metaIgUserId}/media`, null, {
+      params: {
+        media_type: 'CAROUSEL',
+        children: childIds.join(','),
+        caption,
+        access_token: config.metaAccessToken,
+      },
+    });
+    creationId = data.id;
+  } else {
+    creationId = await createIgMediaContainer(item.media[0], { asCarouselItem: false });
   }
 
   const { data: published } = await axios.post(
@@ -64,34 +88,43 @@ async function publishToInstagram(item) {
 
 async function publishToFacebook(item) {
   const caption = buildCaption(item);
-  const url = mediaUrl(item);
 
-  if (item.mediaType === 'video') {
-    const { data } = await axios.post(
-      `${GRAPH_URL}/${config.metaPageId}/videos`,
-      null,
-      {
-        params: {
-          file_url: url,
-          description: caption,
-          access_token: config.metaAccessToken,
-        },
+  if (item.media.length > 1) {
+    const attachedMedia = [];
+    for (const media of item.media) {
+      if (media.type === 'video') {
+        const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/videos`, null, {
+          params: { file_url: mediaUrl(media.file), published: false, access_token: config.metaAccessToken },
+        });
+        attachedMedia.push({ media_fbid: data.id });
+      } else {
+        const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/photos`, null, {
+          params: { url: mediaUrl(media.file), published: false, access_token: config.metaAccessToken },
+        });
+        attachedMedia.push({ media_fbid: data.id });
+      }
+    }
+    const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/feed`, null, {
+      params: {
+        message: caption,
+        attached_media: JSON.stringify(attachedMedia),
+        access_token: config.metaAccessToken,
       },
-    );
+    });
     return data.id;
   }
 
-  const { data } = await axios.post(
-    `${GRAPH_URL}/${config.metaPageId}/photos`,
-    null,
-    {
-      params: {
-        url,
-        caption,
-        access_token: config.metaAccessToken,
-      },
-    },
-  );
+  const media = item.media[0];
+  if (media.type === 'video') {
+    const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/videos`, null, {
+      params: { file_url: mediaUrl(media.file), description: caption, access_token: config.metaAccessToken },
+    });
+    return data.id;
+  }
+
+  const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/photos`, null, {
+    params: { url: mediaUrl(media.file), caption, access_token: config.metaAccessToken },
+  });
   return data.id;
 }
 

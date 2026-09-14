@@ -33,12 +33,11 @@ export function getItem(id) {
   return db.items.find((it) => it.id === id);
 }
 
-export function createItem({ source, mediaFile, mediaType, caption }) {
+export function createItem({ source, media, caption }) {
   const item = {
     id: nanoid(10),
     source, // 'whatsapp' | 'manual'
-    mediaFile, // filename inside MEDIA_DIR
-    mediaType, // 'image' | 'video'
+    media, // [{ file: filename inside MEDIA_DIR, type: 'image' | 'video' }, ...]
     caption: caption || '',
     description: caption || '',
     price: null,
@@ -50,6 +49,14 @@ export function createItem({ source, mediaFile, mediaType, caption }) {
     publishedAt: null,
   };
   db.items.push(item);
+  save(db);
+  return item;
+}
+
+export function addMedia(id, media) {
+  const item = getItem(id);
+  if (!item) return null;
+  item.media.push(...media);
   save(db);
   return item;
 }

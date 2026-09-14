@@ -12,6 +12,12 @@ import {
 import { config } from './config.js';
 import { createItem, MEDIA_DIR } from './store.js';
 
+// Agrupa las fotos/videos que llegan seguidas del mismo chat en una sola
+// tarjeta: cada vez que llega una, se espera este tiempo sin que llegue otra
+// antes de crear el item con todo lo acumulado.
+const GROUP_WINDOW_MS = 3000;
+const pendingGroups = new Map(); // chatJid -> { media: [], caption, timer }
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SESSION_DIR = path.join(__dirname, '..', 'data', 'whatsapp-session');
 fs.mkdirSync(SESSION_DIR, { recursive: true });
@@ -108,23 +114,35 @@ export async function startWhatsapp() {
       try {
         const buffer = await downloadMediaMessage(msg, 'buffer', {});
         const ext = media.type === 'video' ? 'mp4' : 'jpg';
-        const filename = `${Date.now()}-${jidToNumber(chatJid)}.${ext}`;
+        const filename = `${Date.now()}-${jidToNumber(chatJid)}-${pendingGroups.get(chatJid)?.media.length || 0}.${ext}`;
         fs.writeFileSync(path.join(MEDIA_DIR, filename), buffer);
 
-        const item = createItem({
-          source: 'whatsapp',
-          mediaFile: filename,
-          mediaType: media.type,
-          caption: media.caption || '',
-        });
+        let group = pendingGroups.get(chatJid);
+        if (!group) {
+          group = { media: [], caption: '', timer: null };
+          pendingGroups.set(chatJid, group);
+        }
+        group.media.push({ file: filename, type: media.type });
+        if (!group.caption && media.caption) group.caption = media.caption;
 
-        console.log(`[whatsapp] Nuevo contenido en cola: ${item.id}`);
+        clearTimeout(group.timer);
+        group.timer = setTimeout(() => {
+          pendingGroups.delete(chatJid);
 
-        const panelUrl = config.publicBaseUrl || 'http://localhost:' + config.port;
-        await notifyOwner(
-          sock,
-          `🆕 Llegó contenido nuevo para COCA.\nFalta ponerle el precio antes de que se publique.\n\n👉 ${panelUrl}/#/${item.id}`,
-        );
+          const item = createItem({
+            source: 'whatsapp',
+            media: group.media,
+            caption: group.caption,
+          });
+
+          console.log(`[whatsapp] Nuevo contenido en cola: ${item.id} (${group.media.length} archivo/s)`);
+
+          const panelUrl = config.publicBaseUrl || 'http://localhost:' + config.port;
+          notifyOwner(
+            sock,
+            `🆕 Llegó contenido nuevo para COCA (${group.media.length} archivo${group.media.length > 1 ? 's' : ''}).\nFalta ponerle el precio antes de que se publique.\n\n👉 ${panelUrl}`,
+          );
+        }, GROUP_WINDOW_MS);
       } catch (err) {
         console.error('[whatsapp] error procesando media:', err.message);
       }

@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import multer from 'multer';
 import path from 'node:path';
-import { createItem, listItems, getItem, updateItem, deleteItem, MEDIA_DIR } from '../store.js';
-import { publishItem, buildCaption } from '../meta.js';
+import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, MEDIA_DIR } from '../store.js';
+import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured } from '../config.js';
 
 const router = Router();
@@ -12,32 +12,46 @@ const upload = multer({
     destination: MEDIA_DIR,
     filename: (req, file, cb) => {
       const ext = path.extname(file.originalname) || '';
-      cb(null, `${Date.now()}-manual${ext}`);
+      cb(null, `${Date.now()}-manual-${Math.random().toString(36).slice(2, 8)}${ext}`);
     },
   }),
   limits: { fileSize: 200 * 1024 * 1024 },
 });
 
+function toMedia(files) {
+  return files.map((f) => ({
+    file: f.filename,
+    type: f.mimetype.startsWith('video') ? 'video' : 'image',
+  }));
+}
+
 function withCaption(item) {
-  return { ...item, finalCaption: buildCaption(item) };
+  return { ...item, finalCaption: buildCaption(item), buyLink: buildBuyLink(item) };
 }
 
 router.get('/queue', (req, res) => {
   res.json(listItems().map(withCaption));
 });
 
-router.post('/upload', upload.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Falta el archivo.' });
+router.post('/upload', upload.array('files', 10), (req, res) => {
+  if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'Falta el archivo.' });
 
-  const mediaType = req.file.mimetype.startsWith('video') ? 'video' : 'image';
   const item = createItem({
     source: 'manual',
-    mediaFile: req.file.filename,
-    mediaType,
+    media: toMedia(req.files),
     caption: req.body.description || '',
   });
 
   res.status(201).json(withCaption(item));
+});
+
+router.post('/queue/:id/add-media', upload.array('files', 10), (req, res) => {
+  if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'Falta el archivo.' });
+
+  const updated = addMedia(req.params.id, toMedia(req.files));
+  if (!updated) return res.status(404).json({ error: 'No existe.' });
+
+  res.json(withCaption(updated));
 });
 
 router.patch('/queue/:id', async (req, res) => {

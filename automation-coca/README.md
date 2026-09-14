@@ -53,11 +53,13 @@ npm start
 
 ## Cómo queda el flujo del día a día
 
-1. Te llega una foto/video por un canal de WhatsApp que estás siguiendo → el bot la descarga sola y te manda un WhatsApp: "🆕 Llegó contenido nuevo para COCA, poné el precio: [link]".
-2. Abrís el link (o el panel), ves la foto/video, escribís la descripción y el precio, tocás **Guardar precio**.
-3. La tarjeta pasa a "Listo para publicar" con el texto final armado (descripción + precio + hashtags).
-4. Tocás **Copiar texto**, **Descargar archivo** y **Abrir Meta Business Suite** (te lleva directo al compositor). Pegás el texto, subís el archivo descargado, publicás en Instagram y Facebook desde ahí.
+1. Te llega una foto/video por un canal de WhatsApp que estás siguiendo → el bot la descarga sola y te manda un WhatsApp avisando. Si mandan varias fotos seguidas del mismo producto, quedan agrupadas en una sola tarjeta (espera 3 segundos sin fotos nuevas antes de armar la tarjeta).
+2. Abrís el panel, ves las fotos/video, escribís la descripción y el precio, tocás **Guardar precio**. Si te faltó agregar alguna foto, podés sumarla antes con **"+ Agregar otra foto/video a esta publicación"**.
+3. La tarjeta pasa a "Listo para publicar" con el texto final armado (descripción + precio + botón "Lo quiero comprar ya" con tu WhatsApp + hashtags).
+4. Tocás **Copiar texto**, descargás los archivos y **Abrí Meta Business Suite** (te lleva directo al compositor). Pegás el texto, subís los archivos descargados (si son varios, Business Suite arma el carrusel), publicás en Instagram y Facebook desde ahí.
 5. Volvés al panel y tocás **Ya lo publiqué ✅** para sacarlo de la cola.
+
+**Sobre el botón "Lo quiero comprar ya":** es un link de WhatsApp (`wa.me`) con tu número. En **Facebook** funciona como link tocable de verdad dentro del texto del posteo — cuando alguien lo toca y te escribe, te llega el mensaje con su número real, sin nada más que configurar. En **Instagram los links del texto no son tocables** (limitación de la plataforma): ese mismo link también te lo arma el panel para copiar y pegarlo como el link fijo de tu biografía de Instagram, agregando en el texto del posteo algo como "Lo quiero comprar ya 👉 link en la bio".
 
 ## Modo 100% automático (opcional, más adelante)
 

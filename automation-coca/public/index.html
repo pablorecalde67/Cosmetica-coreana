@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COCA · Panel de publicación</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1>COCA</h1>
+    <p>Cola de contenido para Instagram &amp; Facebook</p>
+  </header>
+
+  <main>
+    <section id="dropzone" class="dropzone">
+      <p>Arrastrá una foto o video acá, o hacé clic para elegir un archivo.</p>
+      <input type="file" id="fileInput" accept="image/*,video/*" hidden>
+    </section>
+
+    <section id="queue" class="queue"></section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

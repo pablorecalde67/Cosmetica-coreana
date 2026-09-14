@@ -1,0 +1,146 @@
+:root { color-scheme: light dark; }
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #faf7f9;
+  color: #24121f;
+}
+
+header {
+  padding: 24px 16px 8px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: 0.15em;
+  color: #d6336c;
+}
+
+header p {
+  margin: 4px 0 0;
+  opacity: 0.7;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dropzone {
+  border: 2px dashed #d6336c;
+  border-radius: 16px;
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: #fff;
+  transition: background 0.15s;
+}
+
+.dropzone.drag-over {
+  background: #ffe3ee;
+}
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card .preview {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #eee;
+}
+
+.card .preview img,
+.card .preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card .fields {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.card .price-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.card input[type="number"] {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 120px;
+}
+
+.card button {
+  background: #d6336c;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.card button.secondary {
+  background: transparent;
+  color: #d6336c;
+  border: 1px solid #d6336c;
+}
+
+.badge {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.badge.pending_price { background: #fff3bf; color: #997404; }
+.badge.ready { background: #d0ebff; color: #1864ab; }
+.badge.published { background: #d3f9d8; color: #2b8a3e; }
+.badge.error { background: #ffe3e3; color: #c92a2a; }
+
+.error-text {
+  color: #c92a2a;
+  font-size: 0.85rem;
+}

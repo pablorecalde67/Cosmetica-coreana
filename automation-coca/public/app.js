@@ -10,6 +10,10 @@ const STATUS_LABEL = {
 };
 
 async function fetchQueue() {
+  // Si estás escribiendo en un campo de la cola, no lo pisamos con el refresco
+  // automático: esperamos a que termines (salgas del campo) para actualizar.
+  if (queueEl.contains(document.activeElement)) return;
+
   const res = await fetch('/api/queue');
   const items = await res.json();
   render(items);

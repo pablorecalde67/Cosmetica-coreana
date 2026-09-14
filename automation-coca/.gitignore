@@ -1,0 +1,6 @@
+node_modules/
+data/media/*
+!data/media/.gitkeep
+data/db.json
+data/whatsapp-session/
+.env

@@ -2,7 +2,8 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'node:path';
 import { createItem, listItems, getItem, updateItem, deleteItem, MEDIA_DIR } from '../store.js';
-import { publishItem } from '../meta.js';
+import { publishItem, buildCaption } from '../meta.js';
+import { isMetaConfigured } from '../config.js';
 
 const router = Router();
 
@@ -17,8 +18,12 @@ const upload = multer({
   limits: { fileSize: 200 * 1024 * 1024 },
 });
 
+function withCaption(item) {
+  return { ...item, finalCaption: buildCaption(item) };
+}
+
 router.get('/queue', (req, res) => {
-  res.json(listItems());
+  res.json(listItems().map(withCaption));
 });
 
 router.post('/upload', upload.single('file'), (req, res) => {
@@ -32,7 +37,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
     caption: req.body.description || '',
   });
 
-  res.status(201).json(item);
+  res.status(201).json(withCaption(item));
 });
 
 router.patch('/queue/:id', async (req, res) => {
@@ -55,8 +60,10 @@ router.patch('/queue/:id', async (req, res) => {
 
   let updated = updateItem(req.params.id, patch);
 
-  // Apenas se carga el precio, se publica solo: no hace falta un paso mas.
-  if (priceJustSet) {
+  // Si en algun momento configuras las credenciales de Meta (META_ACCESS_TOKEN,
+  // META_PAGE_ID, META_IG_USER_ID), esto publica solo apenas cargas el precio.
+  // Mientras tanto queda en "ready" para que lo publiques vos en Meta Business Suite.
+  if (priceJustSet && isMetaConfigured()) {
     try {
       const { igPostId, fbPostId } = await publishItem(updated);
       updated = updateItem(updated.id, {
@@ -71,7 +78,7 @@ router.patch('/queue/:id', async (req, res) => {
     }
   }
 
-  res.json(updated);
+  res.json(withCaption(updated));
 });
 
 router.post('/queue/:id/publish', async (req, res) => {
@@ -90,11 +97,26 @@ router.post('/queue/:id/publish', async (req, res) => {
       publishedAt: Date.now(),
       error: null,
     });
-    res.json(updated);
+    res.json(withCaption(updated));
   } catch (err) {
     updateItem(item.id, { status: 'error', error: err.message });
     res.status(502).json({ error: err.message });
   }
+});
+
+router.post('/queue/:id/mark-published', (req, res) => {
+  const item = getItem(req.params.id);
+  if (!item) return res.status(404).json({ error: 'No existe.' });
+  if (item.price == null) {
+    return res.status(400).json({ error: 'No se puede marcar como publicado sin precio.' });
+  }
+
+  const updated = updateItem(item.id, {
+    status: 'published',
+    publishedAt: Date.now(),
+    error: null,
+  });
+  res.json(withCaption(updated));
 });
 
 router.delete('/queue/:id', (req, res) => {

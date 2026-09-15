@@ -18,7 +18,11 @@ export const config = {
   // (personal) nunca se toca, aunque este vacio no se procesa ninguno.
   whatsappStatusSources: list(process.env.WHATSAPP_STATUS_SOURCES),
 
-  metaAccessToken: process.env.META_ACCESS_TOKEN || '',
+  // Token de USUARIO de larga duracion (60 dias). El servicio calcula solo,
+  // en cada publicacion, el token de la Pagina a partir de este - asi no
+  // hace falta ir a buscar manualmente el token de la Pagina cada vez que
+  // Meta lo esconde o lo vence.
+  metaUserToken: process.env.META_USER_TOKEN || '',
   metaPageId: process.env.META_PAGE_ID || '',
   metaIgUserId: process.env.META_IG_USER_ID || '',
 
@@ -26,7 +30,7 @@ export const config = {
 };
 
 export function isMetaConfigured() {
-  return Boolean(config.metaAccessToken && config.metaPageId && config.metaIgUserId);
+  return Boolean(config.metaUserToken && config.metaPageId && config.metaIgUserId);
 }
 
 export function isPublicUrlConfigured() {

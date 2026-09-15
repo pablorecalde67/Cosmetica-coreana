@@ -13,6 +13,10 @@ export const config = {
 
   whatsappOwnerNumber: process.env.WHATSAPP_OWNER_NUMBER || '',
   whatsappMonitoredChats: list(process.env.WHATSAPP_MONITORED_CHATS),
+  // Numeros (sin +, sin espacios) de negocios cuyo ESTADO de WhatsApp se
+  // procesa como si fuera un canal. El Estado de cualquier otro contacto
+  // (personal) nunca se toca, aunque este vacio no se procesa ninguno.
+  whatsappStatusSources: list(process.env.WHATSAPP_STATUS_SOURCES),
 
   metaAccessToken: process.env.META_ACCESS_TOKEN || '',
   metaPageId: process.env.META_PAGE_ID || '',

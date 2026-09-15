@@ -143,19 +143,34 @@ export async function startWhatsapp() {
       // Los canales publican con fromMe=false para todos los que lo siguen,
       // pero por las dudas no filtramos fromMe para chats de canal.
       if (msg.key.fromMe && !isChannel) continue;
-      if (chatJid === 'status@broadcast') continue;
 
-      // Por defecto se procesa cualquier chat/canal. Si WHATSAPP_MONITORED_CHATS
-      // tiene algo cargado, sólo se procesan esos (para restringir más adelante).
-      const isMonitored =
-        config.whatsappMonitoredChats.length === 0 ||
-        config.whatsappMonitoredChats.includes(chatJid);
-      if (!isMonitored) continue;
+      const isStatus = chatJid === 'status@broadcast';
+      let groupKey = chatJid;
+
+      if (isStatus) {
+        // El Estado es de un negocio puntual, nunca "de todos los contactos":
+        // solo se procesa si el numero de quien lo publico esta en la lista
+        // WHATSAPP_STATUS_SOURCES que cargaste vos mismo.
+        const authorJid = msg.key.participant || msg.key.participantPn || '';
+        const authorNumber = jidToNumber(authorJid);
+        const isAuthorizedBusiness =
+          authorNumber && config.whatsappStatusSources.includes(authorNumber);
+        console.log(`[whatsapp]   Estado publicado por ${authorJid || '(desconocido)'} | autorizado=${isAuthorizedBusiness}`);
+        if (!isAuthorizedBusiness) continue;
+        groupKey = authorJid;
+      } else {
+        // Por defecto se procesa cualquier chat/canal. Si WHATSAPP_MONITORED_CHATS
+        // tiene algo cargado, sólo se procesan esos (para restringir más adelante).
+        const isMonitored =
+          config.whatsappMonitoredChats.length === 0 ||
+          config.whatsappMonitoredChats.includes(chatJid);
+        if (!isMonitored) continue;
+      }
 
       const media = extractMedia(msg.message);
       if (!media) continue;
 
-      console.log(`[whatsapp] Contenido detectado (${media.type}) en: ${chatJid}`);
+      console.log(`[whatsapp] Contenido detectado (${media.type}) en: ${isStatus ? 'Estado de ' + groupKey : chatJid}`);
 
       try {
         let buffer;
@@ -167,20 +182,20 @@ export async function startWhatsapp() {
           buffer = await downloadChannelMedia(media.node);
         }
         const ext = media.type === 'video' ? 'mp4' : 'jpg';
-        const filename = `${Date.now()}-${jidToNumber(chatJid)}-${pendingGroups.get(chatJid)?.media.length || 0}.${ext}`;
+        const filename = `${Date.now()}-${jidToNumber(groupKey)}-${pendingGroups.get(groupKey)?.media.length || 0}.${ext}`;
         fs.writeFileSync(path.join(MEDIA_DIR, filename), buffer);
 
-        let group = pendingGroups.get(chatJid);
+        let group = pendingGroups.get(groupKey);
         if (!group) {
           group = { media: [], caption: '', timer: null };
-          pendingGroups.set(chatJid, group);
+          pendingGroups.set(groupKey, group);
         }
         group.media.push({ file: filename, type: media.type });
         if (!group.caption && media.caption) group.caption = media.caption;
 
         clearTimeout(group.timer);
         group.timer = setTimeout(() => {
-          pendingGroups.delete(chatJid);
+          pendingGroups.delete(groupKey);
 
           const item = createItem({
             source: 'whatsapp',

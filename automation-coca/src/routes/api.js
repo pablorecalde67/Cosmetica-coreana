@@ -26,11 +26,20 @@ function toMedia(files) {
 }
 
 function withCaption(item) {
-  return { ...item, finalCaption: buildCaption(item), buyLink: buildBuyLink(item) };
+  return {
+    ...item,
+    finalCaption: buildCaption(item),
+    buyLink: buildBuyLink(item),
+    metaConfigured: isMetaConfigured(),
+  };
 }
 
 router.get('/queue', (req, res) => {
   res.json(listItems().map(withCaption));
+});
+
+router.get('/status', (req, res) => {
+  res.json({ metaConfigured: isMetaConfigured() });
 });
 
 router.post('/upload', upload.array('files', 10), (req, res) => {

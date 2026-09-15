@@ -1,6 +1,7 @@
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
 const queueEl = document.getElementById('queue');
+const statusBanner = document.getElementById('statusBanner');
 
 const STATUS_LABEL = {
   pending_price: 'Falta precio',
@@ -17,6 +18,18 @@ async function fetchQueue() {
   const res = await fetch('/api/queue');
   const items = await res.json();
   render(items);
+}
+
+async function refreshStatusBanner() {
+  const res = await fetch('/api/status');
+  const { metaConfigured } = await res.json();
+  if (metaConfigured) {
+    statusBanner.hidden = true;
+  } else {
+    statusBanner.hidden = false;
+    statusBanner.textContent =
+      '🔧 PUBLICAR todavía no publica solo: falta autorizar una vez la conexión con Meta (Instagram/Facebook). Mientras eso no esté, cada tarjeta te va a dar el texto y las fotos listas para publicar vos mismo en Meta Business Suite.';
+  }
 }
 
 function render(items) {
@@ -105,13 +118,15 @@ function renderCard(item) {
     priceInput.placeholder = 'Precio $';
 
     const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Guardar precio';
+    saveBtn.className = 'publish-btn';
+    saveBtn.textContent = 'PUBLICAR';
     saveBtn.onclick = async () => {
       if (!priceInput.value) {
-        alert('Poné un precio antes de guardar.');
+        alert('Poné un precio antes de publicar.');
         return;
       }
       saveBtn.disabled = true;
+      saveBtn.textContent = 'Publicando...';
       try {
         const res = await fetch(`/api/queue/${item.id}`, {
           method: 'PATCH',
@@ -200,7 +215,7 @@ function renderCard(item) {
       businessSuiteLink.style.alignSelf = 'center';
 
       const markBtn = document.createElement('button');
-      markBtn.textContent = 'Ya lo publiqué ✅';
+      markBtn.textContent = 'Marcar como publicado ✅';
       markBtn.onclick = async () => {
         markBtn.disabled = true;
         try {
@@ -264,5 +279,7 @@ dropzone.addEventListener('drop', (e) => {
   if (e.dataTransfer.files.length) uploadFiles(e.dataTransfer.files);
 });
 
+refreshStatusBanner();
 fetchQueue();
 setInterval(fetchQueue, 4000);
+setInterval(refreshStatusBanner, 15000);

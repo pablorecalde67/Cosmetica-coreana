@@ -36,10 +36,30 @@ function jidToNumber(jid) {
   return jid.replace(/@.*/, '');
 }
 
+// Los canales (a diferencia de chats/grupos normales) a veces envuelven la
+// foto/video adentro de otro mensaje (efímero, "ver una vez", etc.). Esto
+// desenvuelve esas capas hasta llegar al contenido real.
+function unwrapMessage(message) {
+  let current = message;
+  for (let i = 0; i < 5 && current; i++) {
+    const wrapped =
+      current.ephemeralMessage?.message ||
+      current.viewOnceMessage?.message ||
+      current.viewOnceMessageV2?.message ||
+      current.viewOnceMessageV2Extension?.message ||
+      current.documentWithCaptionMessage?.message ||
+      current.editedMessage?.message;
+    if (!wrapped) break;
+    current = wrapped;
+  }
+  return current;
+}
+
 function extractMedia(message) {
-  if (!message) return null;
-  if (message.imageMessage) return { type: 'image', node: message.imageMessage, caption: message.imageMessage.caption };
-  if (message.videoMessage) return { type: 'video', node: message.videoMessage, caption: message.videoMessage.caption };
+  const content = unwrapMessage(message);
+  if (!content) return null;
+  if (content.imageMessage) return { type: 'image', node: content.imageMessage, caption: content.imageMessage.caption };
+  if (content.videoMessage) return { type: 'video', node: content.videoMessage, caption: content.videoMessage.caption };
   return null;
 }
 
@@ -91,12 +111,24 @@ export async function startWhatsapp() {
   });
 
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
-    if (type !== 'notify') return;
+    console.log(`[whatsapp] Evento messages.upsert tipo="${type}" con ${messages.length} mensaje/s.`);
 
     for (const msg of messages) {
-      if (!msg.message || msg.key.fromMe) continue;
-
       const chatJid = msg.key.remoteJid;
+      const isChannel = chatJid?.endsWith('@newsletter');
+
+      // Log de diagnostico: que forma tiene cada mensaje que llega, sea de
+      // canal, chat o grupo. Ayuda a ver por que un canal no sube contenido.
+      console.log(
+        `[whatsapp]   msg de ${chatJid} | fromMe=${msg.key.fromMe} | tipo upsert=${type} | claves del mensaje=${
+          msg.message ? Object.keys(msg.message).join(',') : '(sin message)'
+        }`,
+      );
+
+      if (!msg.message) continue;
+      // Los canales publican con fromMe=false para todos los que lo siguen,
+      // pero por las dudas no filtramos fromMe para chats de canal.
+      if (msg.key.fromMe && !isChannel) continue;
       if (chatJid === 'status@broadcast') continue;
 
       // Por defecto se procesa cualquier chat/canal. Si WHATSAPP_MONITORED_CHATS
@@ -106,13 +138,14 @@ export async function startWhatsapp() {
         config.whatsappMonitoredChats.includes(chatJid);
       if (!isMonitored) continue;
 
-      console.log(`[whatsapp] Mensaje recibido de chat/canal: ${chatJid}`);
-
       const media = extractMedia(msg.message);
       if (!media) continue;
 
+      console.log(`[whatsapp] Contenido detectado (${media.type}) en: ${chatJid}`);
+
       try {
-        const buffer = await downloadMediaMessage(msg, 'buffer', {});
+        const unwrapped = { ...msg, message: unwrapMessage(msg.message) };
+        const buffer = await downloadMediaMessage(unwrapped, 'buffer', {});
         const ext = media.type === 'video' ? 'mp4' : 'jpg';
         const filename = `${Date.now()}-${jidToNumber(chatJid)}-${pendingGroups.get(chatJid)?.media.length || 0}.${ext}`;
         fs.writeFileSync(path.join(MEDIA_DIR, filename), buffer);

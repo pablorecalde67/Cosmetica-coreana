@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import pino from 'pino';
 import QRCode from 'qrcode';
+import axios from 'axios';
 import {
   default as makeWASocket,
   useMultiFileAuthState,
@@ -61,6 +62,19 @@ function extractMedia(message) {
   if (content.imageMessage) return { type: 'image', node: content.imageMessage, caption: content.imageMessage.caption };
   if (content.videoMessage) return { type: 'video', node: content.videoMessage, caption: content.videoMessage.caption };
   return null;
+}
+
+// Las fotos/videos de un CANAL no usan la misma clave de cifrado por mensaje
+// que los chats normales (mediaKey viene vacia), asi que el descargador
+// cifrado de Baileys falla con "Cannot derive from empty media key". En ese
+// caso el archivo se puede bajar directo de su URL, sin descifrar.
+function hasMediaKey(node) {
+  return Boolean(node?.mediaKey && node.mediaKey.length > 0);
+}
+
+async function downloadChannelMedia(node) {
+  const { data } = await axios.get(node.url, { responseType: 'arraybuffer' });
+  return Buffer.from(data);
 }
 
 async function notifyOwner(sock, text) {
@@ -144,8 +158,14 @@ export async function startWhatsapp() {
       console.log(`[whatsapp] Contenido detectado (${media.type}) en: ${chatJid}`);
 
       try {
-        const unwrapped = { ...msg, message: unwrapMessage(msg.message) };
-        const buffer = await downloadMediaMessage(unwrapped, 'buffer', {});
+        let buffer;
+        if (hasMediaKey(media.node)) {
+          const unwrapped = { ...msg, message: unwrapMessage(msg.message) };
+          buffer = await downloadMediaMessage(unwrapped, 'buffer', {});
+        } else {
+          console.log('[whatsapp] Sin mediaKey (típico de canales), descargando directo de la URL.');
+          buffer = await downloadChannelMedia(media.node);
+        }
         const ext = media.type === 'video' ? 'mp4' : 'jpg';
         const filename = `${Date.now()}-${jidToNumber(chatJid)}-${pendingGroups.get(chatJid)?.media.length || 0}.${ext}`;
         fs.writeFileSync(path.join(MEDIA_DIR, filename), buffer);

@@ -9,13 +9,11 @@ export function buildBuyLink(item) {
   return `https://wa.me/${config.whatsappOwnerNumber}?text=${encodeURIComponent(text)}`;
 }
 
-// El link de compra solo tiene sentido en Instagram (bio) — en Facebook el
-// dueño pidió sacarlo del texto para no tener que pegarlo a mano ahí.
-export function buildCaption(item, { forFacebook = false } = {}) {
+export function buildCaption(item) {
   const price = item.price != null ? `\n\n💰 Precio: $${item.price}` : '';
   const hashtags = config.cocaHashtags.map((h) => `#${h}`).join(' ');
   const buyLink = buildBuyLink(item);
-  const buyLine = buyLink && !forFacebook ? `\n\n😍 LO QUIERO COMPRAR YA 👉 ${buyLink}` : '';
+  const buyLine = buyLink ? `\n\n😍 LO QUIERO COMPRAR YA 👉 ${buyLink}` : '';
   return `${item.description}${price}${buyLine}\n\n${hashtags}`.trim();
 }
 
@@ -126,56 +124,10 @@ async function publishToInstagram(item, pageAccessToken) {
   }
 }
 
-async function publishToFacebook(item, pageAccessToken) {
-  const caption = buildCaption(item, { forFacebook: true });
-
-  try {
-    if (item.media.length > 1) {
-      const attachedMedia = [];
-      for (const media of item.media) {
-        if (media.type === 'video') {
-          const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/videos`, null, {
-            params: { file_url: mediaUrl(media.file), published: false, access_token: pageAccessToken },
-          });
-          attachedMedia.push({ media_fbid: data.id });
-        } else {
-          const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/photos`, null, {
-            params: { url: mediaUrl(media.file), published: false, access_token: pageAccessToken },
-          });
-          attachedMedia.push({ media_fbid: data.id });
-        }
-      }
-      const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/feed`, null, {
-        params: {
-          message: caption,
-          attached_media: JSON.stringify(attachedMedia),
-          access_token: pageAccessToken,
-        },
-      });
-      return data.id;
-    }
-
-    const media = item.media[0];
-    if (media.type === 'video') {
-      const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/videos`, null, {
-        params: { file_url: mediaUrl(media.file), description: caption, access_token: pageAccessToken },
-      });
-      return data.id;
-    }
-
-    const { data } = await axios.post(`${GRAPH_URL}/${config.metaPageId}/photos`, null, {
-      params: { url: mediaUrl(media.file), caption, access_token: pageAccessToken },
-    });
-    return data.id;
-  } catch (err) {
-    throw describeGraphError(err, 'Facebook');
-  }
-}
-
 /**
- * Publica un item en Instagram y Facebook. Lanza error si falta configuracion
- * de Meta o si el servicio todavia no tiene una URL publica (necesaria para
- * que Meta pueda descargar el archivo).
+ * Publica un item en Instagram. Lanza error si falta configuracion de Meta
+ * o si el servicio todavia no tiene una URL publica (necesaria para que
+ * Meta pueda descargar el archivo).
  */
 export async function publishItem(item) {
   if (!isPublicUrlConfigured()) {
@@ -190,19 +142,6 @@ export async function publishItem(item) {
   }
 
   const pageAccessToken = await getPageAccessToken();
-
-  const [igResult, fbResult] = await Promise.allSettled([
-    publishToInstagram(item, pageAccessToken),
-    publishToFacebook(item, pageAccessToken),
-  ]);
-
-  // Nunca se reintenta una plataforma que ya publicó bien: eso duplicaría
-  // el posteo. Cada resultado (exito/error) de cada plataforma se devuelve
-  // por separado para que el que llama decida que hacer con cada uno.
-  return {
-    igPostId: igResult.status === 'fulfilled' ? igResult.value : null,
-    igError: igResult.status === 'rejected' ? igResult.reason.message : null,
-    fbPostId: fbResult.status === 'fulfilled' ? fbResult.value : null,
-    fbError: fbResult.status === 'rejected' ? fbResult.reason.message : null,
-  };
+  const igPostId = await publishToInstagram(item, pageAccessToken);
+  return { igPostId };
 }

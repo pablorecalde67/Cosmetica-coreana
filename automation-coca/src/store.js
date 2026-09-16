@@ -44,7 +44,6 @@ export function createItem({ source, media, caption }) {
     status: 'pending_price', // pending_price | ready | published | error
     error: null,
     igPostId: null,
-    fbPostId: null,
     createdAt: Date.now(),
     publishedAt: null,
   };

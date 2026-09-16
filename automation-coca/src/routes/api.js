@@ -25,33 +25,19 @@ function toMedia(files) {
   }));
 }
 
-// Decide el estado final segun que plataformas publicaron bien. Si alguna
-// plato falla pero la otra ya publico, nunca se vuelve a intentar esa que
-// ya salio bien (evita duplicar el posteo si se reintenta).
-function applyPublishResult(item, { igPostId, igError, fbPostId, fbError }) {
-  const patch = { igPostId, fbPostId, error: null };
-
-  if (igPostId && fbPostId) {
-    patch.status = 'published';
-    patch.publishedAt = Date.now();
-  } else if (!igPostId && !fbPostId) {
-    patch.status = 'error';
-    patch.error = [igError, fbError].filter(Boolean).join(' | ');
-  } else {
-    patch.status = 'partial';
-    patch.error = igError
-      ? `${igError} (ya está publicado en Facebook).`
-      : `${fbError} — ya está publicado en Instagram, este falta que lo publiques vos en Meta Business Suite.`;
-  }
-
-  return updateItem(item.id, patch);
+function applyPublishResult(item, { igPostId }) {
+  return updateItem(item.id, {
+    igPostId,
+    error: null,
+    status: 'published',
+    publishedAt: Date.now(),
+  });
 }
 
 function withCaption(item) {
   return {
     ...item,
     finalCaption: buildCaption(item),
-    facebookCaption: buildCaption(item, { forFacebook: true }),
     buyLink: buildBuyLink(item),
     metaConfigured: isMetaConfigured(),
   };

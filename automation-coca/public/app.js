@@ -7,7 +7,6 @@ const STATUS_LABEL = {
   pending_price: 'Falta precio',
   ready: 'Listo para publicar',
   published: 'Publicado ✅',
-  partial: 'Publicado parcial ⚠️',
   error: 'Error al publicar',
 };
 
@@ -29,7 +28,7 @@ async function refreshStatusBanner() {
   } else {
     statusBanner.hidden = false;
     statusBanner.textContent =
-      '🔧 PUBLICAR todavía no publica solo: falta autorizar una vez la conexión con Meta (Instagram/Facebook). Mientras eso no esté, cada tarjeta te va a dar el texto y las fotos listas para publicar vos mismo en Meta Business Suite.';
+      '🔧 PUBLICAR todavía no publica solo: falta autorizar una vez la conexión con Meta (Instagram). Mientras eso no esté, cada tarjeta te va a dar el texto y las fotos listas para publicar vos mismo en Instagram.';
   }
 }
 
@@ -144,24 +143,20 @@ function renderCard(item) {
     priceRow.append(priceInput, saveBtn, deleteBtn);
     fields.append(desc, addMoreBtn, priceRow);
   } else {
-    // Si lo único que falta es Facebook (Instagram ya se publicó solo),
-    // el texto a copiar es el de Facebook, que va sin el link de compra.
-    const pendingIsFacebookOnly = item.status === 'partial' && item.igPostId && !item.fbPostId;
-    const captionToShow = pendingIsFacebookOnly ? item.facebookCaption : item.finalCaption;
+    const captionToShow = item.finalCaption;
 
     // ready / error / published: ya tiene precio. Mostramos el texto final
-    // para copiar y publicar a mano en Meta Business Suite.
+    // para copiar y publicar a mano en Instagram si hace falta.
     const captionBox = document.createElement('textarea');
     captionBox.value = captionToShow || '';
     captionBox.readOnly = true;
     fields.appendChild(captionBox);
 
-    if (item.buyLink && !pendingIsFacebookOnly) {
+    if (item.buyLink) {
       const buyNote = document.createElement('p');
       buyNote.className = 'buy-note';
       buyNote.innerHTML =
-        '💬 Botón "Lo quiero comprar ya": funciona como link tocable si lo pegás en el texto de <strong>Facebook</strong>. ' +
-        'En <strong>Instagram</strong> los links del texto no son tocables — poné este mismo link como el link fijo de tu biografía.';
+        '💬 Botón "Lo quiero comprar ya": en <strong>Instagram</strong> los links del texto no son tocables — poné este mismo link como el link fijo de tu biografía.';
       fields.appendChild(buyNote);
 
       const buyRow = document.createElement('div');
@@ -235,9 +230,6 @@ function renderCard(item) {
 
       row.append(copyBtn, downloadLinks, businessSuiteLink, markBtn, deleteBtn);
 
-      // Reintentar automático solo tiene sentido si fallaron las DOS
-      // plataformas: si una ya se publicó (estado "partial"), reintentar
-      // la volvería a publicar duplicada.
       if (item.status === 'error' && item.metaConfigured) {
         const retryBtn = document.createElement('button');
         retryBtn.className = 'publish-btn';
@@ -259,7 +251,7 @@ function renderCard(item) {
       fields.appendChild(row);
     }
 
-    if ((item.status === 'error' || item.status === 'partial') && item.error) {
+    if (item.status === 'error' && item.error) {
       const errText = document.createElement('p');
       errText.className = 'error-text';
       errText.textContent = item.error;

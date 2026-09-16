@@ -194,14 +194,13 @@ export async function publishItem(item) {
     publishToFacebook(item, pageAccessToken),
   ]);
 
-  if (igResult.status === 'rejected' || fbResult.status === 'rejected') {
-    const messages = [];
-    if (igResult.status === 'rejected') messages.push(igResult.reason.message);
-    else messages.push(`Instagram: publicado bien (id ${igResult.value}).`);
-    if (fbResult.status === 'rejected') messages.push(fbResult.reason.message);
-    else messages.push(`Facebook: publicado bien (id ${fbResult.value}).`);
-    throw new Error(messages.join(' | '));
-  }
-
-  return { igPostId: igResult.value, fbPostId: fbResult.value };
+  // Nunca se reintenta una plataforma que ya publicó bien: eso duplicaría
+  // el posteo. Cada resultado (exito/error) de cada plataforma se devuelve
+  // por separado para que el que llama decida que hacer con cada uno.
+  return {
+    igPostId: igResult.status === 'fulfilled' ? igResult.value : null,
+    igError: igResult.status === 'rejected' ? igResult.reason.message : null,
+    fbPostId: fbResult.status === 'fulfilled' ? fbResult.value : null,
+    fbError: fbResult.status === 'rejected' ? fbResult.reason.message : null,
+  };
 }

@@ -229,6 +229,28 @@ function renderCard(item) {
       };
 
       row.append(copyBtn, downloadLinks, businessSuiteLink, markBtn, deleteBtn);
+
+      // Reintentar automático solo tiene sentido si fallaron las DOS
+      // plataformas: si una ya se publicó (estado "partial"), reintentar
+      // la volvería a publicar duplicada.
+      if (item.status === 'error' && item.metaConfigured) {
+        const retryBtn = document.createElement('button');
+        retryBtn.className = 'publish-btn';
+        retryBtn.textContent = '🔁 Reintentar automático';
+        retryBtn.onclick = async () => {
+          retryBtn.disabled = true;
+          retryBtn.textContent = 'Publicando...';
+          try {
+            const res = await fetch(`/api/queue/${item.id}/publish`, { method: 'POST' });
+            if (!res.ok) throw new Error((await res.json()).error);
+          } catch (err) {
+            alert('Error: ' + err.message);
+          }
+          fetchQueue();
+        };
+        row.appendChild(retryBtn);
+      }
+
       fields.appendChild(row);
     }
 

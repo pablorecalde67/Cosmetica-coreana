@@ -25,6 +25,28 @@ function toMedia(files) {
   }));
 }
 
+// Decide el estado final segun que plataformas publicaron bien. Si alguna
+// plato falla pero la otra ya publico, nunca se vuelve a intentar esa que
+// ya salio bien (evita duplicar el posteo si se reintenta).
+function applyPublishResult(item, { igPostId, igError, fbPostId, fbError }) {
+  const patch = { igPostId, fbPostId, error: null };
+
+  if (igPostId && fbPostId) {
+    patch.status = 'published';
+    patch.publishedAt = Date.now();
+  } else if (!igPostId && !fbPostId) {
+    patch.status = 'error';
+    patch.error = [igError, fbError].filter(Boolean).join(' | ');
+  } else {
+    patch.status = 'partial';
+    patch.error = igError
+      ? `${igError} (ya está publicado en Facebook).`
+      : `${fbError} — ya está publicado en Instagram, este falta que lo publiques vos en Meta Business Suite.`;
+  }
+
+  return updateItem(item.id, patch);
+}
+
 function withCaption(item) {
   return {
     ...item,
@@ -88,14 +110,8 @@ router.patch('/queue/:id', async (req, res) => {
   // Mientras tanto queda en "ready" para que lo publiques vos en Meta Business Suite.
   if (priceJustSet && isMetaConfigured()) {
     try {
-      const { igPostId, fbPostId } = await publishItem(updated);
-      updated = updateItem(updated.id, {
-        status: 'published',
-        igPostId,
-        fbPostId,
-        publishedAt: Date.now(),
-        error: null,
-      });
+      const result = await publishItem(updated);
+      updated = applyPublishResult(updated, result);
     } catch (err) {
       updated = updateItem(updated.id, { status: 'error', error: err.message });
     }
@@ -112,14 +128,8 @@ router.post('/queue/:id/publish', async (req, res) => {
   }
 
   try {
-    const { igPostId, fbPostId } = await publishItem(item);
-    const updated = updateItem(item.id, {
-      status: 'published',
-      igPostId,
-      fbPostId,
-      publishedAt: Date.now(),
-      error: null,
-    });
+    const result = await publishItem(item);
+    const updated = applyPublishResult(item, result);
     res.json(withCaption(updated));
   } catch (err) {
     updateItem(item.id, { status: 'error', error: err.message });

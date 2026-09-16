@@ -214,6 +214,7 @@ main {
 .badge.ready { background: #d0ebff; color: #1864ab; }
 .badge.published { background: #d3f9d8; color: #2b8a3e; }
 .badge.error { background: #ffe3e3; color: #c92a2a; }
+.badge.partial { background: #ffe8cc; color: #a0570d; }
 
 .error-text {
   color: #c92a2a;

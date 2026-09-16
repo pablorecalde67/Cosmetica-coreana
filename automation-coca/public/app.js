@@ -7,6 +7,7 @@ const STATUS_LABEL = {
   pending_price: 'Falta precio',
   ready: 'Listo para publicar',
   published: 'Publicado ✅',
+  partial: 'Publicado parcial ⚠️',
   error: 'Error al publicar',
 };
 
@@ -231,7 +232,7 @@ function renderCard(item) {
       fields.appendChild(row);
     }
 
-    if (item.status === 'error' && item.error) {
+    if ((item.status === 'error' || item.status === 'partial') && item.error) {
       const errText = document.createElement('p');
       errText.className = 'error-text';
       errText.textContent = item.error;

@@ -156,7 +156,10 @@ function renderCard(item) {
       const buyNote = document.createElement('p');
       buyNote.className = 'buy-note';
       buyNote.innerHTML =
-        '💬 Botón "Lo quiero comprar ya": en <strong>Instagram</strong> los links del texto no son tocables — poné este mismo link como el link fijo de tu biografía.';
+        'El texto del posteo ya dice "link en la bio" — tu biografía de Instagram tiene que tener puesto ' +
+        'un link genérico a tu WhatsApp (algo como <code>wa.me/tunúmero</code>), configurado <strong>una sola vez</strong> ' +
+        '(no hace falta cambiarlo por cada publicación). Este de acá abajo es el link con este producto ya escrito, ' +
+        'por si querés mandárselo directo a alguien por su cuenta.';
       fields.appendChild(buyNote);
 
       const buyRow = document.createElement('div');
@@ -168,12 +171,12 @@ function renderCard(item) {
       buyLinkBox.className = 'buy-link-box';
       const copyBuyBtn = document.createElement('button');
       copyBuyBtn.className = 'secondary';
-      copyBuyBtn.textContent = '📋 Copiar link de compra';
+      copyBuyBtn.textContent = '📋 Copiar link con este producto';
       copyBuyBtn.onclick = async () => {
         try {
           await navigator.clipboard.writeText(item.buyLink);
           copyBuyBtn.textContent = '✅ Copiado';
-          setTimeout(() => (copyBuyBtn.textContent = '📋 Copiar link de compra'), 1800);
+          setTimeout(() => (copyBuyBtn.textContent = '📋 Copiar link con este producto'), 1800);
         } catch {
           buyLinkBox.select();
         }

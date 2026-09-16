@@ -9,11 +9,17 @@ export function buildBuyLink(item) {
   return `https://wa.me/${config.whatsappOwnerNumber}?text=${encodeURIComponent(text)}`;
 }
 
+// El link de wa.me completo (con toda la descripcion codificada) queda
+// espantoso como texto plano en el posteo, y en Instagram el texto no es
+// clickeable de todas formas: por eso el llamado a la accion es corto y el
+// link de compra real va solo en la biografia (buildBuyLink sigue existiendo
+// para que el panel te lo pueda mostrar/copiar aparte).
 export function buildCaption(item) {
   const price = item.price != null ? `\n\n💰 Precio: $${item.price}` : '';
   const hashtags = config.cocaHashtags.map((h) => `#${h}`).join(' ');
-  const buyLink = buildBuyLink(item);
-  const buyLine = buyLink ? `\n\n😍 LO QUIERO COMPRAR YA 👉 ${buyLink}` : '';
+  const buyLine = config.whatsappOwnerNumber
+    ? '\n\n😍 LO QUIERO COMPRAR YA 👉 escribinos por WhatsApp, link en la bio'
+    : '';
   return `${item.description}${price}${buyLine}\n\n${hashtags}`.trim();
 }
 

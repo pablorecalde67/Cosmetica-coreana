@@ -209,10 +209,10 @@ function renderCard(item) {
       });
 
       const businessSuiteLink = document.createElement('a');
-      businessSuiteLink.href = 'https://business.facebook.com/latest/composer';
+      businessSuiteLink.href = 'https://www.instagram.com/';
       businessSuiteLink.target = '_blank';
       businessSuiteLink.rel = 'noopener';
-      businessSuiteLink.textContent = '↗️ Abrir Meta Business Suite';
+      businessSuiteLink.textContent = '↗️ Abrir Instagram';
       businessSuiteLink.style.alignSelf = 'center';
 
       const markBtn = document.createElement('button');

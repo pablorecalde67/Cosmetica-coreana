@@ -48,11 +48,7 @@ router.get('/queue', (req, res) => {
 });
 
 router.get('/status', (req, res) => {
-  res.json({
-    metaConfigured: isMetaConfigured(),
-    cwd: process.cwd(),
-    mediaDir: MEDIA_DIR,
-  });
+  res.json({ metaConfigured: isMetaConfigured() });
 });
 
 router.post('/upload', upload.array('files', 10), (req, res) => {

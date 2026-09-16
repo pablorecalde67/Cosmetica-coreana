@@ -9,11 +9,13 @@ export function buildBuyLink(item) {
   return `https://wa.me/${config.whatsappOwnerNumber}?text=${encodeURIComponent(text)}`;
 }
 
-export function buildCaption(item) {
+// El link de compra solo tiene sentido en Instagram (bio) — en Facebook el
+// dueño pidió sacarlo del texto para no tener que pegarlo a mano ahí.
+export function buildCaption(item, { forFacebook = false } = {}) {
   const price = item.price != null ? `\n\n💰 Precio: $${item.price}` : '';
   const hashtags = config.cocaHashtags.map((h) => `#${h}`).join(' ');
   const buyLink = buildBuyLink(item);
-  const buyLine = buyLink ? `\n\n😍 LO QUIERO COMPRAR YA 👉 ${buyLink}` : '';
+  const buyLine = buyLink && !forFacebook ? `\n\n😍 LO QUIERO COMPRAR YA 👉 ${buyLink}` : '';
   return `${item.description}${price}${buyLine}\n\n${hashtags}`.trim();
 }
 
@@ -125,7 +127,7 @@ async function publishToInstagram(item, pageAccessToken) {
 }
 
 async function publishToFacebook(item, pageAccessToken) {
-  const caption = buildCaption(item);
+  const caption = buildCaption(item, { forFacebook: true });
 
   try {
     if (item.media.length > 1) {

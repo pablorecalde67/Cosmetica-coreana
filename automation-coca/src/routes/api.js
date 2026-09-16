@@ -51,6 +51,7 @@ function withCaption(item) {
   return {
     ...item,
     finalCaption: buildCaption(item),
+    facebookCaption: buildCaption(item, { forFacebook: true }),
     buyLink: buildBuyLink(item),
     metaConfigured: isMetaConfigured(),
   };

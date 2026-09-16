@@ -144,14 +144,19 @@ function renderCard(item) {
     priceRow.append(priceInput, saveBtn, deleteBtn);
     fields.append(desc, addMoreBtn, priceRow);
   } else {
+    // Si lo único que falta es Facebook (Instagram ya se publicó solo),
+    // el texto a copiar es el de Facebook, que va sin el link de compra.
+    const pendingIsFacebookOnly = item.status === 'partial' && item.igPostId && !item.fbPostId;
+    const captionToShow = pendingIsFacebookOnly ? item.facebookCaption : item.finalCaption;
+
     // ready / error / published: ya tiene precio. Mostramos el texto final
     // para copiar y publicar a mano en Meta Business Suite.
     const captionBox = document.createElement('textarea');
-    captionBox.value = item.finalCaption || '';
+    captionBox.value = captionToShow || '';
     captionBox.readOnly = true;
     fields.appendChild(captionBox);
 
-    if (item.buyLink) {
+    if (item.buyLink && !pendingIsFacebookOnly) {
       const buyNote = document.createElement('p');
       buyNote.className = 'buy-note';
       buyNote.innerHTML =
@@ -190,7 +195,7 @@ function renderCard(item) {
       copyBtn.textContent = '📋 Copiar texto';
       copyBtn.onclick = async () => {
         try {
-          await navigator.clipboard.writeText(item.finalCaption || '');
+          await navigator.clipboard.writeText(captionToShow || '');
           copyBtn.textContent = '✅ Copiado';
           setTimeout(() => (copyBtn.textContent = '📋 Copiar texto'), 1800);
         } catch {

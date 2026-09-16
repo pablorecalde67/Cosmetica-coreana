@@ -80,7 +80,10 @@ async function createIgMediaContainer(media, pageAccessToken, { asCarouselItem }
   }
 
   const { data } = await axios.post(`${GRAPH_URL}/${config.metaIgUserId}/media`, null, { params });
-  if (media.type === 'video') await waitUntilFinished(data.id, pageAccessToken);
+  // Instagram tarda un rato en procesar el archivo (mas con video, pero
+  // tambien con fotos): hay que esperar a que este "FINISHED" antes de
+  // poder usarlo, sea para publicarlo solo o como parte de un carrusel.
+  await waitUntilFinished(data.id, pageAccessToken);
   return data.id;
 }
 
@@ -104,6 +107,7 @@ async function publishToInstagram(item, pageAccessToken) {
         },
       });
       creationId = data.id;
+      await waitUntilFinished(creationId, pageAccessToken);
     } else {
       creationId = await createIgMediaContainer(item.media[0], pageAccessToken, { asCarouselItem: false });
     }

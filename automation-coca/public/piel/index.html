@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>COCA · Descubrí tu tipo de piel</title>
+<meta name="description" content="Análisis de piel con IA y recomendación de cosmética coreana, gratis y en segundos.">
+<link rel="stylesheet" href="/piel/styles.css">
+</head>
+<body>
+
+<!-- ============ HOME ============ -->
+<section id="screen-home" class="screen active">
+  <div class="wrap">
+    <p class="eyebrow">COCA · K-Beauty</p>
+    <h1>Conocé tu piel<br>en 30 segundos</h1>
+    <p class="lead">Sacate una selfie, nuestra Inteligencia Artificial analiza tu piel y te recomienda qué productos coreanos son para vos.</p>
+
+    <div class="steps">
+      <div class="step"><span>1</span>Te tomás una selfie (no se guarda)</div>
+      <div class="step"><span>2</span>La IA describe tu piel</div>
+      <div class="step"><span>3</span>Te sugiere productos K-Beauty a tu medida</div>
+    </div>
+
+    <button id="btn-start" class="btn btn-primary">Descubrir mi tipo de piel</button>
+    <p class="fineprint">Gratis · Sin registro · Tu foto no se almacena</p>
+  </div>
+</section>
+
+<!-- ============ CONSENT ============ -->
+<section id="screen-consent" class="screen">
+  <div class="wrap">
+    <button class="btn-back" data-back="screen-home">← Volver</button>
+    <h2>Antes de sacarte la foto</h2>
+
+    <div class="legal-box">
+      <p><strong>Consentimiento para la selfie.</strong> Vas a activar tu cámara y tomarte una foto de tu rostro para que una Inteligencia Artificial la analice. Esa foto <strong>no se guarda ni se almacena en ningún servidor ni base de datos</strong>: se usa un instante para el análisis y se descarta apenas termina.</p>
+      <p><strong>Descargo de responsabilidad.</strong> El análisis de piel y las recomendaciones de producto son generados automáticamente por Inteligencia Artificial a partir de una imagen, con fines orientativos y de estética. <strong>No es un diagnóstico médico ni reemplaza la consulta con un dermatólogo.</strong> COCA no se responsabiliza por reacciones, alergias o resultados derivados del uso de los productos sugeridos. Si decidís usarlos, lo hacés bajo tu <strong>absoluta responsabilidad</strong>, verificando ingredientes y consultando a un profesional si tenés piel sensible, alguna condición dermatológica o dudas.</p>
+    </div>
+
+    <label class="check-row">
+      <input type="checkbox" id="chk-consent">
+      <span>Leí y acepto lo anterior: doy mi consentimiento para tomarme la selfie (que no se guarda) y acepto el descargo de responsabilidad sobre las recomendaciones.</span>
+    </label>
+
+    <button id="btn-open-camera" class="btn btn-primary" disabled>Activar cámara y continuar</button>
+  </div>
+</section>
+
+<!-- ============ CAMERA ============ -->
+<section id="screen-camera" class="screen">
+  <div class="wrap">
+    <button class="btn-back" data-back="screen-consent">← Volver</button>
+    <h2>Centrá tu rostro</h2>
+    <p class="lead small">Buena luz, sin lentes ni maquillaje si es posible, mirando de frente.</p>
+
+    <div class="camera-box">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="canvas" hidden></canvas>
+      <img id="preview" hidden alt="Selfie tomada">
+    </div>
+
+    <p id="camera-error" class="error-text" hidden></p>
+
+    <div id="camera-actions" class="actions">
+      <button id="btn-capture" class="btn btn-primary">📸 Tomar foto</button>
+    </div>
+    <div id="preview-actions" class="actions" hidden>
+      <button id="btn-retake" class="btn btn-secondary">Repetir</button>
+      <button id="btn-analyze" class="btn btn-primary">Analizar mi piel</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOADING ============ -->
+<section id="screen-loading" class="screen">
+  <div class="wrap center">
+    <div class="spinner"></div>
+    <p>Analizando tu piel con IA…</p>
+  </div>
+</section>
+
+<!-- ============ RESULT ============ -->
+<section id="screen-result" class="screen">
+  <div class="wrap">
+    <h2>Tu análisis de piel</h2>
+
+    <div id="informe" class="informe-protegido">
+      <p class="skin-type-badge" id="res-skintype"></p>
+      <p id="res-resumen" class="resumen"></p>
+      <ul id="res-detalles" class="detalles"></ul>
+      <p id="res-advertencia" class="advertencia" hidden></p>
+
+      <h3>Recomendado para tu piel</h3>
+      <div id="res-productos" class="product-grid"></div>
+    </div>
+
+    <p class="legal-mini">Sugerencias generadas por IA con fines orientativos, no reemplazan un diagnóstico dermatológico.</p>
+
+    <div class="ask-box">
+      <p><strong>¿Querés probar estos productos bajo tu absoluta responsabilidad?</strong></p>
+      <div class="actions">
+        <button id="btn-no" class="btn btn-secondary">No</button>
+        <button id="btn-yes" class="btn btn-primary">Sí</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SELECT PRODUCTS ============ -->
+<section id="screen-select" class="screen">
+  <div class="wrap">
+    <button class="btn-back" data-back="screen-result">← Volver</button>
+    <h2>Elegí qué productos querés</h2>
+    <div id="select-productos" class="select-list"></div>
+    <p class="total-row">Total: <strong id="select-total">$0</strong></p>
+    <button id="btn-want" class="btn btn-primary">Quiero tenerlo</button>
+  </div>
+</section>
+
+<!-- ============ SHIPPING FORM ============ -->
+<section id="screen-form" class="screen">
+  <div class="wrap">
+    <button class="btn-back" data-back="screen-select">← Volver</button>
+    <h2>Último paso</h2>
+
+    <div class="legal-box small">
+      <p>Confirmás que estos productos fueron sugeridos por Inteligencia Artificial en base a tu selfie, que no reemplazan una consulta dermatológica, y que los adquirís bajo tu <strong>absoluta responsabilidad</strong>.</p>
+    </div>
+
+    <form id="form-pedido">
+      <label>Nombre y apellido
+        <input type="text" id="f-name" required>
+      </label>
+      <label>WhatsApp / teléfono
+        <input type="tel" id="f-phone" required>
+      </label>
+      <label>Dirección de envío
+        <textarea id="f-address" required placeholder="Calle, número, ciudad, provincia, código postal"></textarea>
+      </label>
+      <label>Notas (opcional)
+        <textarea id="f-notes" placeholder="Referencias de entrega, horarios, etc."></textarea>
+      </label>
+
+      <label class="check-row">
+        <input type="checkbox" id="chk-responsabilidad" required>
+        <span>Confirmo que acepto el descargo de responsabilidad y quiero comprar estos productos bajo mi absoluta responsabilidad.</span>
+      </label>
+
+      <p id="form-error" class="error-text" hidden></p>
+      <button type="submit" id="btn-confirm" class="btn btn-primary">Confirmar pedido</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ CONFIRMATION ============ -->
+<section id="screen-confirm" class="screen">
+  <div class="wrap center">
+    <h2>¡Pedido registrado! 🎉</h2>
+    <p>Total a transferir: <strong id="conf-total"></strong></p>
+
+    <div class="alias-box">
+      <p class="alias-label">Alias para transferencia</p>
+      <p class="alias-value" id="conf-alias"></p>
+      <p id="conf-holder" class="alias-holder"></p>
+    </div>
+
+    <p class="lead small">Guardá el comprobante y enviálo por WhatsApp para que confirmemos tu envío. Te va a llegar a la dirección que cargaste.</p>
+    <a id="conf-whatsapp" class="btn btn-primary" target="_blank" rel="noopener">Enviar comprobante por WhatsApp</a>
+    <button id="btn-home" class="btn btn-secondary">Volver al inicio</button>
+  </div>
+</section>
+
+<script src="/piel/app.js"></script>
+</body>
+</html>

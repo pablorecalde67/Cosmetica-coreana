@@ -27,6 +27,19 @@ export const config = {
   metaIgUserId: process.env.META_IG_USER_ID || '',
 
   cocaHashtags: list(process.env.COCA_HASHTAGS || 'COCA,KBeauty,SkincareTips,GlowUp,BeautyTok,Belleza,Skincare'),
+
+  // --- Análisis de piel con IA (página /piel) ---
+  // API key de Anthropic (console.anthropic.com) usada solo para describir
+  // la piel de la selfie y elegir productos. La selfie nunca se guarda.
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
+  aiModel: process.env.AI_MODEL || 'claude-sonnet-5',
+
+  // Alias de transferencia que se le muestra al cliente recién al final del
+  // flujo, cuando ya aceptó el descargo de responsabilidad y confirmó que
+  // quiere los productos. Editalo cuando quieras, no requiere reiniciar el
+  // build (se toma en cada pedido desde la variable de entorno).
+  transferAlias: process.env.TRANSFER_ALIAS || 'ALIAS.PENDIENTE.DE.CARGAR',
+  transferHolderName: process.env.TRANSFER_HOLDER_NAME || '',
 };
 
 export function isMetaConfigured() {

@@ -70,6 +70,34 @@ npm start
 
 **Sobre el botón "Lo quiero comprar ya":** es un link de WhatsApp (`wa.me`) con tu número, incluido siempre en el texto del posteo. En Instagram los links del texto no son tocables (limitación de la plataforma): ese mismo link te lo arma el panel para copiar y pegarlo como el link fijo de tu biografía de Instagram.
 
+## Página pública `/piel`: análisis de piel con IA + venta automática
+
+Además del panel de publicación, el servicio expone una página pública pensada para poner como **link en la bio de Instagram**: `https://TU-URL/piel`.
+
+Flujo, 100% automático, sin que vos tengas que intervenir en cada caso:
+
+1. **Landing**: explica en 3 pasos qué va a pasar y lleva a la persona a "Descubrir mi tipo de piel".
+2. **Consentimiento**: antes de activar la cámara, se muestra un texto que dice explícitamente que la selfie **no se guarda** y el **descargo de responsabilidad** completo (no es diagnóstico médico, la persona usa las recomendaciones bajo su responsabilidad). Hay que tildar el check para continuar.
+3. **Selfie**: se activa la cámara del navegador, la persona se saca la foto. La foto viaja al servidor solo para la llamada a la IA y **nunca se escribe a disco ni a ninguna base de datos** (ver `src/skinAnalysis.js` y `src/routes/piel.js`).
+4. **Resultado**: la IA (Claude, vía `ANTHROPIC_API_KEY`) describe únicamente características de la piel (hidratación, grasitud, poros, textura, tono) y sugiere hasta 5 productos del catálogo que matchean. Ese bloque de resultado tiene protecciones (sin selección de texto, sin clic derecho, sin arrastrar imágenes, bloqueo de atajos de copiar/imprimir/guardar) para desalentar copiarlo — **no es una protección técnica infalible** (nada evita una captura de pantalla del sistema operativo), pero cubre las formas normales de copiar/guardar/imprimir desde el navegador.
+5. Botón **"¿Querés probar estos productos bajo tu absoluta responsabilidad?"** con **Sí / No**. "No" vuelve al inicio. "Sí" muestra el listado con precios para elegir.
+6. La persona confirma **"Quiero tenerlo"**, vuelve a ver el descargo de responsabilidad, y completa nombre, teléfono y **dirección de envío**.
+7. Al confirmar, el servicio crea el pedido (sin la foto) y muestra el **alias de transferencia** (`TRANSFER_ALIAS`) y un botón para mandar el comprobante por WhatsApp. Todo esto sin que el administrador tenga que hacer nada en el momento.
+8. Vos ves los pedidos en `/pedidos.html` (dirección, teléfono, productos, total) y los vas marcando como "Pago confirmado" / "Enviado" a medida que los procesás.
+
+### Configurar esta parte
+
+En Railway (o tu `.env` local) agregá:
+
+- `ANTHROPIC_API_KEY`: se genera en https://console.anthropic.com. Sin esto, el análisis de piel no funciona (el resto del panel de publicación sigue funcionando igual).
+- `AI_MODEL`: dejalo en `claude-sonnet-5` salvo que quieras cambiarlo.
+- `TRANSFER_ALIAS` / `TRANSFER_HOLDER_NAME`: alias de Mercado Pago/CBU que se le muestra a la clienta al confirmar el pedido.
+- `WHATSAPP_OWNER_NUMBER` (ya existente): se usa también para el botón "Enviar comprobante por WhatsApp".
+
+### Catálogo de productos (`/productos.html`)
+
+El catálogo que la IA usa para recomendar viene con una selección inicial de productos Medicube (semilla en `src/products.js`), pero **vos editás precio, nombre, descripción, foto y disponibilidad** desde `/productos.html` en cualquier momento — se guarda en `data/products.json` y se refleja al instante en `/piel`. Las fotos van en `public/piel/img/products/` (hoy solo hay dos fotos reales cargadas; para el resto se muestra un placeholder hasta que cargues la imagen real).
+
 ## Estructura
 
 ```
@@ -78,9 +106,14 @@ automation-coca/
     index.js           servidor Express
     config.js           variables de entorno
     store.js             cola de contenido (archivo JSON)
-    whatsapp.js           bot de WhatsApp (Baileys)
-    meta.js                publicación en Instagram (Graph API)
-    routes/api.js           endpoints del panel
-    routes/whatsappSetup.js  página con el QR de conexión
-  public/                 panel web (drag&drop + cola + precio + publicar)
+    products.js          catálogo editable de productos (para /piel)
+    orders.js             pedidos generados desde /piel (sin la selfie)
+    skinAnalysis.js        análisis de piel con IA (Claude vision)
+    whatsapp.js             bot de WhatsApp (Baileys)
+    meta.js                  publicación en Instagram (Graph API)
+    routes/api.js             endpoints del panel (cola, productos, pedidos)
+    routes/piel.js              endpoints públicos de /piel (analizar, pedido)
+    routes/whatsappSetup.js      página con el QR de conexión
+  public/                 panel web admin (cola, productos, pedidos)
+  public/piel/             página pública de análisis de piel con IA
 ```

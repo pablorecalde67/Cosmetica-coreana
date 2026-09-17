@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>COCA · Panel de publicación</title>
+<title>COCA · Productos y precios</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <header>
     <h1>COCA</h1>
-    <p>Cola de contenido para Instagram</p>
+    <p>Catálogo de la página de análisis de piel (/piel)</p>
     <nav class="admin-nav">
       <a href="/">Cola</a>
       <a href="/productos.html">Productos y precios</a>
@@ -19,16 +19,13 @@
   </header>
 
   <main>
-    <p id="statusBanner" class="status-banner" hidden></p>
-
-    <section id="dropzone" class="dropzone">
-      <p>Arrastrá una o varias fotos/videos acá (van a quedar juntas en la misma publicación), o hacé clic para elegirlas.</p>
-      <input type="file" id="fileInput" accept="image/*,video/*" multiple hidden>
-    </section>
-
-    <section id="queue" class="queue"></section>
+    <p style="text-align:center;opacity:.7;font-size:.88rem;max-width:520px;margin:0 auto">
+      Acá editás precio, nombre, descripción, foto y disponibilidad de cada producto que la IA puede recomendar.
+      Los cambios se ven al instante en la página pública.
+    </p>
+    <section id="productos" class="queue"></section>
   </main>
 
-  <script src="/app.js"></script>
+  <script src="/productos.js"></script>
 </body>
 </html>

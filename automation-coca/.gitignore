@@ -2,5 +2,7 @@ node_modules/
 data/media/*
 !data/media/.gitkeep
 data/db.json
+data/orders.json
+data/products.json
 data/whatsapp-session/
 .env

@@ -2,9 +2,14 @@ import { Router } from 'express';
 import { analyzeSkin, isAiConfigured } from '../skinAnalysis.js';
 import { getProduct } from '../products.js';
 import { createOrder } from '../orders.js';
+import { getSite } from '../site.js';
 import { config } from '../config.js';
 
 const router = Router();
+
+router.get('/sitio', (req, res) => {
+  res.json(getSite());
+});
 
 function stripDataUrl(imageBase64) {
   const match = /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/.exec(imageBase64 || '');

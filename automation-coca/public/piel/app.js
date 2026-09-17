@@ -25,6 +25,26 @@ function money(n) {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n || 0);
 }
 
+// ---------- Portada editable ----------
+async function loadSite() {
+  try {
+    const res = await fetch('/api/piel/sitio');
+    if (!res.ok) return;
+    const site = await res.json();
+    $('site-eyebrow').textContent = site.eyebrow;
+    $('site-title').textContent = site.heroTitle;
+    $('site-lead').textContent = site.heroLead;
+    $('site-step1').textContent = site.step1;
+    $('site-step2').textContent = site.step2;
+    $('site-step3').textContent = site.step3;
+    $('btn-start').textContent = site.ctaText;
+    $('site-fineprint').textContent = site.fineprint;
+  } catch {
+    // Si falla, queda el texto por defecto que ya está en el HTML.
+  }
+}
+loadSite();
+
 // ---------- Home → Consent ----------
 $('btn-start').addEventListener('click', () => showScreen('screen-consent'));
 

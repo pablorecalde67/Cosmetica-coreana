@@ -6,6 +6,7 @@ import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured } from '../config.js';
 import { listProducts, updateProduct } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
+import { getSite, updateSite } from '../site.js';
 
 const router = Router();
 
@@ -185,6 +186,16 @@ router.patch('/pedidos/:id', (req, res) => {
   const updated = updateOrder(req.params.id, patch);
   if (!updated) return res.status(404).json({ error: 'No existe.' });
   res.json(updated);
+});
+
+// --- Admin: textos de la portada pública de /piel ---
+
+router.get('/sitio', (req, res) => {
+  res.json(getSite());
+});
+
+router.patch('/sitio', (req, res) => {
+  res.json(updateSite(req.body || {}));
 });
 
 export default router;

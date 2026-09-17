@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COCA · Portada</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1>COCA</h1>
+    <p>Textos de la portada pública (/piel)</p>
+    <nav class="admin-nav">
+      <a href="/">Cola</a>
+      <a href="/productos.html">Productos y precios</a>
+      <a href="/pedidos.html">Pedidos (análisis de piel)</a>
+      <a href="/fronting.html">Portada</a>
+      <a href="/piel" target="_blank" rel="noopener">↗ Ver página pública</a>
+    </nav>
+  </header>
+
+  <main>
+    <p style="text-align:center;opacity:.7;font-size:.88rem;max-width:520px;margin:0 auto">
+      Editá acá el texto que ve la persona apenas entra a <code>/piel</code> desde el link de tu bio de Instagram.
+      Los cambios se ven al instante, sin necesidad de redeploy.
+    </p>
+
+    <form id="form-sitio" class="table-row" style="flex-direction:column;max-width:520px;margin:0 auto;width:100%">
+      <label>Texto chico de arriba (eyebrow)
+        <input type="text" id="f-eyebrow">
+      </label>
+      <label>Título principal (podés usar un salto de línea)
+        <textarea id="f-heroTitle" rows="2"></textarea>
+      </label>
+      <label>Bajada
+        <textarea id="f-heroLead" rows="3"></textarea>
+      </label>
+      <label>Paso 1
+        <input type="text" id="f-step1">
+      </label>
+      <label>Paso 2
+        <input type="text" id="f-step2">
+      </label>
+      <label>Paso 3
+        <input type="text" id="f-step3">
+      </label>
+      <label>Texto del botón principal
+        <input type="text" id="f-ctaText">
+      </label>
+      <label>Texto chico de abajo
+        <input type="text" id="f-fineprint">
+      </label>
+
+      <div class="row2" style="margin-top:8px">
+        <button type="submit" class="publish-btn">Guardar cambios</button>
+        <span id="saved-tag" class="saved-tag">✅ Guardado</span>
+      </div>
+    </form>
+  </main>
+
+  <script src="/fronting.js"></script>
+</body>
+</html>

@@ -26,6 +26,68 @@ header p {
   opacity: 0.7;
 }
 
+.admin-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  margin-top: 10px;
+}
+
+.admin-nav a {
+  color: #d6336c;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-nav a:hover { text-decoration: underline; }
+
+.table-row {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.table-row img.thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #fdf3f7;
+  flex-shrink: 0;
+}
+
+.table-row .fields { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+
+.table-row input[type="text"],
+.table-row textarea,
+.table-row input[type="number"] {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: inherit;
+  width: 100%;
+}
+
+.table-row textarea { resize: vertical; min-height: 50px; }
+
+.table-row .row2 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.table-row label.inline { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+
+.saved-tag { font-size: 0.78rem; color: #2b8a3e; opacity: 0; transition: opacity 0.2s; }
+.saved-tag.show { opacity: 1; }
+
+.order-meta { font-size: 0.85rem; opacity: 0.8; margin: 0; }
+.order-products { font-size: 0.88rem; margin: 6px 0; }
+.order-total { font-weight: 700; color: #a61e4d; }
+
 main {
   max-width: 720px;
   margin: 0 auto;

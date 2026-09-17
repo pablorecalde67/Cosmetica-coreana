@@ -5,16 +5,21 @@ import { config } from './config.js';
 import { MEDIA_DIR } from './store.js';
 import apiRouter from './routes/api.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
+import pielRouter from './routes/piel.js';
 import { startWhatsapp } from './whatsapp.js';
 import { startEmailIngest } from './email.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-app.use(express.json());
+// La selfie llega en base64 dentro del JSON: subimos el límite normal de
+// express.json() para que entre una foto de cámara sin problema. Igual
+// nunca se guarda en disco (ver src/skinAnalysis.js).
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/media', express.static(MEDIA_DIR));
 
+app.use('/api/piel', pielRouter);
 app.use('/api', apiRouter);
 app.use('/', whatsappSetupRouter);
 

@@ -4,6 +4,9 @@ import path from 'node:path';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, MEDIA_DIR } from '../store.js';
 import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured } from '../config.js';
+import { listProducts, updateProduct } from '../products.js';
+import { listOrders, updateOrder } from '../orders.js';
+import { getSite, updateSite } from '../site.js';
 
 const router = Router();
 
@@ -143,6 +146,56 @@ router.delete('/queue/:id', (req, res) => {
   const ok = deleteItem(req.params.id);
   if (!ok) return res.status(404).json({ error: 'No existe.' });
   res.status(204).end();
+});
+
+// --- Admin: catálogo de productos usado en /piel (precio, descripción, etc.) ---
+
+router.get('/productos', (req, res) => {
+  res.json(listProducts());
+});
+
+router.patch('/productos/:id', (req, res) => {
+  const patch = {};
+  if (typeof req.body.name === 'string') patch.name = req.body.name;
+  if (typeof req.body.description === 'string') patch.description = req.body.description;
+  if (typeof req.body.image === 'string') patch.image = req.body.image;
+  if (typeof req.body.active === 'boolean') patch.active = req.body.active;
+  if (req.body.price !== undefined) {
+    const price = Number(req.body.price);
+    if (Number.isNaN(price) || price < 0) return res.status(400).json({ error: 'Precio inválido.' });
+    patch.price = price;
+  }
+
+  const updated = updateProduct(req.params.id, patch);
+  if (!updated) return res.status(404).json({ error: 'No existe.' });
+  res.json(updated);
+});
+
+// --- Admin: pedidos generados automáticamente desde /piel ---
+
+router.get('/pedidos', (req, res) => {
+  res.json(listOrders());
+});
+
+router.patch('/pedidos/:id', (req, res) => {
+  const patch = {};
+  if (typeof req.body.status === 'string') {
+    patch.status = req.body.status;
+    if (req.body.status === 'enviado') patch.fulfilledAt = Date.now();
+  }
+  const updated = updateOrder(req.params.id, patch);
+  if (!updated) return res.status(404).json({ error: 'No existe.' });
+  res.json(updated);
+});
+
+// --- Admin: textos de la portada pública de /piel ---
+
+router.get('/sitio', (req, res) => {
+  res.json(getSite());
+});
+
+router.patch('/sitio', (req, res) => {
+  res.json(updateSite(req.body || {}));
 });
 
 export default router;

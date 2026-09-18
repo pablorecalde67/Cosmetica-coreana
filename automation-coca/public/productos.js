@@ -3,6 +3,7 @@ const list = document.getElementById('productos');
 async function load() {
   const res = await fetch('/api/productos');
   const productos = await res.json();
+  productos.sort((a, b) => (a.brand || '').localeCompare(b.brand || '') || a.name.localeCompare(b.name));
   render(productos);
 }
 
@@ -25,6 +26,15 @@ function renderRow(p) {
 
   const fields = document.createElement('div');
   fields.className = 'fields';
+
+  if (p.brand) {
+    const brandTag = document.createElement('p');
+    brandTag.className = 'order-meta';
+    brandTag.style.margin = '0';
+    brandTag.style.fontWeight = '700';
+    brandTag.textContent = p.brand;
+    fields.appendChild(brandTag);
+  }
 
   const nameInput = document.createElement('input');
   nameInput.type = 'text';

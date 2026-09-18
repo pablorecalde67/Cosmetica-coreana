@@ -183,6 +183,7 @@ router.patch('/productos/:id', (req, res) => {
   if (typeof req.body.name === 'string') patch.name = req.body.name;
   if (typeof req.body.description === 'string') patch.description = req.body.description;
   if (typeof req.body.image === 'string') patch.image = req.body.image;
+  if (typeof req.body.brand === 'string') patch.brand = req.body.brand;
   if (typeof req.body.active === 'boolean') patch.active = req.body.active;
   if (req.body.price !== undefined) {
     const price = Number(req.body.price);

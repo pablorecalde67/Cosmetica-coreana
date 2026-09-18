@@ -28,6 +28,19 @@ export const config = {
 
   cocaHashtags: list(process.env.COCA_HASHTAGS || 'COCA,KBeauty,SkincareTips,GlowUp,BeautyTok,Belleza,Skincare'),
 
+  // Ingesta por mail: alternativa a WhatsApp que no depende de vincular
+  // ningun dispositivo. Se conecta por IMAP a esta casilla y cada mail que
+  // llegue con fotos/videos adjuntos y el tag en el asunto pasa a la cola.
+  emailImapHost: process.env.EMAIL_IMAP_HOST || 'imap.gmail.com',
+  emailImapPort: Number(process.env.EMAIL_IMAP_PORT || 993),
+  emailUser: process.env.EMAIL_USER || '',
+  emailAppPassword: process.env.EMAIL_APP_PASSWORD || '',
+  // Filtro para no juntar cualquier newsletter/spam con imagenes: solo se
+  // procesan mails cuyo asunto contenga esta palabra (no importa mayus/minus).
+  // Si se deja vacio, se procesa CUALQUIER mail con foto/video adjunto (no
+  // recomendado en una casilla personal).
+  emailSubjectTag: process.env.EMAIL_SUBJECT_TAG ?? 'COCA',
+
   // --- Análisis de piel con IA (página /piel) ---
   // API key de Anthropic (console.anthropic.com) usada solo para describir
   // la piel de la selfie y elegir productos. La selfie nunca se guarda.
@@ -48,4 +61,8 @@ export function isMetaConfigured() {
 
 export function isPublicUrlConfigured() {
   return Boolean(config.publicBaseUrl);
+}
+
+export function isEmailConfigured() {
+  return Boolean(config.emailUser && config.emailAppPassword);
 }

@@ -72,7 +72,8 @@ function renderCard(item) {
   const badge = document.createElement('span');
   badge.className = `badge ${item.status}`;
   const countLabel = item.media.length > 1 ? ` · ${item.media.length} fotos` : '';
-  badge.textContent = `${STATUS_LABEL[item.status]} · ${item.source === 'whatsapp' ? 'WhatsApp' : 'Manual'}${countLabel}`;
+  const sourceLabel = { whatsapp: 'WhatsApp', email: 'Mail' }[item.source] || 'Manual';
+  badge.textContent = `${STATUS_LABEL[item.status]} · ${sourceLabel}${countLabel}`;
 
   fields.appendChild(badge);
 

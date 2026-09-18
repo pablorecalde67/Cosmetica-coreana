@@ -7,6 +7,7 @@ import apiRouter from './routes/api.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import { startWhatsapp } from './whatsapp.js';
+import { startEmailIngest } from './email.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,4 +30,8 @@ app.listen(config.port, () => {
 
 startWhatsapp().catch((err) => {
   console.error('[COCA] No se pudo iniciar WhatsApp:', err);
+});
+
+startEmailIngest().catch((err) => {
+  console.error('[COCA] No se pudo iniciar la ingesta por mail:', err);
 });

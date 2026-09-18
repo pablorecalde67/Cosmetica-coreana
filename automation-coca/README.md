@@ -2,12 +2,12 @@
 
 Servicio que:
 
-1. Recibe automáticamente las fotos/videos que llegan por WhatsApp (canales/chats que vos elijas).
+1. Recibe automáticamente las fotos/videos que llegan por WhatsApp (canales/chats que vos elijas) **o por mail** (a una casilla que vos elijas).
 2. Te avisa por WhatsApp cuando hay contenido nuevo esperando precio.
 3. Vos entrás al panel web, ponés precio y descripción, y tocás **PUBLICAR**.
 4. El servicio publica solo en Instagram (foto, video o carrusel si mandaste varias), con el texto final armado (descripción + precio + botón "Lo quiero comprar ya" con tu WhatsApp + hashtags).
 
-También podés arrastrar fotos/videos manuales directamente en el panel (no todo tiene que venir de WhatsApp).
+También podés arrastrar fotos/videos manuales directamente en el panel (no todo tiene que venir de WhatsApp o del mail).
 
 Si todavía no cargaste las credenciales de Meta (ver abajo), el panel igual arma el texto y te deja los archivos listos para publicar vos mismo en Instagram.
 
@@ -25,7 +25,7 @@ Esto no lo puede hacer un asistente de código por vos porque Meta y WhatsApp ex
 ### 2. Deploy en Railway
 
 1. Subí este repo (o al menos la carpeta `automation-coca/`) a Railway como un nuevo proyecto Node.
-2. Agregá un **volumen persistente** montado en `/app/automation-coca/data` (para no perder la sesión de WhatsApp ni el historial al reiniciar). Sin esto, cada redeploy corta la conexión de WhatsApp y hay que volver a escanear el QR.
+2. Agregá un **volumen persistente** montado en `/app/data` (para no perder la sesión de WhatsApp ni el historial al reiniciar). Sin esto, cada redeploy corta la conexión de WhatsApp y hay que volver a escanear el QR.
 3. Cargá las variables de `.env.example`.
 4. Una vez deployado, copiá la URL pública que te da Railway y ponela en `PUBLIC_BASE_URL`.
 
@@ -38,7 +38,18 @@ Esto no lo puede hacer un asistente de código por vos porque Meta y WhatsApp ex
 
 > Importante: esto usa una librería no oficial (Baileys) que simula tu WhatsApp normal, porque la API oficial de WhatsApp Business no permite "leer" canales de difusión de terceros. Es el mismo mecanismo que usan la mayoría de los bots personales de WhatsApp. El riesgo real es bajo si sólo lee mensajes (no manda spam), pero es un uso no oficial — tenelo presente.
 
-### 4. Credenciales de Meta para publicar automático en Instagram
+### 4. Ingesta por mail (alternativa a WhatsApp)
+
+No depende de vincular ningún dispositivo, así que nunca se corta ni se bloquea como WhatsApp:
+
+1. En la cuenta de Gmail que quieras usar, activá la **Verificación en 2 pasos** (Cuenta de Google → Seguridad) si todavía no la tenés.
+2. Generá una **Contraseña de aplicación** (Cuenta de Google → Seguridad → Contraseñas de aplicaciones). No es la contraseña normal de la cuenta.
+3. Cargá en Railway:
+   - `EMAIL_USER` = la dirección de Gmail.
+   - `EMAIL_APP_PASSWORD` = la contraseña de aplicación generada.
+4. Para que un mail se procese, su **asunto tiene que contener la palabra "COCA"** (configurable con `EMAIL_SUBJECT_TAG`) — así ningún newsletter ni mail con una imagen suelta termina en la cola. Cualquier foto/video adjunto en ese mail pasa a una tarjeta nueva del panel.
+
+### 5. Credenciales de Meta para publicar automático en Instagram
 
 1. Creá una app en https://developers.facebook.com/apps (tipo "Otro" → caso de uso "Empresa").
 2. Agregale el producto **Instagram Graph API**.
@@ -110,10 +121,11 @@ automation-coca/
     orders.js             pedidos generados desde /piel (sin la selfie)
     skinAnalysis.js        análisis de piel con IA (Claude vision)
     whatsapp.js             bot de WhatsApp (Baileys)
-    meta.js                  publicación en Instagram (Graph API)
-    routes/api.js             endpoints del panel (cola, productos, pedidos)
-    routes/piel.js              endpoints públicos de /piel (analizar, pedido)
-    routes/whatsappSetup.js      página con el QR de conexión
+    email.js                 ingesta por mail (IMAP)
+    meta.js                    publicación en Instagram (Graph API)
+    routes/api.js                endpoints del panel (cola, productos, pedidos)
+    routes/piel.js                  endpoints públicos de /piel (analizar, pedido)
+    routes/whatsappSetup.js          página con el QR de conexión
   public/                 panel web admin (cola, productos, pedidos)
   public/piel/             página pública de análisis de piel con IA
 ```

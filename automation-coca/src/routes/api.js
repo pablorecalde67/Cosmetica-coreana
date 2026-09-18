@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, MEDIA_DIR } from '../store.js';
 import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured } from '../config.js';
-import { listProducts, updateProduct } from '../products.js';
+import { listProducts, updateProduct, createProduct } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
 
@@ -154,11 +154,36 @@ router.get('/productos', (req, res) => {
   res.json(listProducts());
 });
 
+router.post('/productos', (req, res) => {
+  const { name, description, image, price, skinTypes, concerns, brand, id } = req.body || {};
+  if (typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'Falta el nombre del producto.' });
+  }
+  const numericPrice = Number(price);
+  if (Number.isNaN(numericPrice) || numericPrice < 0) {
+    return res.status(400).json({ error: 'Precio inválido.' });
+  }
+
+  const product = createProduct({
+    id,
+    name,
+    description: typeof description === 'string' ? description : '',
+    image: typeof image === 'string' && image ? image : undefined,
+    price: numericPrice,
+    skinTypes: Array.isArray(skinTypes) ? skinTypes : [],
+    concerns: Array.isArray(concerns) ? concerns : [],
+    brand: typeof brand === 'string' ? brand : '',
+  });
+
+  res.status(201).json(product);
+});
+
 router.patch('/productos/:id', (req, res) => {
   const patch = {};
   if (typeof req.body.name === 'string') patch.name = req.body.name;
   if (typeof req.body.description === 'string') patch.description = req.body.description;
   if (typeof req.body.image === 'string') patch.image = req.body.image;
+  if (typeof req.body.brand === 'string') patch.brand = req.body.brand;
   if (typeof req.body.active === 'boolean') patch.active = req.body.active;
   if (req.body.price !== undefined) {
     const price = Number(req.body.price);

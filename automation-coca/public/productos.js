@@ -1,8 +1,25 @@
 const list = document.getElementById('productos');
+const conteo = document.getElementById('conteo');
+const buscador = document.getElementById('buscador');
+
+let debounceTimer;
+buscador.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(load, 300);
+});
 
 async function load() {
-  const res = await fetch('/api/productos');
-  const productos = await res.json();
+  const q = buscador.value.trim();
+  const url = q ? `/api/productos?q=${encodeURIComponent(q)}` : '/api/productos?limit=100';
+  const res = await fetch(url);
+  const { total, matched, productos } = await res.json();
+
+  if (q) {
+    conteo.textContent = `${matched} de ${total} productos coinciden con "${q}"${matched > productos.length ? ` (mostrando los primeros ${productos.length})` : ''}`;
+  } else {
+    conteo.textContent = `${total} productos en el catálogo — mostrando los primeros ${productos.length}. Buscá arriba para encontrar uno puntual.`;
+  }
+
   productos.sort((a, b) => (a.brand || '').localeCompare(b.brand || '') || a.name.localeCompare(b.name));
   render(productos);
 }
@@ -27,12 +44,12 @@ function renderRow(p) {
   const fields = document.createElement('div');
   fields.className = 'fields';
 
-  if (p.brand) {
+  if (p.brand || p.store) {
     const brandTag = document.createElement('p');
     brandTag.className = 'order-meta';
     brandTag.style.margin = '0';
     brandTag.style.fontWeight = '700';
-    brandTag.textContent = p.brand;
+    brandTag.textContent = [p.brand, p.store].filter(Boolean).join(' · ');
     fields.appendChild(brandTag);
   }
 

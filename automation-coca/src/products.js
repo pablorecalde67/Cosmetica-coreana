@@ -651,6 +651,44 @@ export function createProduct({ name, description = '', image = '/piel/img/place
   return product;
 }
 
+// Carga muchos productos de una sola vez (ej. importación desde un Excel).
+// A diferencia de createProduct, resuelve colisiones de id en memoria contra
+// un Set y hace UN solo guardado en disco al final — createProduct llamado
+// en loop miles de veces sería carísimo (recorre todo el catálogo y
+// reescribe el archivo entero en cada llamada).
+export function bulkImportProducts(rawProducts) {
+  const existingIds = new Set(products.map((p) => p.id));
+  let added = 0;
+
+  for (const raw of rawProducts) {
+    const base = raw.id || slugify(raw.name);
+    let finalId = base;
+    let n = 2;
+    while (existingIds.has(finalId)) {
+      finalId = `${base}-${n}`;
+      n++;
+    }
+    existingIds.add(finalId);
+
+    products.push({
+      id: finalId,
+      name: raw.name,
+      description: raw.description || '',
+      image: raw.image || '/piel/img/placeholder.svg',
+      price: raw.price,
+      skinTypes: Array.isArray(raw.skinTypes) ? raw.skinTypes : [],
+      concerns: Array.isArray(raw.concerns) ? raw.concerns : [],
+      active: raw.active !== false,
+      brand: raw.brand || '',
+      store: raw.store || '',
+    });
+    added++;
+  }
+
+  save(products);
+  return added;
+}
+
 /**
  * Ordena el catálogo activo según qué tan bien matchea con el tipo de piel
  * y las preocupaciones ("concerns") que devolvió el análisis de IA.

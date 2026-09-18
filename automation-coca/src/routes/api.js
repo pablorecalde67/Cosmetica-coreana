@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, MEDIA_DIR } from '../store.js';
 import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured } from '../config.js';
-import { listProducts, updateProduct, createProduct } from '../products.js';
+import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
 
@@ -150,8 +150,50 @@ router.delete('/queue/:id', (req, res) => {
 
 // --- Admin: catálogo de productos usado en /piel (precio, descripción, etc.) ---
 
+// El catálogo puede tener miles de productos (importación masiva), así que
+// el panel admin no pide "todo" salvo que lo pidan explícitamente: sin
+// query de búsqueda devuelve solo un resumen (para no tildar el navegador
+// bajando/renderizando miles de filas de una).
 router.get('/productos', (req, res) => {
-  res.json(listProducts());
+  const all = listProducts();
+  const q = (req.query.q || '').toString().trim().toLowerCase();
+  const limit = Math.min(Number(req.query.limit) || 200, 500);
+
+  let filtered = all;
+  if (q) {
+    filtered = all.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        (p.brand || '').toLowerCase().includes(q) ||
+        (p.store || '').toLowerCase().includes(q) ||
+        p.id.toLowerCase().includes(q),
+    );
+  }
+
+  res.json({
+    total: all.length,
+    matched: filtered.length,
+    productos: filtered.slice(0, limit),
+  });
+});
+
+// Importación masiva (ej. desde un Excel). Pensado para uso puntual del
+// administrador, no para el flujo público de /piel.
+router.post('/productos/importar-masivo', (req, res) => {
+  const items = req.body?.productos;
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Falta el array "productos".' });
+  }
+  for (const it of items) {
+    if (typeof it.name !== 'string' || !it.name.trim()) {
+      return res.status(400).json({ error: 'Todos los items necesitan "name".' });
+    }
+    if (typeof it.price !== 'number' || Number.isNaN(it.price) || it.price < 0) {
+      return res.status(400).json({ error: `Precio inválido para "${it.name}".` });
+    }
+  }
+  const added = bulkImportProducts(items);
+  res.status(201).json({ added, total: listProducts().length });
 });
 
 router.post('/productos', (req, res) => {

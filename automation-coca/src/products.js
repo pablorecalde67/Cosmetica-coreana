@@ -18,6 +18,17 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 //
 // "concerns": preocupaciones/objetivos que ataca el producto. La IA que
 // analiza la selfie devuelve estos mismos tags, así se hace el matching.
+//
+// Precios (sept. 2026): tomados del precio de venta real de Medicube en el
+// mercado paraguayo (mismos importadores que abastecen Ciudad del Este,
+// donde no se vende por catálogo propio online) en guaraníes, convertidos a
+// dólares al tipo de cambio del día (~1 USD = 6.140 Gs) y de ahí a pesos
+// argentinos a $1600 por dólar, como se pidió. Los productos sin una
+// coincidencia exacta en el listado paraguayo (zero-pore-serum,
+// glutathione-glow-serum, hypochlorous-mist, collagen-glow-sunscreen) se
+// estimaron con el precio internacional (USD) de Medicube para ese mismo
+// producto o de la categoría más parecida. Revisalo/ajustalo vos desde
+// /productos.html si tenés un precio más preciso.
 const SEED_PRODUCTS = [
   {
     id: 'zero-pore-toner',
@@ -25,7 +36,7 @@ const SEED_PRODUCTS = [
     description:
       'Tónico exfoliante suave con AHA/BHA/PHA y niacinamida. Afina la textura, cierra poros visibles y despareja la superficie de la piel sin resecar.',
     image: '/piel/img/products/zero-pore-toner.webp',
-    price: 25000,
+    price: 49700,
     skinTypes: ['grasa', 'mixta', 'normal'],
     concerns: ['poros-visibles', 'textura-irregular', 'brillo-excesivo'],
     active: true,
@@ -36,7 +47,7 @@ const SEED_PRODUCTS = [
     description:
       'Sérum control de poros y sebo, textura ligera. Ideal para pieles grasas o mixtas con brillo en zona T y poros dilatados.',
     image: '/piel/img/products/zero-pore-serum.webp',
-    price: 32000,
+    price: 53700,
     skinTypes: ['grasa', 'mixta'],
     concerns: ['poros-visibles', 'brillo-excesivo', 'textura-irregular'],
     active: true,
@@ -47,7 +58,7 @@ const SEED_PRODUCTS = [
     description:
       'Sérum luminosidad con glutatión liposomal y niacinamida al 5%. Ayuda a unificar el tono y aportar un brillo saludable a pieles opacas.',
     image: '/piel/img/products/glutathione-glow-serum.webp',
-    price: 34000,
+    price: 44800,
     skinTypes: ['normal', 'mixta', 'seca'],
     concerns: ['tono-desparejo', 'opacidad', 'manchas'],
     active: true,
@@ -58,7 +69,7 @@ const SEED_PRODUCTS = [
     description:
       'Sérum en cápsula con vitamina C estabilizada. Antioxidante, ilumina y ayuda a atenuar manchas y marcas de acné.',
     image: '/piel/img/products/vita-c-capsule.webp',
-    price: 33000,
+    price: 49300,
     skinTypes: ['normal', 'mixta', 'grasa'],
     concerns: ['manchas', 'opacidad', 'tono-desparejo'],
     active: true,
@@ -69,7 +80,7 @@ const SEED_PRODUCTS = [
     description:
       'Sérum con retinol para renovación celular. Suaviza líneas finas y mejora la textura en pieles con signos de edad.',
     image: '/piel/img/products/deep-vita-a-retinol.webp',
-    price: 36000,
+    price: 58300,
     skinTypes: ['normal', 'mixta', 'seca'],
     concerns: ['signos-de-edad', 'textura-irregular'],
     active: true,
@@ -80,7 +91,7 @@ const SEED_PRODUCTS = [
     description:
       'Crema gel con colágeno. Hidratación profunda y efecto relleno, para pieles secas o deshidratadas que buscan firmeza.',
     image: '/piel/img/products/collagen-jelly-cream.webp',
-    price: 38000,
+    price: 54000,
     skinTypes: ['seca', 'normal'],
     concerns: ['deshidratacion', 'signos-de-edad'],
     active: true,
@@ -91,7 +102,7 @@ const SEED_PRODUCTS = [
     description:
       'Crema calmante y nutritiva pensada para pieles sensibles o con tendencia al enrojecimiento. Fortalece la barrera cutánea.',
     image: '/piel/img/products/red-cream-plus.webp',
-    price: 37000,
+    price: 58600,
     skinTypes: ['sensible', 'seca'],
     concerns: ['enrojecimiento', 'deshidratacion', 'barrera-danada'],
     active: true,
@@ -102,7 +113,7 @@ const SEED_PRODUCTS = [
     description:
       'Sérum reparador con centella asiática y exosomas. Calma irritación y ayuda a recuperar piel sensibilizada o post-procedimiento.',
     image: '/piel/img/products/exosome-cica-serum.webp',
-    price: 39000,
+    price: 53700,
     skinTypes: ['sensible', 'seca', 'normal'],
     concerns: ['enrojecimiento', 'barrera-danada', 'deshidratacion'],
     active: true,
@@ -113,7 +124,7 @@ const SEED_PRODUCTS = [
     description:
       'Limpiador suave con ácido azelaico y niacinamida. Pensado para piel con tendencia acneica o rojeces, sin resecar.',
     image: '/piel/img/products/azelaic-niacinamide-cleanser.webp',
-    price: 24000,
+    price: 48200,
     skinTypes: ['grasa', 'mixta', 'sensible'],
     concerns: ['con-acne', 'enrojecimiento', 'poros-visibles'],
     active: true,
@@ -124,7 +135,7 @@ const SEED_PRODUCTS = [
     description:
       'Bruma calmante de uso diario. Ayuda a controlar brotes y mantener la piel fresca e hidratada durante el día.',
     image: '/piel/img/products/hypochlorous-mist.webp',
-    price: 21000,
+    price: 40000,
     skinTypes: ['grasa', 'mixta', 'sensible', 'normal'],
     concerns: ['con-acne', 'deshidratacion', 'enrojecimiento'],
     active: true,
@@ -135,7 +146,7 @@ const SEED_PRODUCTS = [
     description:
       'Pads exfoliantes con ácido kójico y cúrcuma. Ayudan a atenuar manchas y marcas post-acné y a uniformar el tono.',
     image: '/piel/img/products/kojic-turmeric-pad.webp',
-    price: 27000,
+    price: 56700,
     skinTypes: ['grasa', 'mixta', 'normal'],
     concerns: ['manchas', 'tono-desparejo', 'con-acne'],
     active: true,
@@ -146,7 +157,7 @@ const SEED_PRODUCTS = [
     description:
       'Sérum regenerador e hidratante con PDRN. Repara la barrera cutánea y aporta luminosidad a pieles deshidratadas o sensibles.',
     image: '/piel/img/products/pdrn-hydrating-serum.webp',
-    price: 35000,
+    price: 53700,
     skinTypes: ['seca', 'sensible', 'normal'],
     concerns: ['deshidratacion', 'barrera-danada', 'opacidad'],
     active: true,
@@ -157,7 +168,7 @@ const SEED_PRODUCTS = [
     description:
       'Protector solar con efecto luminoso. Recomendado como paso final para cualquier tipo de piel, todos los días.',
     image: '/piel/img/products/collagen-glow-sunscreen.webp',
-    price: 22000,
+    price: 22400,
     skinTypes: ['grasa', 'mixta', 'seca', 'sensible', 'normal'],
     concerns: ['signos-de-edad', 'manchas', 'tono-desparejo'],
     active: true,

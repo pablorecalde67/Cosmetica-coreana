@@ -199,7 +199,7 @@ const SEED_PRODUCTS = [
     name: 'Anua Heartleaf 77% Soothing Toner',
     description:
       'Tónico calmante con 77% de extracto de asperilla (heartleaf) que baja rojeces e irritación al toque. Ideal si tenés piel sensible, reactiva o con tendencia a granitos.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/anua-heartleaf-77-soothing-toner.webp',
     price: 46370,
     skinTypes: ['sensible', 'mixta', 'grasa'],
     concerns: ['enrojecimiento', 'barrera-danada', 'deshidratacion'],
@@ -211,7 +211,7 @@ const SEED_PRODUCTS = [
     name: 'Anua Peach 70% Niacinamide Serum',
     description:
       'Sérum con 70% de extracto de durazno y niacinamida que empareja el tono y afina la textura sin resecar. Perfecto para piel mixta a grasa con poros marcados.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/anua-peach-70-niacinamide-serum.webp',
     price: 35200,
     skinTypes: ['mixta', 'grasa', 'normal'],
     concerns: ['poros-visibles', 'tono-desparejo', 'textura-irregular'],
@@ -223,7 +223,7 @@ const SEED_PRODUCTS = [
     name: 'Anua Heartleaf Pore Control Cleansing Oil',
     description:
       'Aceite limpiador que disuelve maquillaje, protector solar y exceso de sebo sin dejar la piel tirante. Muy pedido por quienes tienen poros visibles y piel grasa o mixta.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/anua-heartleaf-pore-control-cleansing-oil.webp',
     price: 38400,
     skinTypes: ['grasa', 'mixta', 'normal'],
     concerns: ['poros-visibles', 'brillo-excesivo', 'con-acne'],
@@ -235,7 +235,7 @@ const SEED_PRODUCTS = [
     name: 'Beauty of Joseon Relief Sun: Rice + Probiotics SPF50+',
     description:
       'El protector solar coreano más viral: textura súper liviana, no deja blanco ni brillo graso, y lleva arroz y probióticos que además cuidan la barrera de la piel.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/beauty-of-joseon-relief-sun-spf50.webp',
     price: 28800,
     skinTypes: ['normal', 'mixta', 'seca', 'sensible'],
     concerns: ['proteccion-solar', 'deshidratacion', 'barrera-danada'],
@@ -247,7 +247,7 @@ const SEED_PRODUCTS = [
     name: 'Beauty of Joseon Glow Deep Serum: Rice + Alpha-Arbutin',
     description:
       'Sérum iluminador con agua de arroz y alfa-arbutina que ataca manchas y tono desparejo, dejando la piel más pareja y con luz.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/beauty-of-joseon-glow-deep-serum.webp',
     price: 27200,
     skinTypes: ['mixta', 'normal', 'seca'],
     concerns: ['manchas', 'tono-desparejo', 'opacidad'],
@@ -259,7 +259,7 @@ const SEED_PRODUCTS = [
     name: 'Beauty of Joseon Dynasty Cream',
     description:
       'Crema nutritiva con aceite de camelia y ginseng, pensada para pieles secas o maduras que necesitan hidratación profunda y un extra anti-edad.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/beauty-of-joseon-dynasty-cream.webp',
     price: 56000,
     skinTypes: ['seca', 'normal'],
     concerns: ['signos-de-edad', 'deshidratacion'],
@@ -271,7 +271,7 @@ const SEED_PRODUCTS = [
     name: 'COSRX Low pH Good Morning Gel Cleanser',
     description:
       'Limpiador en gel de pH bajo (5.5) que lava sin resecar ni alterar la barrera cutánea. El básico de rutina para piel sensible o con acné.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/cosrx-low-ph-good-morning-gel-cleanser.webp',
     price: 16350,
     skinTypes: ['sensible', 'grasa', 'mixta', 'normal'],
     concerns: ['barrera-danada', 'con-acne', 'control-oleosidad'],
@@ -283,7 +283,7 @@ const SEED_PRODUCTS = [
     name: 'COSRX Advanced Snail 96 Mucin Power Essence',
     description:
       'La esencia de baba de caracol más famosa del K-beauty: hidrata en profundidad y ayuda a reparar la piel dañada o deshidratada, con ese efecto "glass skin".',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/cosrx-advanced-snail-96-mucin-essence.webp',
     price: 28800,
     skinTypes: ['seca', 'sensible', 'normal', 'mixta'],
     concerns: ['deshidratacion', 'barrera-danada', 'textura-irregular'],
@@ -295,7 +295,7 @@ const SEED_PRODUCTS = [
     name: 'COSRX AHA/BHA Clarifying Treatment Toner',
     description:
       'Tónico exfoliante suave con AHA y BHA que despeja poros y afina la textura. Ideal para piel grasa o mixta con puntos negros y brillo.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/cosrx-aha-bha-clarifying-toner.webp',
     price: 32000,
     skinTypes: ['grasa', 'mixta'],
     concerns: ['poros-visibles', 'textura-irregular', 'con-acne', 'brillo-excesivo'],
@@ -307,7 +307,7 @@ const SEED_PRODUCTS = [
     name: 'Seoul 1988 Retinal Liposome 2% + Black Ginseng Serum',
     description:
       'Sérum anti-edad con retinal encapsulado y ginseng negro que trabaja arrugas y firmeza sin la irritación típica del retinol tradicional.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/seoul1988-retinal-2-black-ginseng-serum.webp',
     price: 39560,
     skinTypes: ['normal', 'mixta', 'seca'],
     concerns: ['signos-de-edad', 'textura-irregular', 'opacidad'],
@@ -319,7 +319,7 @@ const SEED_PRODUCTS = [
     name: 'Seoul 1988 Retinal Liposome 4% + Fermented Bean Eye Cream',
     description:
       'Contorno de ojos con retinal de alta concentración y poroto fermentado, pensado para líneas finas y ojeras. Se usa de noche.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/seoul1988-retinal-4-fermented-bean-eye-cream.webp',
     price: 35200,
     skinTypes: ['normal', 'seca', 'mixta'],
     concerns: ['signos-de-edad', 'deshidratacion'],
@@ -331,7 +331,7 @@ const SEED_PRODUCTS = [
     name: 'Skin1004 Madagascar Centella Ampoule',
     description:
       'El sérum calmante estrella de la marca, con extracto 100% de centella asiática: hidrata y calma rojeces e irritaciones, apto para piel sensible.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/skin1004-centella-ampoule.webp',
     price: 40390,
     skinTypes: ['sensible', 'seca', 'normal', 'mixta'],
     concerns: ['enrojecimiento', 'deshidratacion', 'barrera-danada'],
@@ -343,7 +343,7 @@ const SEED_PRODUCTS = [
     name: 'Skin1004 Madagascar Centella Poremizing Fresh Ampoule',
     description:
       'Versión más liviana de la línea Centella, pensada para piel grasa o con poros abiertos: controla el brillo mientras calma.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/skin1004-centella-poremizing-ampoule.webp',
     price: 31050,
     skinTypes: ['grasa', 'mixta'],
     concerns: ['poros-visibles', 'brillo-excesivo', 'control-oleosidad'],
@@ -355,7 +355,7 @@ const SEED_PRODUCTS = [
     name: 'Skin1004 Madagascar Centella Hyalu-Cica First Ampoule',
     description:
       'Primer paso de rutina tipo esencia, con centella y ácido hialurónico, para dar un extra de hidratación y luminosidad antes del sérum.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/skin1004-centella-hyalucica-first-ampoule.webp',
     price: 29200,
     skinTypes: ['seca', 'normal', 'mixta'],
     concerns: ['deshidratacion', 'opacidad'],
@@ -367,7 +367,7 @@ const SEED_PRODUCTS = [
     name: 'Tocobo Vita Tone Up Sun Cream SPF50+',
     description:
       'Protector solar con un ligero efecto "tono up" que ilumina al toque, sin dejar blanco. Buena opción para piel normal a mixta que quiere un extra de luminosidad.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/tocobo-vita-tone-up-sun-cream-spf50.webp',
     price: 41230,
     skinTypes: ['normal', 'mixta', 'seca'],
     concerns: ['proteccion-solar', 'opacidad', 'luminosidad'],
@@ -379,7 +379,7 @@ const SEED_PRODUCTS = [
     name: 'Tocobo Bio Watery Sun Cream SPF50+',
     description:
       'El protector solar "aguado" más famoso de Tocobo: textura gel-agua que se siente como nada, ideal para piel grasa o mixta que odia sentirse pesada.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/tocobo-bio-watery-sun-cream-spf50.webp',
     price: 40000,
     skinTypes: ['grasa', 'mixta', 'normal'],
     concerns: ['proteccion-solar', 'brillo-excesivo', 'control-oleosidad'],
@@ -391,7 +391,7 @@ const SEED_PRODUCTS = [
     name: 'Tocobo Cica Calming Serum',
     description:
       'Sérum calmante a base de centella que baja la inflamación y las rojeces, pensado para piel sensible o reactiva que necesita reparar su barrera.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/tocobo-cica-calming-serum.webp',
     price: 41600,
     skinTypes: ['sensible', 'seca', 'normal'],
     concerns: ['enrojecimiento', 'barrera-danada', 'deshidratacion'],
@@ -403,7 +403,7 @@ const SEED_PRODUCTS = [
     name: 'Some By Mi AHA-BHA-PHA 30 Days Miracle Toner',
     description:
       'El tónico exfoliante ícono de Some By Mi: combina tres ácidos para destapar poros y afinar la textura en piel grasa o con tendencia acnéica.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/somebymi-aha-bha-pha-30days-miracle-toner.webp',
     price: 44140,
     skinTypes: ['grasa', 'mixta'],
     concerns: ['poros-visibles', 'textura-irregular', 'con-acne', 'brillo-excesivo'],
@@ -415,7 +415,7 @@ const SEED_PRODUCTS = [
     name: 'Some By Mi Snail Truecica Miracle Repair Cream',
     description:
       'Crema reparadora con mucina de caracol y centella, pensada para calmar la piel después de tratamientos exfoliantes o con acné activo.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/somebymi-snail-truecica-repair-cream.webp',
     price: 38400,
     skinTypes: ['sensible', 'mixta', 'seca'],
     concerns: ['barrera-danada', 'enrojecimiento', 'con-acne'],
@@ -427,7 +427,7 @@ const SEED_PRODUCTS = [
     name: 'Some By Mi Galactomyces Pure Vitamin C Glow Serum',
     description:
       'Sérum luminoso con galactomyces fermentado y vitamina C derivada, para dar brillo saludable y parejo a pieles opacas.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/somebymi-galactomyces-vitamin-c-glow-serum.webp',
     price: 31520,
     skinTypes: ['normal', 'mixta', 'seca'],
     concerns: ['opacidad', 'tono-desparejo', 'luminosidad'],
@@ -439,7 +439,7 @@ const SEED_PRODUCTS = [
     name: 'Torriden Dive-In Low Molecule Hyaluronic Acid Serum',
     description:
       'Sérum con 5 tipos de ácido hialurónico de bajo peso molecular que hidrata en profundidad sin sensación pegajosa. Un básico para piel deshidratada.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/torriden-dive-in-hyaluronic-serum.webp',
     price: 38400,
     skinTypes: ['seca', 'normal', 'mixta', 'sensible'],
     concerns: ['deshidratacion', 'barrera-danada'],
@@ -451,7 +451,7 @@ const SEED_PRODUCTS = [
     name: 'Torriden Dive-In Soothing Cream',
     description:
       'Crema calmante e hidratante de la misma línea Dive-In, pensada para sellar la hidratación y calmar la piel sensible o reactiva.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/torriden-dive-in-soothing-cream.webp',
     price: 34990,
     skinTypes: ['sensible', 'seca', 'normal'],
     concerns: ['deshidratacion', 'enrojecimiento', 'barrera-danada'],
@@ -463,7 +463,7 @@ const SEED_PRODUCTS = [
     name: 'Mixsoon Bean Essence',
     description:
       'Esencia fermentada a base de poroto de soja que exfolia suavemente y da un brillo tipo "piel de vidrio". Furor en redes por su efecto glow inmediato.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/mixsoon-bean-essence.webp',
     price: 56000,
     skinTypes: ['normal', 'mixta', 'seca'],
     concerns: ['opacidad', 'textura-irregular', 'luminosidad'],
@@ -475,7 +475,7 @@ const SEED_PRODUCTS = [
     name: 'Mixsoon Bean Toner',
     description:
       'Tónico hidratante y calmante de la línea Bean, pensado como primer paso para preparar la piel y darle un extra de luminosidad.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/mixsoon-bean-toner.webp',
     price: 44800,
     skinTypes: ['normal', 'mixta', 'seca', 'sensible'],
     concerns: ['deshidratacion', 'opacidad'],
@@ -487,7 +487,7 @@ const SEED_PRODUCTS = [
     name: 'Numbuzin No.5+ Glutathione TXA Advanced Dark Spot Ampoule Concentrate',
     description:
       'Ampolla concentrada con glutatión y ácido tranexámico para atacar manchas puntuales y marcas de acné.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/numbuzin-no5-dark-spot-ampoule.webp',
     price: 39220,
     skinTypes: ['normal', 'mixta', 'grasa'],
     concerns: ['manchas', 'tono-desparejo'],
@@ -499,7 +499,7 @@ const SEED_PRODUCTS = [
     name: 'Numbuzin No.3 Skin Softening Serum',
     description:
       'El sérum más viral de Numbuzin: combina niacinamida y adenosina para afinar poros y dar ese efecto piel de bebé o "glass skin".',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/numbuzin-no3-skin-softening-serum.webp',
     price: 44800,
     skinTypes: ['mixta', 'grasa', 'normal'],
     concerns: ['poros-visibles', 'textura-irregular', 'opacidad'],
@@ -511,7 +511,7 @@ const SEED_PRODUCTS = [
     name: 'Numbuzin No.5+ Glutathione Vitamin Concentrated Serum',
     description:
       'Sérum brightening con vitamina C y niacinamida en alta concentración, para tono parejo y luminosidad.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/numbuzin-no5-vitamin-concentrated-serum.webp',
     price: 41600,
     skinTypes: ['mixta', 'normal', 'seca'],
     concerns: ['tono-desparejo', 'opacidad', 'manchas'],
@@ -523,7 +523,7 @@ const SEED_PRODUCTS = [
     name: 'Dr. Althea 147 Barrier Cream',
     description:
       'Crema reparadora de barrera con pantenol y centella, para pieles sensibles o resecas que necesitan calma y reconstrucción.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/dr-althea-147-barrier-cream.webp',
     price: 44370,
     skinTypes: ['sensible', 'seca', 'normal'],
     concerns: ['barrera-danada', 'deshidratacion', 'enrojecimiento'],
@@ -535,7 +535,7 @@ const SEED_PRODUCTS = [
     name: 'Dr. Althea 345 Relief Cream',
     description:
       'Crema calmante multiuso pensada para piel con acné activo o post-acné: hidrata sin tapar los poros y ayuda a bajar la inflamación.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/dr-althea-345-relief-cream.webp',
     price: 43200,
     skinTypes: ['sensible', 'mixta', 'grasa'],
     concerns: ['con-acne', 'enrojecimiento', 'barrera-danada'],
@@ -547,7 +547,7 @@ const SEED_PRODUCTS = [
     name: 'Dr. Althea MelaClear Cream',
     description:
       'Crema despigmentante suave para trabajar manchas y marcas de acné, con un enfoque más gentil que otros tratamientos con ácidos fuertes.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/dr-althea-melaclear-cream.webp',
     price: 40390,
     skinTypes: ['normal', 'mixta', 'seca'],
     concerns: ['manchas', 'tono-desparejo'],
@@ -559,7 +559,7 @@ const SEED_PRODUCTS = [
     name: 'Jumiso All Day Vitamin Brightening & Balancing Facial Serum',
     description:
       'Sérum con niacinamida al 20.000ppm y vitaminas que despareja el tono y controla el brillo. Ideal para piel mixta a grasa.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/jumiso-all-day-vitamin-brightening-serum.webp',
     price: 38400,
     skinTypes: ['mixta', 'grasa', 'normal'],
     concerns: ['tono-desparejo', 'brillo-excesivo', 'opacidad'],
@@ -571,7 +571,7 @@ const SEED_PRODUCTS = [
     name: 'Jumiso Waterfull Hyaluronic Acid Serum',
     description:
       'Sérum hidratante ligero con múltiples pesos de ácido hialurónico, para dar un chorro de hidratación instantánea a cualquier tipo de piel.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/jumiso-waterfull-hyaluronic-serum.webp',
     price: 40000,
     skinTypes: ['seca', 'normal', 'mixta', 'sensible'],
     concerns: ['deshidratacion'],
@@ -583,7 +583,7 @@ const SEED_PRODUCTS = [
     name: 'Jumiso Snail Mucin 88 + Peptide Facial Cream',
     description:
       'Crema reparadora con alta concentración de mucina de caracol y péptidos, pensada para pieles maduras o dañadas que buscan firmeza e hidratación.',
-    image: '/piel/img/placeholder.svg',
+    image: '/piel/img/products/jumiso-snail-mucin-88-peptide-cream.webp',
     price: 29600,
     skinTypes: ['seca', 'normal', 'sensible'],
     concerns: ['signos-de-edad', 'deshidratacion', 'barrera-danada'],
@@ -649,6 +649,44 @@ export function createProduct({ name, description = '', image = '/piel/img/place
   products.push(product);
   save(products);
   return product;
+}
+
+// Carga muchos productos de una sola vez (ej. importación desde un Excel).
+// A diferencia de createProduct, resuelve colisiones de id en memoria contra
+// un Set y hace UN solo guardado en disco al final — createProduct llamado
+// en loop miles de veces sería carísimo (recorre todo el catálogo y
+// reescribe el archivo entero en cada llamada).
+export function bulkImportProducts(rawProducts) {
+  const existingIds = new Set(products.map((p) => p.id));
+  let added = 0;
+
+  for (const raw of rawProducts) {
+    const base = raw.id || slugify(raw.name);
+    let finalId = base;
+    let n = 2;
+    while (existingIds.has(finalId)) {
+      finalId = `${base}-${n}`;
+      n++;
+    }
+    existingIds.add(finalId);
+
+    products.push({
+      id: finalId,
+      name: raw.name,
+      description: raw.description || '',
+      image: raw.image || '/piel/img/placeholder.svg',
+      price: raw.price,
+      skinTypes: Array.isArray(raw.skinTypes) ? raw.skinTypes : [],
+      concerns: Array.isArray(raw.concerns) ? raw.concerns : [],
+      active: raw.active !== false,
+      brand: raw.brand || '',
+      store: raw.store || '',
+    });
+    added++;
+  }
+
+  save(products);
+  return added;
 }
 
 /**

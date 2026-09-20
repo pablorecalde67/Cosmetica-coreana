@@ -112,11 +112,28 @@ function renderCard(item) {
     const priceRow = document.createElement('div');
     priceRow.className = 'price-row';
 
+    // El precio final que se publica sale de aplicarle un 35% de margen al
+    // costo que se carga acá — no se publica nunca el número tal cual se
+    // escribe.
+    const MARKUP = 1.35;
+
     const priceInput = document.createElement('input');
     priceInput.type = 'number';
     priceInput.min = '0';
     priceInput.step = '0.01';
-    priceInput.placeholder = 'Precio $';
+    priceInput.placeholder = 'Costo $';
+
+    const finalPriceLabel = document.createElement('span');
+    finalPriceLabel.className = 'final-price-label';
+    finalPriceLabel.textContent = 'Precio final: —';
+
+    priceInput.oninput = () => {
+      const cost = Number(priceInput.value);
+      finalPriceLabel.textContent =
+        priceInput.value && !Number.isNaN(cost)
+          ? `Precio final (+35%): $${Math.round(cost * MARKUP)}`
+          : 'Precio final: —';
+    };
 
     const saveBtn = document.createElement('button');
     saveBtn.className = 'publish-btn';
@@ -126,13 +143,14 @@ function renderCard(item) {
         alert('Poné un precio antes de publicar.');
         return;
       }
+      const finalPrice = Math.round(Number(priceInput.value) * MARKUP);
       saveBtn.disabled = true;
       saveBtn.textContent = 'Publicando...';
       try {
         const res = await fetch(`/api/queue/${item.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ description: desc.value, price: priceInput.value }),
+          body: JSON.stringify({ description: desc.value, price: finalPrice }),
         });
         if (!res.ok) throw new Error((await res.json()).error);
       } catch (err) {
@@ -141,7 +159,7 @@ function renderCard(item) {
       fetchQueue();
     };
 
-    priceRow.append(priceInput, saveBtn, deleteBtn);
+    priceRow.append(priceInput, finalPriceLabel, saveBtn, deleteBtn);
     fields.append(desc, addMoreBtn, priceRow);
   } else {
     const captionToShow = item.finalCaption;

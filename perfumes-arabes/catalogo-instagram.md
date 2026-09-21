@@ -63,3 +63,13 @@
 - **Llamada a la Acción:** 🐎 Asegurá tu botella — edición de alta rotación, stock limitado.
 
 ---
+
+👑 **Maison Alhambra Victoria Flower Rosa**
+- **Tipo de Fragancia / Concentración:** Floral — Eau de Parfum
+- **Estilo de Foto:** Fondo rosa palo con líneas geométricas negras difuminadas de fondo (evocando el packaging), luz suave y difusa desde arriba, estética moderna y minimalista. El frasco facetado con la cinta negra característica al centro, sobre una superficie clara y lisa. Utilería: hojas sueltas de té verde, ramitas de osmanthus, un par de flores de azahar y jazmín blanco esparcidas con delicadeza, sin sobrecargar la composición — el foco está en la silueta limpia del frasco.
+- **Texto Principal:** Elegancia floral con estela suave 🌼🍃 Se abre con té, osmanto y bergamota frescos, que dan paso a un corazón sofisticado de orquídea, flor de azahar africana, fresia, jazmín y rosa. La base de pachulí, vainilla y almizcle aporta calidez y una sensación aterciopelada en la piel. Duración de 3 a 7 horas con una estela suave y discreta, ideal para quienes prefieren un floral elegante sin excesos.
+- **La Inspiración Exclusiva:** Si te gustan los florales blancos sofisticados y aterciopelados —con esa calidez de fondo almizclada— este te va a fascinar. Una vibra refinada, con aire de perfumería de autor.
+- **Ocasión Ideal:** Otoño, oficina y salidas relajadas donde buscás un floral elegante y discreto.
+- **Llamada a la Acción:** 🌼 Pedí el tuyo — stock limitado.
+
+---

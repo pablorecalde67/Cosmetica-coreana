@@ -73,3 +73,13 @@
 - **Llamada a la Acción:** 🌼 Pedí el tuyo — stock limitado.
 
 ---
+
+👑 **Maison Alhambra Philos Centro**
+- **Tipo de Fragancia / Concentración:** Chipre Floral — Eau de Parfum
+- **Estilo de Foto:** Fondo de terciopelo violeta profundo con luz dorada cálida entrando en diagonal, ambiente lujoso y misterioso, tipo bodegón nocturno. El frasco aterciopelado con el aro dorado al centro, apoyado sobre mármol oscuro con vetas doradas. Utilería: una piña cortada al medio dejando ver su textura jugosa, flores violetas de jacinto e iris esparcidas con delicadeza, y una vaina de vainilla apoyada contra la base del frasco. Sombras suaves, reflejos dorados sobre el vidrio.
+- **Texto Principal:** Una experiencia única y sofisticada 💜🍍 Salida fresca de jacinto y piña que sorprende desde el primer instante; corazón envolvente de iris, pimienta rosa y jazmín; base profunda de vetiver, ámbar, almizcle, vainilla y pachulí que aporta elegancia y carácter. Una fragancia chipre floral llamativa y duradera, pensada para dejar huella.
+- **La Inspiración Exclusiva:** Si te gustan los chipre florales sofisticados —con ese contraste entre frescura frutal e intensidad amaderada— este te va a fascinar. Una vibra elegante y magnética, con aire de perfumería de autor.
+- **Ocasión Ideal:** Noches especiales, eventos y esos momentos donde querés una esencia llamativa e inolvidable.
+- **Llamada a la Acción:** 💜 Reservá tu frasco — stock limitado.
+
+---

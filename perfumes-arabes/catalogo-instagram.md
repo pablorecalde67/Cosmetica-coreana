@@ -43,3 +43,23 @@
 - **Llamada a la Acción:** 🌸 Pedí el tuyo — quedan pocas unidades.
 
 ---
+
+👑 **Al Wataniah Tibyan**
+- **Tipo de Fragancia / Concentración:** Floral-Gourmand — Eau de Parfum
+- **Estilo de Foto:** Fondo rosa pálido con mármol blanco veteado y luz cálida dorada entrando en diagonal, ambiente delicado y lujoso. El frasco rosado de tapa negra y detalles dorados al centro, elevado sobre una base clara. Utilería: orquídeas rosas y blancas, flores diminutas de heliotropo, gajos de mandarina fresca y unas gotas de vainilla líquida esparcidas sutilmente sobre el mármol, con un velo de tul rosa desenfocado de fondo para dar textura.
+- **Texto Principal:** Floral con un toque dulce envolvente 🌸🍯 Se abre con orquídea, heliotropo, mandarina y bergamota que aportan frescura inmediata. En el corazón, un acorde gourmand con frutas tropicales suma dulzura jugosa, mientras que la base de vainilla, almizcle, sándalo y pachulí deja una estela cálida y sofisticada que se queda en la piel. Ideal para dejar impresión duradera en cada encuentro.
+- **La Inspiración Exclusiva:** Si te encantan los florales gourmand cálidos y sofisticados —con esa base envolvente de vainilla y almizcle— este te va a fascinar. Una vibra elegante, perfecta para brillar de noche.
+- **Ocasión Ideal:** Noches elegantes, cenas especiales y esos momentos donde buscás causar una impresión duradera.
+- **Llamada a la Acción:** 🌸 Reservá tu frasco — stock limitado.
+
+---
+
+👑 **Lattafa Qaed Al Fursan Untamed**
+- **Tipo de Fragancia / Concentración:** Fresh Spicy / Ambarada — Eau de Parfum
+- **Estilo de Foto:** Fondo marrón cuero con textura, luz cálida y dramática entrando desde un costado, ambiente potente y masculino. El frasco cuadrado oscuro con tapa cobriza al centro, apoyado sobre madera oscura. Utilería: ramitas de canela, vainas de cardamomo, un trozo de resina de ámbar y algunas hojas de laurel o vetiver esparcidas alrededor, con la silueta dorada de un caballo en movimiento sugerida en el fondo desenfocado (evocando el arte de la caja) para reforzar la idea de fuerza indomable.
+- **Texto Principal:** Aroma potente que impacta desde el primer instante 🐎🪵 Salida de canela, mandarina, nuez moscada y cardamomo que golpea fuerte; corazón de caramelo, lavanda, salvia, geranio y ciprés que equilibra lo dulce con lo aromático; base de ámbar, olíbano, labdanum, cedro y vetiver que asegura fijación duradera y una estela intensa. Un perfume especiado y amaderado pensado para quienes buscan proyección fuerte en todo momento.
+- **La Inspiración Exclusiva:** Si te gustan los especiados ambarados de carácter fuerte —esos que dejan estela sin pedir permiso— este te va a fascinar. Una vibra indomable, con la potencia de los orientales de nicho.
+- **Ocasión Ideal:** Noches de invierno, salidas nocturnas y ocasiones donde querés dejar una huella imposible de ignorar.
+- **Llamada a la Acción:** 🐎 Asegurá tu botella — edición de alta rotación, stock limitado.
+
+---

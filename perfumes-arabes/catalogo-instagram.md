@@ -83,3 +83,23 @@
 - **Llamada a la Acción:** 💜 Reservá tu frasco — stock limitado.
 
 ---
+
+👑 **Maison Alhambra Queenstown Intense Pour Femme**
+- **Tipo de Fragancia / Concentración:** Oriental Floral — Eau de Parfum
+- **Estilo de Foto:** Fondo rojo profundo aterciopelado con destellos dorados difuminados, luz cálida y dramática entrando en diagonal, tipo bodegón regio. El frasco de tapa dorada al centro, apoyado sobre mármol oscuro con vetas doradas, dejando que el tono rosado del líquido brille por contraste. Utilería: bayas rojas frescas (moras, arándanos, frambuesas) esparcidas alrededor de la base y ramitas de jazmín blanco, con un sutil brillo dorado de fondo que evoque el escudo real del frasco.
+- **Texto Principal:** Fragancia floral, dulce y envolvente 👑🍒 Se abre con bayas rojas y jazmín egipcio que despiertan los sentidos, desarrollándose en una composición floral femenina con acordes dulces y una base cálida que aporta sensualidad y carácter. Un perfume intenso y sofisticado, pensado para mujeres que disfrutan de fragancias expresivas y distintivas en cada ocasión.
+- **La Inspiración Exclusiva:** Si te gustan los orientales florales intensos y envolventes —con esa mezcla de bayas rojas y flores blancas— este te va a fascinar. Una vibra regia y sensual, con la firma de un perfume de autor.
+- **Ocasión Ideal:** Citas, fiestas, eventos y ocasiones especiales que piden una fragancia más intensa.
+- **Llamada a la Acción:** 👑 Asegurá tu botella — stock limitado.
+
+---
+
+👑 **Maison Alhambra Jubilant Vitality**
+- **Tipo de Fragancia / Concentración:** Cítrica — Eau de Parfum
+- **Estilo de Foto:** Fondo amarillo dorado vibrante con luz brillante y energética entrando de frente, ambiente fresco y luminoso. El frasco cuadrado con tapa cobriza al centro, sobre una superficie clara y reflectante. Utilería: rodajas de naranja sanguina, pomelo, limón y lima recién cortadas, con salpicaduras de jugo cítrico brillante alrededor de la base para transmitir frescura y energía.
+- **Texto Principal:** Frescura energética que despierta los sentidos 🍊✨ Notas cítricas iniciales de bergamota siciliana, naranja sanguina, limón, lima, mandarina y pomelo dan paso a un corazón sofisticado de grosella negra, pimienta rosa y ámbar blanco. La base de musgo de roble, pachulí y almizcle deja una estela cálida y elegante que perdura sobre la piel. Un aroma versátil, unisex, con presencia distintiva.
+- **La Inspiración Exclusiva:** Si te gustan los cítricos frescos con fondo amaderado y ambarado —esa combinación energética y sofisticada a la vez— este te va a fascinar. Una vibra vital y magnética para cualquier género.
+- **Ocasión Ideal:** Uso diario, mañanas activas, oficina y climas cálidos.
+- **Llamada a la Acción:** 🍊 Pedí el tuyo — stock limitado.
+
+---

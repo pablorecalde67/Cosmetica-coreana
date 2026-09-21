@@ -103,3 +103,13 @@
 - **Llamada a la Acción:** 🍊 Pedí el tuyo — stock limitado.
 
 ---
+
+👑 **Lattafa Sheikh Al Shuyukh Khusoosi**
+- **Tipo de Fragancia / Concentración:** Oriental Fougère — Eau de Parfum
+- **Estilo de Foto:** Fondo de mármol blanco y plateado con detalles de encaje dorado difuminados de fondo, luz cálida y dramática entrando desde atrás para que el líquido ámbar oscuro del frasco brille por contraste con el entorno claro. El frasco facetado al centro, elevado sobre una base clara. Utilería: hebras de azafrán rojo esparcidas, un trozo de madera de oud oscura, un poco de resina de mirra y una ramita de lavanda apoyada contra el vidrio — composición nocturna, elegante y misteriosa.
+- **Texto Principal:** Especias y maderas con refinamiento 🪵✨ Una fragancia oriental fougère unisex que se abre con lavanda, pimienta negra y bergamota; despliega en el corazón azafrán y salvia clara con un toque picante y floral; y cierra en una base profunda de cedro, ámbar, mirra, ambroxán y agarwood (oud) que aporta calidez y profundidad. Presencia fuerte, con un aire sofisticado y atrevido que se queda en el ambiente.
+- **La Inspiración Exclusiva:** Si te gustan los orientales especiados con oud y ámbar —esos que dejan un rastro sofisticado y potente— este te va a fascinar. Una vibra atrevida y magnética, con la fuerza de los orientales de nicho más codiciados.
+- **Ocasión Ideal:** Noches y climas frescos, donde buscás una presencia fuerte y sofisticada.
+- **Llamada a la Acción:** 🪵 Asegurá tu botella — stock limitado, cierra la colección.
+
+---

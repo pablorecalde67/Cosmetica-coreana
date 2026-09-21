@@ -23,3 +23,23 @@
 - **Llamada a la Acción:** 🍏 Asegurá tu botella — quedan pocas unidades.
 
 ---
+
+👑 **Shirley May Deluxe Ki Ki**
+- **Tipo de Fragancia / Concentración:** Floral Aldehídico — Eau de Toilette
+- **Estilo de Foto:** Fondo fucsia vibrante con luz brillante y difusa, estilo pop y juvenil (nada de sombras densas). El frasco redondo al centro sobre una base blanca brillante, dejando que el líquido rosa intenso se ilumine desde atrás como si tuviera luz propia. Utilería: mitades de maracuyá/mburucuyá jugosas, rodajas de cidra y una ramita de lavanda apoyadas alrededor de la base, gotas de agua simulando frescura. Composición limpia, colorida y luminosa, tipo campaña de verano.
+- **Texto Principal:** Aroma delicado con estilo juvenil 🍈💜 Se abre con un estallido de frutas tropicales —mburucuyá, sidra y bergamota— que da paso a un corazón floral de lavanda y geranio, y cierra en una base de almizcle y sándalo que abraza la piel. Fijación moderada que acompaña todo el día sin ser intensa, con una composición equilibrada que aporta frescura y confort en cada aplicación.
+- **La Inspiración Exclusiva:** Si te gustan los florales frescos con un giro frutal tropical y aldehídico, este te va a fascinar. Una vibra juguetona y luminosa, ideal para quien busca un floral fácil de llevar.
+- **Ocasión Ideal:** Uso diario, momentos casuales, salidas de día y climas cálidos.
+- **Llamada a la Acción:** 💜 Sumalo a tu colección — stock limitado.
+
+---
+
+👑 **Shirley May Deluxe Choice**
+- **Tipo de Fragancia / Concentración:** Floral Frutal — Eau de Toilette
+- **Estilo de Foto:** Fondo rosa pastel con destellos dorados difuminados, luz suave y romántica desde arriba, estilo elegante y femenino. El frasco redondo de tapa dorada apoyado sobre mármol blanco veteado en rosa. Utilería: rodajas de pera y manzana frescas, pétalos de rosa y jazmín esparcidos con delicadeza, un toque de brillo dorado difuminado en el fondo para dar sensación deluxe. Iluminación suave, sin sombras duras, aire aspiracional.
+- **Texto Principal:** Estilo ligero con frescura distintiva ✨🌸 Notas de salida cítricas con pera y manzana dan paso a un corazón floral de rosa, jazmín y violeta, en una composición equilibrada entre lo fresco y lo suavemente amaderado. Fijación moderada que se adapta a distintos momentos del día, ideal para quienes buscan una fragancia versátil y agradable que nunca se vuelve intensa.
+- **La Inspiración Exclusiva:** Si te gustan los florales frutales suaves, versátiles y fáciles de llevar, este te va a fascinar. Una vibra romántica y deluxe, perfecta para el día a día.
+- **Ocasión Ideal:** Uso diario, oficina, encuentros casuales y esos días donde querés un toque floral discreto.
+- **Llamada a la Acción:** 🌸 Pedí el tuyo — quedan pocas unidades.
+
+---

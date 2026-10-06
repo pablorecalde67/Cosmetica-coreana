@@ -1,0 +1,9 @@
+[[redirects]]
+from = "/api/*"
+to = "/.netlify/functions/tiendas-api/:splat"
+status = 200
+
+[[redirects]]
+from = "/api/tiendas"
+to = "/.netlify/functions/tiendas-api/tiendas"
+status = 200

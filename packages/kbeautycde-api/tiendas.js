@@ -1,0 +1,222 @@
+export const TIENDAS = [
+  {
+    id: 1,
+    nombre: "MediCube CDE",
+    categoria: "K-Beauty Skincare",
+    sitio_web: "https://medicube.cde.com",
+    calificacion: 4.8,
+    ubicacion: "Avenida Costanera 2500, Ciudad del Este",
+    productos: ["Medicube Age R Booster", "Medicube Collagen Jelly", "Medicube PDRN Booster"],
+    telefono: "+595 6 1234567",
+    email: "info@medicube.cde.com"
+  },
+  {
+    id: 2,
+    nombre: "Beauty Korean Store",
+    categoria: "Cosmética Coreana",
+    sitio_web: "https://beautykstore.cde.com",
+    calificacion: 4.7,
+    ubicacion: "Centro Comercial del Este, Ciudad del Este",
+    productos: ["Mascarillas faciales", "Serums", "Tonificantes"],
+    telefono: "+595 6 7654321",
+    email: "ventas@beautykstore.cde.com"
+  },
+  {
+    id: 3,
+    nombre: "K-Beauty Direct",
+    categoria: "Importador directo",
+    sitio_web: "https://kbeautydirect.cde.com",
+    calificacion: 4.9,
+    ubicacion: "Avenida San Martín 1200, Ciudad del Este",
+    productos: ["Productos de marca premium", "Sets especiales", "Bundles"],
+    telefono: "+595 6 1111111",
+    email: "contacto@kbeautydirect.cde.com"
+  },
+  {
+    id: 4,
+    nombre: "Skincare Seoul",
+    categoria: "Especialista en skincare",
+    sitio_web: "https://skincare-seoul.cde.com",
+    calificacion: 4.6,
+    ubicacion: "Paseo Costanera, Ciudad del Este",
+    productos: ["Rutinas completas", "Tratamientos especiales", "Consultorías"],
+    telefono: "+595 6 2222222",
+    email: "info@skincare-seoul.cde.com"
+  },
+  {
+    id: 5,
+    nombre: "CosmeticaKor",
+    categoria: "Distribuidor mayorista",
+    sitio_web: "https://cosmeticakor.cde.com",
+    calificacion: 4.5,
+    ubicacion: "Zona Industrial, Ciudad del Este",
+    productos: ["Productos al por mayor", "Paquetes especiales"],
+    telefono: "+595 6 3333333",
+    email: "mayorista@cosmeticakor.cde.com"
+  },
+  {
+    id: 6,
+    nombre: "BeautyHub CDE",
+    categoria: "Centro de belleza",
+    sitio_web: "https://beautyhub.cde.com",
+    calificacion: 4.7,
+    ubicacion: "Galería comercial Paraná, Ciudad del Este",
+    productos: ["Cosméticos + servicios", "Faciales", "Asesoramiento"],
+    telefono: "+595 6 4444444",
+    email: "ventas@beautyhub.cde.com"
+  },
+  {
+    id: 7,
+    nombre: "Korean Essence",
+    categoria: "Boutique especializada",
+    sitio_web: "https://koreanessence.cde.com",
+    calificacion: 4.8,
+    ubicacion: "Centro de la ciudad, Ciudad del Este",
+    productos: ["Esencias", "Ampolletas", "Productos premium"],
+    telefono: "+595 6 5555555",
+    email: "info@koreanessence.cde.com"
+  },
+  {
+    id: 8,
+    nombre: "Glow and Shine",
+    categoria: "Tienda de belleza",
+    sitio_web: "https://glowandshine.cde.com",
+    calificacion: 4.6,
+    ubicacion: "Avenida Mitre, Ciudad del Este",
+    productos: ["Productos de cuidado", "Maquillaje", "Accesorios"],
+    telefono: "+595 6 6666666",
+    email: "contacto@glowandshine.cde.com"
+  },
+  {
+    id: 9,
+    nombre: "Seoul Beauty Supply",
+    categoria: "Mayorista de cosméticos",
+    sitio_web: "https://seoulbeauty.cde.com",
+    calificacion: 4.4,
+    ubicacion: "Zona comercial norte, Ciudad del Este",
+    productos: ["Stock constante", "Precios mayoristas", "Envíos rápidos"],
+    telefono: "+595 6 7777777",
+    email: "ventas@seoulbeauty.cde.com"
+  },
+  {
+    id: 10,
+    nombre: "Piel Coreana",
+    categoria: "Clínica estética",
+    sitio_web: "https://pielcoreana.cde.com",
+    calificacion: 4.9,
+    ubicacion: "Barrio histórico, Ciudad del Este",
+    productos: ["Tratamientos profesionales", "Productos dermatológicos"],
+    telefono: "+595 6 8888888",
+    email: "consultas@pielcoreana.cde.com"
+  },
+  {
+    id: 11,
+    nombre: "K-Style Cosmetics",
+    categoria: "Tienda de estilo",
+    sitio_web: "https://kstyleweb.cde.com",
+    calificacion: 4.7,
+    ubicacion: "Mall del Este, Ciudad del Este",
+    productos: ["Tendencias actuales", "Ediciones limitadas"],
+    telefono: "+595 6 9999999",
+    email: "info@kstyle.cde.com"
+  },
+  {
+    id: 12,
+    nombre: "Natural Beauty Korea",
+    categoria: "Cosméticos naturales",
+    sitio_web: "https://naturalbeauty.cde.com",
+    calificacion: 4.8,
+    ubicacion: "Avenida Argentina, Ciudad del Este",
+    productos: ["Productos orgánicos", "Sin químicos dañinos"],
+    telefono: "+595 6 1010101",
+    email: "info@naturalbeauty.cde.com"
+  },
+  {
+    id: 13,
+    nombre: "Radiance Hub",
+    categoria: "Centro de belleza integral",
+    sitio_web: "https://radiancehub.cde.com",
+    calificacion: 4.6,
+    ubicacion: "Paseo comercial central, Ciudad del Este",
+    productos: ["Tratamientos completos", "Skincare premium"],
+    telefono: "+595 6 1111212",
+    email: "ventas@radiancehub.cde.com"
+  },
+  {
+    id: 14,
+    nombre: "Seoul Imports",
+    categoria: "Importador directo",
+    sitio_web: "https://seoulimports.cde.com",
+    calificacion: 4.5,
+    ubicacion: "Zona franca, Ciudad del Este",
+    productos: ["Marcas exclusivas", "Precios competitivos"],
+    telefono: "+595 6 1313131",
+    email: "comercial@seoulimports.cde.com"
+  },
+  {
+    id: 15,
+    nombre: "Beauty Essence Store",
+    categoria: "Tienda especializada",
+    sitio_web: "https://beautyessence.cde.com",
+    calificacion: 4.7,
+    ubicacion: "Centro histórico, Ciudad del Este",
+    productos: ["Esencias premium", "Serums concentrados"],
+    telefono: "+595 6 1515151",
+    email: "info@beautyessence.cde.com"
+  },
+  {
+    id: 16,
+    nombre: "CosmeticaKPop",
+    categoria: "Tienda temática",
+    sitio_web: "https://cosmekpop.cde.com",
+    calificacion: 4.4,
+    ubicacion: "Galería comercial sur, Ciudad del Este",
+    productos: ["Productos de influenciadores", "Ediciones limitadas"],
+    telefono: "+595 6 1616161",
+    email: "info@cosmekpop.cde.com"
+  },
+  {
+    id: 17,
+    nombre: "Premium Skin Solutions",
+    categoria: "Soluciones dermatológicas",
+    sitio_web: "https://premiumskin.cde.com",
+    calificacion: 4.9,
+    ubicacion: "Edificio corporativo, Ciudad del Este",
+    productos: ["Consultoría dermatológica", "Tratamientos personalizados"],
+    telefono: "+595 6 1717171",
+    email: "consultas@premiumskin.cde.com"
+  },
+  {
+    id: 18,
+    nombre: "Glow Factory",
+    categoria: "Fabricante y distribuidor",
+    sitio_web: "https://glowfactory.cde.com",
+    calificacion: 4.6,
+    ubicacion: "Parque industrial, Ciudad del Este",
+    productos: ["Producción propia", "Productos personalizados"],
+    telefono: "+595 6 1818181",
+    email: "ventas@glowfactory.cde.com"
+  },
+  {
+    id: 19,
+    nombre: "Seoul Market Express",
+    categoria: "Mercado virtual",
+    sitio_web: "https://seoulmarket.cde.com",
+    calificacion: 4.5,
+    ubicacion: "Logística central, Ciudad del Este",
+    productos: ["Envío rápido", "Promociones semanales"],
+    telefono: "+595 6 1919191",
+    email: "info@seoulmarket.cde.com"
+  },
+  {
+    id: 20,
+    nombre: "Belleza Infinita Korea",
+    categoria: "Tienda premium",
+    sitio_web: "https://bellezainfinita.cde.com",
+    calificacion: 4.8,
+    ubicacion: "Avenida principal, Ciudad del Este",
+    productos: ["Lujo y exclusividad", "Atención personalizada"],
+    telefono: "+595 6 2020202",
+    email: "info@bellezainfinita.cde.com"
+  }
+];

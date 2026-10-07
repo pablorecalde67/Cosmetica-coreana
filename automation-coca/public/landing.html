@@ -46,9 +46,16 @@
     }
 
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 600;
       color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .logo svg {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
 
     nav a {
@@ -449,7 +456,24 @@
   <!-- Header -->
   <header>
     <div class="header-content">
-      <div class="logo">K-Beauty CDE</div>
+      <div class="logo">
+        <svg width="50" height="50" viewBox="0 0 300 300" style="vertical-align: middle; margin-right: 12px;">
+          <circle cx="150" cy="150" r="148" fill="white" stroke="#b8818b" stroke-width="2"/>
+          <g opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <g transform="rotate(120 150 150)" opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <g transform="rotate(240 150 150)" opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <circle cx="150" cy="150" r="35" fill="#b8818b"/>
+          <circle cx="150" cy="150" r="30" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+          <text x="150" y="160" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle" dy="0.3em">미</text>
+        </svg>
+        <span style="display: inline-block; vertical-align: middle;">K-Beauty CDE</span>
+      </div>
       <nav>
         <a href="#productos">Productos</a>
         <a href="#tiendas">Tiendas</a>
@@ -598,6 +622,78 @@
         <div class="testimonial-author">Sofía, Encarnación</div>
       </div>
     </div>
+  </section>
+
+  <!-- Logo Showcase -->
+  <section style="padding: 80px 20px; text-align: center;">
+    <div class="section-title">Nuestro Logo</div>
+    <p style="color: var(--light-text); margin-bottom: 48px; font-size: 1rem;">Disponible para impresiones, redes sociales y marketing</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; max-width: 1000px; margin: 0 auto;">
+      <div style="text-align: center;">
+        <svg width="120" height="120" viewBox="0 0 300 300" style="margin-bottom: 16px;">
+          <circle cx="150" cy="150" r="148" fill="white" stroke="#b8818b" stroke-width="2"/>
+          <g opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <g transform="rotate(120 150 150)" opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <g transform="rotate(240 150 150)" opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <circle cx="150" cy="150" r="35" fill="#b8818b"/>
+          <circle cx="150" cy="150" r="30" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+          <text x="150" y="160" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle" dy="0.3em">미</text>
+        </svg>
+        <p style="font-weight: 600; color: var(--text); margin-bottom: 4px;">Logo Principal</p>
+        <p style="font-size: 0.85rem; color: var(--light-text);">Isologo con caracteres coreanos</p>
+      </div>
+
+      <div style="text-align: center;">
+        <svg width="120" height="120" viewBox="0 0 300 300" style="margin-bottom: 16px;">
+          <circle cx="150" cy="150" r="148" fill="white" stroke="#b8818b" stroke-width="2"/>
+          <g opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <g transform="rotate(120 150 150)" opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <g transform="rotate(240 150 150)" opacity="0.8">
+            <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/>
+          </g>
+          <circle cx="150" cy="150" r="35" fill="#b8818b"/>
+          <circle cx="150" cy="150" r="30" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+          <text x="150" y="160" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle" dy="0.3em">미</text>
+          <text x="150" y="230" font-family="Arial" font-size="16" font-weight="600" fill="#b8818b" text-anchor="middle">K-BEAUTY</text>
+        </svg>
+        <p style="font-weight: 600; color: var(--text); margin-bottom: 4px;">Con Texto</p>
+        <p style="font-size: 0.85rem; color: var(--light-text);">Para redes sociales</p>
+      </div>
+
+      <div style="text-align: center;">
+        <div style="width: 120px; height: 120px; background: var(--light); border-radius: 8px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;">
+          <svg width="100" height="100" viewBox="0 0 300 300">
+            <circle cx="150" cy="150" r="148" fill="#b8818b"/>
+            <g opacity="0.9">
+              <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="white"/>
+            </g>
+            <g transform="rotate(120 150 150)" opacity="0.9">
+              <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="white"/>
+            </g>
+            <g transform="rotate(240 150 150)" opacity="0.9">
+              <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="white"/>
+            </g>
+            <circle cx="150" cy="150" r="35" fill="white" opacity="0.9"/>
+            <text x="150" y="160" font-family="Arial" font-size="36" font-weight="bold" fill="#b8818b" text-anchor="middle" dy="0.3em">미</text>
+          </svg>
+        </div>
+        <p style="font-weight: 600; color: var(--text); margin-bottom: 4px;">Fondo Oscuro</p>
+        <p style="font-size: 0.85rem; color: var(--light-text);">Para impresiones</p>
+      </div>
+    </div>
+
+    <a href="/logo.svg" download class="btn" style="margin-top: 48px;">Descargar Logo SVG</a>
   </section>
 
   <!-- CTA -->

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tarjetas de Presentación · K'Beauty CDE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f5f5f5;
+      padding: 40px 20px;
+      font-family: 'Lora', serif;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #2d2d2d;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .card-pair {
+      perspective: 1000px;
+    }
+
+    .card {
+      width: 340px;
+      height: 215px;
+      background: linear-gradient(135deg, #c49a8e 0%, #b8818b 100%);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card.front {
+      font-size: 0.9rem;
+    }
+
+    /* Elemento decorativo sutil en la esquina */
+    .card::before {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      top: -30px;
+      right: -30px;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      bottom: -20px;
+      left: -20px;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Frente de la tarjeta */
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .kbeauty {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      font-weight: 400;
+      opacity: 0.95;
+      margin-top: 4px;
+    }
+
+    /* Reverso de la tarjeta */
+    .card.back {
+      justify-content: space-between;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .back-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    .back-header {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      opacity: 0.95;
+    }
+
+    .contact-line {
+      font-size: 0.75rem;
+      line-height: 1.6;
+      opacity: 0.92;
+      margin-bottom: 2px;
+    }
+
+    .contact-line strong {
+      font-weight: 500;
+    }
+
+    .contact-label {
+      display: inline-block;
+      min-width: 40px;
+      opacity: 0.85;
+    }
+
+    .contact-value {
+      font-family: 'Lora', serif;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.3);
+      margin: 8px 0;
+    }
+
+    .back-footer {
+      text-align: center;
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin-top: 8px;
+    }
+
+    /* Impresión */
+    .print-instructions {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+
+    .print-instructions h2 {
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+      color: #2d2d2d;
+    }
+
+    .print-instructions ol {
+      margin-left: 20px;
+      line-height: 1.8;
+      color: #555;
+    }
+
+    .print-instructions li {
+      margin-bottom: 10px;
+    }
+
+    .spec-table {
+      background: #fafafa;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      font-family: monospace;
+      color: #666;
+    }
+
+    .spec-table div {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 100%;
+      }
+
+      h1, .subtitle, .print-instructions {
+        display: none;
+      }
+
+      .cards-container {
+        gap: 0;
+        grid-template-columns: 1fr 1fr;
+        page-break-after: avoid;
+      }
+
+      .card-pair {
+        page-break-inside: avoid;
+      }
+
+      .card {
+        margin-bottom: 30px;
+        box-shadow: none;
+      }
+    }
+
+    .color-info {
+      background: #fff9f7;
+      border-left: 4px solid #b8818b;
+      padding: 16px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .color-preview {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #c49a8e 0%, #b8818b 100%);
+      border-radius: 4px;
+      vertical-align: middle;
+      margin-right: 8px;
+      border: 1px solid #a07078;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="font-family: 'Playfair Display', serif;">Tarjeta de Presentación</h1>
+    <p class="subtitle">K'Beauty CDE — Pablo Marcelo Recalde</p>
+
+    <div class="print-instructions">
+      <h2>📋 Cómo imprimir</h2>
+      <ol>
+        <li><strong>Tamaño:</strong> Tarjeta estándar 85×55 mm (3.35×2.17 pulgadas)</li>
+        <li><strong>Papel:</strong> Cartulina de 250-300 gsm, acabado mate o satinado</li>
+        <li><strong>Color:</strong> <span class="color-preview"></span> Rosa viejo suave (degradado #c49a8e → #b8818b)</li>
+        <li><strong>Imprimir:</strong>
+          <ul style="margin-top: 8px; margin-left: 20px;">
+            <li>Escala: 100% (sin ajustar a página)</li>
+            <li>Márgenes: 0 mm</li>
+            <li>Orientación: Horizontal</li>
+          </ul>
+        </li>
+        <li><strong>Cortar:</strong> Usa una guillotina o cutter con regla para cortes precisos</li>
+        <li><strong>Laminado (opcional):</strong> Acabado brillante o mate para protección</li>
+      </ol>
+
+      <div class="spec-table">
+        <div><span>Ancho:</span> <span>85 mm</span></div>
+        <div><span>Alto:</span> <span>55 mm</span></div>
+        <div><span>Resolución:</span> <span>300 DPI (para impresión profesional)</span></div>
+        <div><span>Espacio de color:</span> <span>RGB (pantalla) o CMYK (impresión profesional)</span></div>
+      </div>
+    </div>
+
+    <div class="cards-container">
+      <div class="card-pair">
+        <div style="margin-bottom: 20px;">
+          <div class="card front">
+            <div class="card-content">
+              <div class="name">PABLO MARCELO</div>
+              <div class="name" style="font-size: 1.3rem; margin-top: 4px;">RECALDE</div>
+              <div class="kbeauty">K'BEAUTY</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card back">
+            <div class="back-content">
+              <div class="back-header">K'BEAUTY CDE</div>
+              <div class="divider"></div>
+              <div class="contact-line">
+                <span class="contact-label">📱</span>
+                <span class="contact-value">+54 9 3855 756444</span>
+              </div>
+              <div class="contact-line">
+                <span class="contact-label">✉️</span>
+                <span class="contact-value">hello@kbeautycde.com</span>
+              </div>
+              <div class="contact-line">
+                <span class="contact-label">🌐</span>
+                <span class="contact-value">kbeautycde.com</span>
+              </div>
+              <div class="back-footer">Buenos Aires, Argentina</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="print-instructions" style="background: #fff9f7; border-top: 2px solid #b8818b;">
+      <h2 style="color: #b8818b;">🎨 Detalles de diseño</h2>
+      <ul style="margin-left: 20px; line-height: 1.8; color: #555;">
+        <li><strong>Tipografía frente:</strong> Playfair Display (elegante, minimalista)</li>
+        <li><strong>Tipografía reverso:</strong> Lora (serif sutil, atractivo)</li>
+        <li><strong>Color de fondo:</strong> Gradiente rosa viejo suave (de cálido a profundo)</li>
+        <li><strong>Texto:</strong> Blanco con opacidad para sutileza</li>
+        <li><strong>Elementos decorativos:</strong> Círculos borrosos en esquinas (muy sutil)</li>
+        <li><strong>Espaciado:</strong> Minimalista, centro de atención en nombre y datos</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Botón de impresión al presionar Ctrl+P
+    console.log('✅ Tarjetas listas para imprimir. Presiona Ctrl+P o Cmd+P.');
+  </script>
+</body>
+</html>

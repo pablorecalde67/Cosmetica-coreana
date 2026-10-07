@@ -20,6 +20,9 @@ import monitoringRouter from './routes/monitoring.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import apiV2Router from './routes/api-v2.js';
+import productsRouter from './routes/products.js';
+import cartRouter from './routes/cart.js';
+import usersRouter from './routes/users.js';
 
 // Import advanced middleware
 import {
@@ -67,6 +70,11 @@ app.use(monitor.middleware());
 
 // API v2 (advanced with caching, rate limiting, diagnostics)
 app.use('/api/v2', apiV2Router);
+
+// E-commerce core routes (NEW)
+app.use('/api/products', productsRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/users', usersRouter);
 
 // Existing routes
 app.use('/api/piel', pielRouter);

@@ -16,6 +16,39 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  max-width: 100%;
+}
+
+header svg {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pink);
+}
+
+header p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #999;
+  font-weight: 500;
+}
+
 .screen { display: none; min-height: 100dvh; }
 .screen.active { display: block; }
 

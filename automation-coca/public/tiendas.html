@@ -5,26 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>K-Beauty CDE · 20 Tiendas de Cosmética Coreana</title>
   <style>
+    :root {
+      color-scheme: light;
+      --primary: #b8818b;
+      --secondary: #d4a5a5;
+      --accent: #a68a8a;
+      --light-bg: #f5f1f0;
+      --dark-text: #3a3a3a;
+      --light-text: #666;
+      --border: #e8e1df;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f8f9fa;
-      color: #333;
+      background: #ffffff;
+      color: var(--dark-text);
       line-height: 1.6;
     }
     header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 28px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
     }
     header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--primary);
+    }
+    header .subtitle {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--light-text);
     }
     header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
+      font-size: 0.9rem;
+      color: var(--light-text);
+      margin: 0 0 12px 0;
     }
     .container {
       max-width: 1200px;
@@ -39,19 +68,24 @@
     }
     .stat-card {
       background: white;
+      border: 1px solid var(--border);
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
       text-align: center;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover {
+      border-color: var(--primary);
     }
     .stat-card .number {
       font-size: 2.5rem;
       font-weight: bold;
-      color: #667eea;
+      color: var(--primary);
     }
     .stat-card .label {
-      color: #666;
+      color: var(--light-text);
       margin-top: 5px;
+      font-size: 0.95rem;
     }
     .tiendas-grid {
       display: grid;
@@ -60,30 +94,34 @@
     }
     .tienda-card {
       background: white;
-      border-radius: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: border-color 0.2s;
     }
     .tienda-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      border-color: var(--primary);
     }
     .tienda-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      color: var(--dark-text);
       padding: 20px;
     }
     .tienda-header h3 {
       font-size: 1.3rem;
       margin-bottom: 8px;
+      color: var(--primary);
+      font-weight: 600;
     }
     .categoria {
       display: inline-block;
-      background: rgba(255,255,255,0.2);
+      background: var(--light-bg);
+      color: var(--accent);
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.85rem;
+      font-weight: 500;
     }
     .tienda-body {
       padding: 20px;
@@ -104,19 +142,30 @@
     }
     .info-label {
       font-weight: 600;
-      color: #667eea;
+      color: var(--primary);
       display: block;
       margin-bottom: 3px;
     }
     .info-value {
-      color: #555;
+      color: var(--dark-text);
       word-break: break-word;
     }
+    .info-value a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .info-value a:hover {
+      color: var(--accent);
+    }
     .productos {
-      background: #f8f9fa;
+      background: var(--light-bg);
       padding: 12px;
       border-radius: 8px;
       margin-top: 15px;
+    }
+    .productos strong {
+      color: var(--primary);
     }
     .productos-list {
       list-style: none;
@@ -128,9 +177,12 @@
     }
     .productos-list li:before {
       content: "• ";
-      color: #667eea;
+      color: var(--primary);
       font-weight: bold;
       margin-right: 6px;
+    }
+    .productos-list li {
+      color: var(--dark-text);
     }
     .contact {
       display: flex;
@@ -147,7 +199,8 @@
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 600;
-      transition: 0.3s;
+      transition: 0.2s;
+      border: 1px solid transparent;
     }
     .whatsapp {
       background: #25d366;
@@ -157,11 +210,11 @@
       background: #1ea952;
     }
     .email {
-      background: #667eea;
+      background: var(--primary);
       color: white;
     }
     .email:hover {
-      background: #5568d3;
+      background: var(--accent);
     }
     .loading {
       text-align: center;
@@ -173,8 +226,8 @@
       display: inline-block;
       width: 40px;
       height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #667eea;
+      border: 4px solid var(--light-bg);
+      border-top: 4px solid var(--primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin-bottom: 20px;
@@ -184,18 +237,32 @@
       100% { transform: rotate(360deg); }
     }
     .error {
-      background: #fee;
-      border: 1px solid #f99;
+      background: #fef0f0;
+      border: 1px solid #e8d5d5;
       color: #c33;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 8px;
       margin: 20px;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>🇰🇷 K-Beauty CDE</h1>
+    <div class="header-content">
+      <svg width="40" height="40" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="150" cy="150" r="148" fill="white" stroke="#b8818b" stroke-width="2"/>
+        <g opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <g transform="rotate(120 150 150)" opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <g transform="rotate(240 150 150)" opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <circle cx="150" cy="150" r="35" fill="#b8818b"/>
+        <circle cx="150" cy="150" r="30" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+        <text x="150" y="160" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle" dy="0.3em">미</text>
+      </svg>
+      <div>
+        <h1>K-Beauty CDE</h1>
+        <p class="subtitle">Tiendas de cosmética coreana</p>
+      </div>
+    </div>
     <p>Las mejores tiendas de cosmética coreana en Ciudad del Este</p>
   </header>
 

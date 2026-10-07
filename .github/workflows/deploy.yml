@@ -8,71 +8,63 @@ on:
 
 env:
   HEROKU_APP_NAME: kbeautycde
-  NODE_VERSION: '18'
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install Heroku CLI
+      - name: Build Docker image
+        working-directory: automation-coca
         run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
+          docker build -t ${{ env.HEROKU_APP_NAME }}:latest .
 
-      - name: Create Heroku app
+      - name: Login to Heroku Container Registry
         run: |
-          export PATH="/usr/local/bin:$PATH"
-          heroku auth:login --browser=false <<< "${{ secrets.HEROKU_API_KEY }}"
+          echo ${{ secrets.HEROKU_API_KEY }} | docker login --username=_ --password-stdin registry.heroku.com
 
-          heroku create ${{ env.HEROKU_APP_NAME }} --region us || echo "App may already exist"
-          heroku apps:info -a ${{ env.HEROKU_APP_NAME }}
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
-      - name: Deploy
+      - name: Create Heroku app if needed
         run: |
-          export PATH="/usr/local/bin:$PATH"
-          cd automation-coca
+          curl -X POST https://api.heroku.com/apps \
+            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"name\": \"${{ env.HEROKU_APP_NAME }}\"}" \
+            -s -o /dev/null
 
-          # Initialize git if needed
-          git config user.email "ci@heroku.com" || git init && git config user.email "ci@heroku.com"
-          git config user.name "CI"
+          echo "App ready"
 
-          # Add all files
-          git add -A
-          git commit -m "Deployment from GitHub Actions" || echo "Nothing to commit"
+      - name: Push Docker image to Heroku
+        run: |
+          docker tag ${{ env.HEROKU_APP_NAME }}:latest registry.heroku.com/${{ env.HEROKU_APP_NAME }}/web:latest
+          docker push registry.heroku.com/${{ env.HEROKU_APP_NAME }}/web:latest
 
-          # Deploy via Heroku CLI
-          heroku git:clone -a ${{ env.HEROKU_APP_NAME }} ../heroku-app 2>/dev/null || true
+      - name: Release on Heroku
+        run: |
+          # Get image ID
+          IMAGE_ID=$(curl -s https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }}/formation \
+            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+            -H "Accept: application/vnd.heroku+json; version=3.docker-releases" | grep -o '"image_id":"[^"]*' | cut -d'"' -f4 | head -1)
 
-          # Copy files to heroku-app and push
-          cp -r . ../heroku-app/ 2>/dev/null || true
-          cd ../heroku-app
-          git add -A
-          git commit -m "Deploy $(date)" || echo "Nothing to commit"
+          if [ ! -z "$IMAGE_ID" ]; then
+            echo "Releasing image: $IMAGE_ID"
+            curl -X PATCH https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }}/formation \
+              -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+              -H "Accept: application/vnd.heroku+json; version=3.docker-releases" \
+              -H "Content-Type: application/json" \
+              -d "[{\"type\": \"web\", \"docker_image\": \"$IMAGE_ID\"}]"
+          fi
 
-          git push heroku main -f || git push heroku HEAD:main -f
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
-      - name: Health check
+      - name: Wait and verify
         run: |
           sleep 20
+
           for i in {1..12}; do
-            echo "Health check $i/12..."
             if curl -s -f https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/ > /dev/null 2>&1; then
-              echo "✅ App is up!"
-              curl -s https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/api/admin/health 2>/dev/null | head -5 || echo "App responding"
-              echo ""
-              echo "SUCCESS: https://${{ env.HEROKU_APP_NAME }}.herokuapp.com"
+              echo "✅ App is running!"
+              curl -s https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/api/admin/health || echo "Health check endpoint"
               exit 0
             fi
-            sleep 3
+            echo "Attempt $i/12..."
+            sleep 5
           done
-          echo "App may still be starting"

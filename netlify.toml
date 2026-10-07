@@ -1,4 +1,5 @@
 [build]
+  publish = "automation-coca/public"
   functions = "netlify/functions"
 
 [[redirects]]

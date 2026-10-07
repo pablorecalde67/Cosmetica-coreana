@@ -1,9 +1,9 @@
 [[redirects]]
-from = "/api/*"
-to = "/.netlify/functions/tiendas-api/:splat"
+from = "/api/tiendas"
+to = "/.netlify/functions/tiendas-api"
 status = 200
 
 [[redirects]]
-from = "/api/tiendas"
-to = "/.netlify/functions/tiendas-api/tiendas"
+from = "/api/tiendas/:id"
+to = "/.netlify/functions/tiendas-api"
 status = 200

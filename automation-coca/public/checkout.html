@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COCA · Checkout</title>
+<link rel="stylesheet" href="/styles.css">
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=TEST-sandbox-id&currency=USD&disable-funding=credit,card"></script>
+<style>
+  .checkout-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 30px;
+  }
+
+  .checkout-form {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 30px;
+  }
+
+  .checkout-form h2 {
+    color: var(--primary);
+    margin-top: 0;
+  }
+
+  .form-section {
+    margin-bottom: 24px;
+  }
+
+  .form-section h3 {
+    font-size: 1rem;
+    color: var(--dark-text);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--dark-text);
+    font-size: 0.9rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(184, 129, 139, 0.1);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .form-row.full {
+    grid-template-columns: 1fr;
+  }
+
+  .metodos-pago {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .metodos-pago.argentina {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .metodo-pago-btn {
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-weight: 500;
+    color: var(--dark-text);
+  }
+
+  .metodo-pago-btn.active {
+    border-color: var(--primary);
+    background: var(--light-bg);
+    color: var(--primary);
+  }
+
+  .metodo-pago-btn:hover {
+    border-color: var(--primary);
+  }
+
+  .pago-form {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .pago-form.active {
+    display: block;
+  }
+
+  #cardNumberContainer,
+  #expirationDateContainer,
+  #securityCodeContainer {
+    margin-bottom: 12px;
+  }
+
+  .StripeElement {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  .StripeElement--focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(184, 129, 139, 0.1);
+  }
+
+  #paypal-button-container {
+    margin-top: 12px;
+  }
+
+  .metodo-hidden {
+    display: none !important;
+  }
+
+  .checkout-resumen {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+  }
+
+  .checkout-resumen h3 {
+    margin: 0 0 16px;
+    font-size: 1rem;
+    color: var(--dark-text);
+  }
+
+  .resumen-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .resumen-item:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .resumen-total {
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 12px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--primary);
+  }
+
+  .btn-pagar {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.2s;
+  }
+
+  .btn-pagar:hover {
+    background: var(--accent);
+  }
+
+  .btn-pagar:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .error-message {
+    background: #fef0f0;
+    border: 1px solid #e8d5d5;
+    color: #c33;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .success-message {
+    background: #d1e7dd;
+    border: 1px solid #badbcc;
+    color: #0f5132;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .info-box {
+    background: #f0f7ff;
+    border-left: 4px solid var(--primary);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--dark-text);
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .checkout-container {
+      grid-template-columns: 1fr;
+    }
+
+    .checkout-resumen {
+      position: static;
+    }
+
+    .metodos-pago {
+      grid-template-columns: 1fr;
+    }
+
+    .metodos-pago.argentina {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <svg width="40" height="40" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="150" cy="150" r="148" fill="white" stroke="#b8818b" stroke-width="2"/>
+        <g opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <g transform="rotate(120 150 150)" opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <g transform="rotate(240 150 150)" opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <circle cx="150" cy="150" r="35" fill="#b8818b"/>
+        <circle cx="150" cy="150" r="30" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+        <text x="150" y="160" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle" dy="0.3em">미</text>
+      </svg>
+      <div>
+        <h1 style="margin: 0; font-size: 1.4rem;">COCA</h1>
+        <p style="margin: 0; font-size: 0.85rem; opacity: 0.7;">K-Beauty CDE</p>
+      </div>
+    </div>
+    <p>Finalizar compra</p>
+  </header>
+
+  <main>
+    <div class="checkout-container">
+      <div>
+        <div id="error-msg" class="error-message"></div>
+        <div id="success-msg" class="success-message"></div>
+
+        <form id="checkout-form" onsubmit="handleCheckout(event)">
+          <div class="checkout-form">
+            <h2>Finalizar compra</h2>
+
+            <div class="form-section">
+              <h3>Datos personales</h3>
+              <div class="form-group">
+                <label for="nombre">Nombre completo *</label>
+                <input type="text" id="nombre" name="nombre" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="telefono">Teléfono/WhatsApp *</label>
+                <input type="tel" id="telefono" name="telefono" required>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3>Dirección de envío</h3>
+              <div class="form-group">
+                <label for="direccion">Calle y número *</label>
+                <input type="text" id="direccion" name="direccion" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="ciudad">Ciudad *</label>
+                  <input type="text" id="ciudad" name="ciudad" required>
+                </div>
+                <div class="form-group">
+                  <label for="cp">Código postal *</label>
+                  <input type="text" id="cp" name="cp" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="provincia">Provincia/Región *</label>
+                <input type="text" id="provincia" name="provincia" required>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3>Método de pago</h3>
+              <div id="metodos-container" class="metodos-pago">
+                <button type="button" class="metodo-pago-btn active" data-metodo="mercadopago" onclick="selectMetodo('mercadopago')">
+                  💳 Mercado Pago
+                </button>
+                <button type="button" class="metodo-pago-btn metodo-hidden" data-metodo="stripe" onclick="selectMetodo('stripe')">
+                  💳 Stripe
+                </button>
+                <button type="button" class="metodo-pago-btn metodo-hidden" data-metodo="paypal" onclick="selectMetodo('paypal')">
+                  🅿️ PayPal
+                </button>
+                <button type="button" class="metodo-pago-btn" data-metodo="transferencia" onclick="selectMetodo('transferencia')">
+                  🏦 Transferencia
+                </button>
+              </div>
+
+              <!-- Mercado Pago -->
+              <div id="mercadopago-form" class="pago-form active">
+                <div class="info-box">
+                  Ingresa los datos de tu tarjeta. Tu información es segura y encriptada.
+                </div>
+                <div id="cardNumberContainer"></div>
+                <div class="form-row">
+                  <div id="expirationDateContainer"></div>
+                  <div id="securityCodeContainer"></div>
+                </div>
+              </div>
+
+              <!-- Stripe -->
+              <div id="stripe-form" class="pago-form">
+                <div class="info-box">
+                  Ingresa los datos de tu tarjeta. Tu información es segura y encriptada por Stripe.
+                </div>
+                <div id="card-element"></div>
+                <div id="card-errors" style="color: #d32f2f; margin-top: 10px;"></div>
+              </div>
+
+              <!-- PayPal -->
+              <div id="paypal-form" class="pago-form">
+                <div class="info-box">
+                  Haz clic en el botón de PayPal para completar el pago de forma segura.
+                </div>
+                <div id="paypal-button-container"></div>
+              </div>
+
+              <!-- Transferencia -->
+              <div id="transferencia-form" class="pago-form">
+                <div class="info-box">
+                  <strong>📋 Instrucciones de transferencia:</strong><br>
+                  Alias: <strong id="alias-pesos">kbeautycde.com</strong><br>
+                  O para dólares: <strong id="alias-dolares">kbeautycde</strong><br>
+                  <br>
+                  Después de transferir, confirmá el pago en WhatsApp al +54 9 3855 756444.
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-pagar" id="btn-submit">
+              Confirmar pago
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="checkout-resumen">
+        <h3>Resumen de tu compra</h3>
+        <div id="resumen-items"></div>
+        <div class="resumen-item">
+          <span>Subtotal:</span>
+          <strong id="resumen-subtotal">$0</strong>
+        </div>
+        <div class="resumen-item">
+          <span>Envío:</span>
+          <strong id="resumen-envio">$0</strong>
+        </div>
+        <div id="resumen-descuento" class="resumen-item" style="display: none;">
+          <span>Descuento:</span>
+          <strong id="resumen-desc-valor" style="color: #4ade80;">-$0</strong>
+        </div>
+        <div class="resumen-total">
+          Total: <span id="resumen-total">$0</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ============= CONFIGURACIÓN GLOBAL =============
+    const mp = new MercadoPago('TEST-a1234567-1234-1234-1234-1234567890ab');
+    const stripe = Stripe('pk_test_123456789'); // Reemplazar con clave TEST
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+
+    let metodoActual = 'mercadopago';
+    let paisActual = 'AR';
+    let paypalLoaded = false;
+
+    // ============= INICIALIZACIÓN DE MÉTODOS DE PAGO =============
+    function initializePaymentMethods() {
+      const checkoutData = JSON.parse(localStorage.getItem('checkout_data')) || {};
+      paisActual = checkoutData.pais || 'AR';
+
+      // Mostrar/ocultar métodos según país
+      const metodosBotones = document.querySelectorAll('.metodo-pago-btn');
+      const metodosMercadopago = document.querySelector('[data-metodo="mercadopago"]');
+      const metodosStripe = document.querySelector('[data-metodo="stripe"]');
+      const metodosPaypal = document.querySelector('[data-metodo="paypal"]');
+      const metodosTransferencia = document.querySelector('[data-metodo="transferencia"]');
+      const container = document.getElementById('metodos-container');
+
+      if (paisActual === 'AR') {
+        // Argentina: Mercado Pago + Transferencia
+        container.classList.add('argentina');
+        metodosStripe?.classList.add('metodo-hidden');
+        metodosPaypal?.classList.add('metodo-hidden');
+        metodoActual = 'mercadopago';
+      } else {
+        // Otros países: Stripe + PayPal
+        container.classList.remove('argentina');
+        metodosMercadopago?.classList.add('metodo-hidden');
+        metodosTransferencia?.classList.add('metodo-hidden');
+        metodosStripe?.classList.remove('metodo-hidden');
+        metodosPaypal?.classList.remove('metodo-hidden');
+        metodoActual = 'stripe';
+      }
+
+      selectMetodo(metodoActual);
+    }
+
+    // ============= SELECTOR DE MÉTODO DE PAGO =============
+    function selectMetodo(metodo) {
+      metodoActual = metodo;
+
+      // Actualizar botones activos
+      document.querySelectorAll('.metodo-pago-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-metodo') === metodo) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Ocultar todos los formularios
+      document.querySelectorAll('.pago-form').forEach(form => {
+        form.classList.remove('active');
+      });
+
+      // Mostrar formulario seleccionado
+      const formMap = {
+        'mercadopago': 'mercadopago-form',
+        'stripe': 'stripe-form',
+        'paypal': 'paypal-form',
+        'transferencia': 'transferencia-form'
+      };
+
+      const selectedForm = document.getElementById(formMap[metodo]);
+      if (selectedForm) {
+        selectedForm.classList.add('active');
+      }
+
+      // Inicializar Stripe/PayPal si es necesario
+      if (metodo === 'stripe' && !cardElement.getParent()) {
+        cardElement.mount('#card-element');
+      }
+
+      if (metodo === 'paypal' && !paypalLoaded) {
+        initializePayPal();
+      }
+    }
+
+    // ============= STRIPE =============
+    function initializeStripe() {
+      if (!cardElement.getParent()) {
+        cardElement.mount('#card-element');
+      }
+
+      cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
+    }
+
+    async function procesarStripe(data) {
+      const checkoutData = JSON.parse(localStorage.getItem('checkout_data')) || {};
+
+      const { token } = await stripe.createToken(cardElement);
+
+      if (token) {
+        fetch('/api/checkout/stripe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...data,
+            token: token.id,
+            amount: Math.round(checkoutData.total * 100)
+          })
+        })
+        .then(r => r.json())
+        .then(result => {
+          if (result.success) {
+            localStorage.removeItem('carrito_kbeautycde');
+            localStorage.removeItem('checkout_data');
+            showSuccess('¡Pago procesado con Stripe! Recibirás confirmación por email.');
+            setTimeout(() => window.location.href = '/checkout-success', 2000);
+          } else {
+            showError(result.error);
+          }
+        })
+        .catch(err => showError(err.message));
+      } else {
+        showError('Error al procesar tarjeta');
+      }
+    }
+
+    // ============= PAYPAL =============
+    function initializePayPal() {
+      const checkoutData = JSON.parse(localStorage.getItem('checkout_data')) || {};
+
+      paypal.Buttons({
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: (checkoutData.total / 100).toFixed(2) // PayPal requiere USD/valor
+              }
+            }]
+          });
+        },
+        onApprove: async (data, actions) => {
+          const order = await actions.order.capture();
+
+          // Procesar en backend
+          const formData = {
+            nombre: document.getElementById('nombre').value,
+            email: document.getElementById('email').value,
+            telefono: document.getElementById('telefono').value,
+            direccion: document.getElementById('direccion').value,
+            ciudad: document.getElementById('ciudad').value,
+            cp: document.getElementById('cp').value,
+            provincia: document.getElementById('provincia').value,
+            metodo: 'paypal',
+            paypalOrderId: order.id
+          };
+
+          fetch('/api/checkout/paypal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          })
+          .then(r => r.json())
+          .then(result => {
+            if (result.success) {
+              localStorage.removeItem('carrito_kbeautycde');
+              localStorage.removeItem('checkout_data');
+              showSuccess('¡Pago procesado con PayPal! Recibirás confirmación por email.');
+              setTimeout(() => window.location.href = '/checkout-success', 2000);
+            } else {
+              showError(result.error);
+            }
+          });
+        },
+        onError: (err) => {
+          showError('Error en PayPal: ' + err.message);
+        }
+      }).render('#paypal-button-container');
+
+      paypalLoaded = true;
+    }
+
+    // ============= MERCADO PAGO =============
+    async function procesarMercadoPago(data) {
+      fetch('/api/checkout/mercadopago', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(r => r.json())
+      .then(result => {
+        if (result.success) {
+          window.location.href = result.checkout_url;
+        } else {
+          showError(result.error);
+        }
+      })
+      .catch(err => showError(err.message));
+    }
+
+    // ============= TRANSFERENCIA =============
+    async function procesarTransferencia(data) {
+      fetch('/api/checkout/transferencia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(r => r.json())
+      .then(result => {
+        if (result.success) {
+          localStorage.removeItem('carrito_kbeautycde');
+          localStorage.removeItem('checkout_data');
+          showSuccess('¡Compra creada! Recibirás instrucciones de transferencia en tu WhatsApp.');
+          setTimeout(() => window.location.href = '/checkout-pending', 2000);
+        } else {
+          showError(result.error);
+        }
+      })
+      .catch(err => showError(err.message));
+    }
+
+    // ============= MANEJADOR PRINCIPAL DE CHECKOUT =============
+    function handleCheckout(event) {
+      event.preventDefault();
+
+      const formData = {
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value,
+        telefono: document.getElementById('telefono').value,
+        direccion: document.getElementById('direccion').value,
+        ciudad: document.getElementById('ciudad').value,
+        cp: document.getElementById('cp').value,
+        provincia: document.getElementById('provincia').value,
+        metodo: metodoActual,
+        items: JSON.parse(localStorage.getItem('checkout_data'))
+      };
+
+      switch(metodoActual) {
+        case 'mercadopago':
+          procesarMercadoPago(formData);
+          break;
+        case 'stripe':
+          procesarStripe(formData);
+          break;
+        case 'paypal':
+          // PayPal maneja su propio flujo mediante botones
+          showError('Por favor haz clic en el botón de PayPal para continuar');
+          break;
+        case 'transferencia':
+          procesarTransferencia(formData);
+          break;
+      }
+    }
+
+    // ============= UTILIDADES =============
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = '❌ ' + msg;
+      el.style.display = 'block';
+      setTimeout(() => {
+        el.style.display = 'none';
+      }, 5000);
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('success-msg');
+      el.textContent = '✅ ' + msg;
+      el.style.display = 'block';
+    }
+
+    function formatNumber(num) {
+      return Math.round(num).toLocaleString('es-AR');
+    }
+
+    function loadResumen() {
+      const data = JSON.parse(localStorage.getItem('checkout_data')) || {};
+
+      document.getElementById('resumen-items').innerHTML = (data.items || [])
+        .map(item => `
+          <div class="resumen-item">
+            <span>${item.nombre} x${item.cantidad}</span>
+            <strong>$${formatNumber(item.precio * item.cantidad)}</strong>
+          </div>
+        `)
+        .join('');
+
+      document.getElementById('resumen-subtotal').textContent = `$${formatNumber(data.subtotal || 0)}`;
+      document.getElementById('resumen-envio').textContent = `$${formatNumber(data.envio || 0)}`;
+      document.getElementById('resumen-total').textContent = `$${formatNumber(data.total || 0)}`;
+
+      if (data.descuento > 0) {
+        document.getElementById('resumen-descuento').style.display = 'flex';
+        document.getElementById('resumen-desc-valor').textContent = `-$${formatNumber(data.descuento)}`;
+      }
+    }
+
+    // ============= INICIALIZACIÓN AL CARGAR =============
+    document.addEventListener('DOMContentLoaded', () => {
+      loadResumen();
+      initializePaymentMethods();
+      initializeStripe();
+    });
+  </script>
+</body>
+</html>

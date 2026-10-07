@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COCA · Carrito de compras</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .carrito-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 30px;
+    padding: 20px;
+  }
+
+  .carrito-vacio {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--light-text);
+  }
+
+  .carrito-vacio svg {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+  }
+
+  .carrito-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .carrito-item {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+  }
+
+  .carrito-item-imagen {
+    width: 100px;
+    height: 100px;
+    background: var(--light-bg);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .carrito-item-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .carrito-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .carrito-item-titulo {
+    font-weight: 600;
+    color: var(--dark-text);
+  }
+
+  .carrito-item-tienda {
+    font-size: 0.85rem;
+    color: var(--light-text);
+  }
+
+  .carrito-item-precio {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.1rem;
+  }
+
+  .carrito-item-controles {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cantidad-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .cantidad-control button {
+    background: transparent;
+    border: none;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .cantidad-control input {
+    width: 40px;
+    border: none;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .carrito-item-eliminar {
+    background: transparent;
+    border: none;
+    color: #d32f2f;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .carrito-resumen {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+  }
+
+  .carrito-resumen h3 {
+    margin: 0 0 16px;
+    font-size: 1rem;
+    color: var(--dark-text);
+  }
+
+  .resumen-fila {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: var(--dark-text);
+  }
+
+  .resumen-fila.total {
+    border-top: 2px solid var(--border);
+    padding-top: 12px;
+    margin-top: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary);
+  }
+
+  .resumen-fila.descuento {
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  .carrito-acciones {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-checkout {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-checkout:hover {
+    background: var(--accent);
+  }
+
+  .btn-seguir-comprando {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-seguir-comprando:hover {
+    background: var(--light-bg);
+  }
+
+  .pais-selector {
+    margin-bottom: 16px;
+  }
+
+  .pais-selector label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--dark-text);
+  }
+
+  .pais-selector select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .carrito-container {
+      grid-template-columns: 1fr;
+    }
+
+    .carrito-resumen {
+      position: static;
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <svg width="40" height="40" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="150" cy="150" r="148" fill="white" stroke="#b8818b" stroke-width="2"/>
+        <g opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <g transform="rotate(120 150 150)" opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <g transform="rotate(240 150 150)" opacity="0.8"><path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="#b8818b"/></g>
+        <circle cx="150" cy="150" r="35" fill="#b8818b"/>
+        <circle cx="150" cy="150" r="30" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+        <text x="150" y="160" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle" dy="0.3em">미</text>
+      </svg>
+      <div>
+        <h1 style="margin: 0; font-size: 1.4rem;">COCA</h1>
+        <p style="margin: 0; font-size: 0.85rem; opacity: 0.7;">K-Beauty CDE</p>
+      </div>
+    </div>
+    <p>Tu carrito de compras</p>
+    <nav class="admin-nav">
+      <a href="/">Inicio</a>
+      <a href="/piel" target="_blank" rel="noopener">↗ Ver página pública</a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="carrito-vacio-msg" class="carrito-vacio" style="display: none;">
+      <p><strong>Tu carrito está vacío</strong></p>
+      <p style="font-size: 0.9rem;">Explora nuestros productos y agrega los que te gusten.</p>
+      <a href="/piel" style="color: var(--primary); text-decoration: none; font-weight: 600;">← Volver a comprar</a>
+    </div>
+
+    <div id="carrito-contenido" class="carrito-container" style="display: none;">
+      <div>
+        <div class="carrito-items" id="carrito-items"></div>
+      </div>
+
+      <div>
+        <div class="carrito-resumen">
+          <h3>Resumen</h3>
+
+          <div class="pais-selector">
+            <label for="pais-select">País de envío</label>
+            <select id="pais-select">
+              <option value="AR">Argentina 🇦🇷</option>
+              <option value="PY">Paraguay 🇵🇾</option>
+              <option value="BR">Brasil 🇧🇷</option>
+              <option value="UY">Uruguay 🇺🇾</option>
+              <option value="OTHER">Otro país</option>
+            </select>
+          </div>
+
+          <div class="resumen-fila">
+            <span>Subtotal:</span>
+            <span id="subtotal">$0</span>
+          </div>
+
+          <div class="resumen-fila">
+            <span>Envío:</span>
+            <span id="envio">Calculando...</span>
+          </div>
+
+          <div id="descuento-fila" class="resumen-fila descuento" style="display: none;">
+            <span>Descuento:</span>
+            <span id="descuento">-$0</span>
+          </div>
+
+          <div class="resumen-fila total">
+            <span>Total:</span>
+            <span id="total">$0</span>
+          </div>
+
+          <p style="font-size: 0.75rem; color: var(--light-text); margin: 12px 0 0; text-align: center;">
+            Impuestos incluidos donde corresponde
+          </p>
+
+          <div class="carrito-acciones">
+            <button class="btn-checkout" onclick="proceedToCheckout()">
+              Continuar al pago
+            </button>
+            <a href="/piel" class="btn-seguir-comprando" style="text-align: center; text-decoration: none;">
+              Seguir comprando
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/carrito.js"></script>
+</body>
+</html>

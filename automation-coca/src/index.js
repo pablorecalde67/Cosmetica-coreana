@@ -8,6 +8,7 @@ import checkoutRouter from './routes/checkout.js';
 import shippingRouter from './routes/shipping.js';
 import webhooksRouter from './routes/webhooks.js';
 import instagramRouter from './routes/instagram.js';
+import adminRouter from './routes/admin.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import { startWhatsapp } from './whatsapp.js';
@@ -29,6 +30,7 @@ app.use('/api/checkout', checkoutRouter);
 app.use('/api/shipping', shippingRouter);
 app.use('/api/webhooks', webhooksRouter);
 app.use('/api/instagram', instagramRouter);
+app.use('/api/admin', adminRouter);
 app.use('/', whatsappSetupRouter);
 
 app.listen(config.port, () => {

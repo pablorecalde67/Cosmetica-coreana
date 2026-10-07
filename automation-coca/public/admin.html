@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Panel · COCA</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      color: #b8818b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .nav-btn {
+      padding: 12px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--light-bg);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .nav-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .section {
+      display: none;
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-top: 0;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 12px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--light-bg);
+      padding: 16px;
+      border-radius: 6px;
+      text-align: center;
+      border-left: 4px solid var(--primary);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 8px 0;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: var(--light-bg);
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    tr:hover {
+      background: var(--light-bg);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge.paid {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .badge.pending {
+      background: #fff3cd;
+      color: #664d03;
+    }
+
+    .badge.failed {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .error-msg {
+      background: #f8d7da;
+      color: #842029;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .success-msg {
+      background: #d1e7dd;
+      color: #0f5132;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .chart-bar {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      height: 20px;
+      border-radius: 4px;
+      margin: 8px 0;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      justify-content: center;
+    }
+
+    .pagination button {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .pagination button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .modal-close {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <header>
+      <h1>🔐 Admin Panel — COCA</h1>
+      <div class="admin-nav">
+        <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
+        <button class="nav-btn" onclick="showSection('orders')">Órdenes</button>
+        <button class="nav-btn" onclick="showSection('products')">Productos</button>
+        <button class="nav-btn" onclick="showSection('analytics')">Analytics</button>
+        <button class="nav-btn" onclick="showSection('webhooks')">Webhooks</button>
+        <button class="nav-btn" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="section active">
+      <h2>📊 Dashboard</h2>
+      <div id="stats-grid" class="stat-grid"></div>
+      <div id="health-status"></div>
+    </div>
+
+    <!-- ÓRDENES -->
+    <div id="orders" class="section">
+      <h2>📦 Órdenes</h2>
+      <div class="error-msg" id="orders-error"></div>
+      <div class="success-msg" id="orders-success"></div>
+
+      <div style="margin-bottom: 16px;">
+        <input type="text" id="order-search" placeholder="Buscar por ID o cliente..." style="width: 300px;">
+        <select id="order-status-filter" style="width: 150px; margin-left: 8px;">
+          <option value="">Todos los estados</option>
+          <option value="paid">Pagado</option>
+          <option value="pending">Pendiente</option>
+          <option value="payment_failed">Fallido</option>
+        </select>
+      </div>
+
+      <table id="orders-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Método</th>
+            <th>País</th>
+            <th>Fecha</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody">
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <div id="products" class="section">
+      <h2>🛍️ Productos</h2>
+      <div class="error-msg" id="products-error"></div>
+      <div class="success-msg" id="products-success"></div>
+
+      <button class="btn-primary" onclick="openProductModal()">+ Nuevo Producto</button>
+
+      <div style="margin-top: 16px; margin-bottom: 16px;">
+        <input type="text" id="product-search" placeholder="Buscar productos...">
+      </div>
+
+      <table id="products-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Moneda</th>
+            <th>Fuente</th>
+            <th>Creado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="products-tbody">
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div id="analytics" class="section">
+      <h2>📈 Analytics</h2>
+      <div id="analytics-content"></div>
+    </div>
+
+    <!-- WEBHOOKS -->
+    <div id="webhooks" class="section">
+      <h2>🔗 Webhooks</h2>
+      <div id="webhooks-content"></div>
+    </div>
+  </div>
+
+  <!-- MODAL PRODUCTO -->
+  <div id="product-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeProductModal()">✕</span>
+      <h3>Nuevo Producto</h3>
+      <div class="error-msg" id="modal-error"></div>
+
+      <form id="product-form" onsubmit="saveProduct(event)">
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input type="text" id="product-nombre" required>
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="product-descripcion"></textarea>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>Precio *</label>
+            <input type="number" id="product-precio" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>Moneda</label>
+            <select id="product-moneda">
+              <option value="ARS">ARS</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>URL Imagen</label>
+          <input type="url" id="product-imagen">
+        </div>
+        <button type="submit" class="btn-primary">Guardar Producto</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = '/api/admin';
+    let authToken = localStorage.getItem('admin_token') || '';
+
+    // ============= AUTENTICACIÓN =============
+    function getHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      };
+    }
+
+    function logout() {
+      localStorage.removeItem('admin_token');
+      authToken = '';
+      prompt('Token removido. Ingresa el admin token:');
+    }
+
+    function setToken(token) {
+      authToken = token;
+      localStorage.setItem('admin_token', token);
+    }
+
+    // ============= NAVEGACIÓN =============
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      document.getElementById(sectionId).classList.add('active');
+      event.target.classList.add('active');
+
+      if (sectionId === 'dashboard') loadDashboard();
+      if (sectionId === 'orders') loadOrders();
+      if (sectionId === 'products') loadProducts();
+      if (sectionId === 'analytics') loadAnalytics();
+      if (sectionId === 'webhooks') loadWebhooks();
+    }
+
+    // ============= DASHBOARD =============
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API_URL}/health`, { headers: getHeaders() });
+        const data = await res.json();
+
+        const statsRes = await fetch(`${API_URL}/analytics`, { headers: getHeaders() });
+        const stats = await statsRes.json();
+
+        if (stats.success) {
+          const grid = document.getElementById('stats-grid');
+          grid.innerHTML = `
+            <div class="stat-card">
+              <div class="stat-label">Total Órdenes</div>
+              <div class="stat-value">${stats.stats.totalOrders}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Revenue Total</div>
+              <div class="stat-value">$${stats.stats.totalRevenue.toLocaleString()}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Orden Promedio</div>
+              <div class="stat-value">$${stats.stats.averageOrderValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+      }
+    }
+
+    // ============= ÓRDENES =============
+    async function loadOrders() {
+      try {
+        const res = await fetch(`${API_URL}/orders`, { headers: getHeaders() });
+        const data = await res.json();
+
+        if (data.success) {
+          const tbody = document.getElementById('orders-tbody');
+          tbody.innerHTML = data.orders.map(order => `
+            <tr>
+              <td><strong>${order.id}</strong></td>
+              <td>${order.nombre || '—'}</td>
+              <td>$${order.total || 0}</td>
+              <td><span class="badge ${order.status}">${order.status}</span></td>
+              <td>${order.metodo || '—'}</td>
+              <td>${order.pais || '—'}</td>
+              <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+              <td><button class="btn-primary" onclick="viewOrder('${order.id}')">Ver</button></td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        showError('orders-error', err.message);
+      }
+    }
+
+    function viewOrder(orderId) {
+      alert(`Ver orden: ${orderId}\n(Implementar detalle en próxima versión)`);
+    }
+
+    // ============= PRODUCTOS =============
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${API_URL}/products`, { headers: getHeaders() });
+        const data = await res.json();
+
+        if (data.success) {
+          const tbody = document.getElementById('products-tbody');
+          tbody.innerHTML = data.products.map(product => `
+            <tr>
+              <td>${product.nombre}</td>
+              <td>$${product.precio}</td>
+              <td>${product.moneda}</td>
+              <td>${product.fuente}</td>
+              <td>${new Date(product.createdAt).toLocaleDateString()}</td>
+              <td>
+                <button class="btn-primary" style="font-size: 0.85rem; padding: 6px 10px;" onclick="deleteProduct('${product.id}')">Eliminar</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        showError('products-error', err.message);
+      }
+    }
+
+    function openProductModal() {
+      document.getElementById('product-modal').classList.add('active');
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-modal').classList.remove('active');
+      document.getElementById('product-form').reset();
+    }
+
+    async function saveProduct(event) {
+      event.preventDefault();
+
+      const product = {
+        nombre: document.getElementById('product-nombre').value,
+        descripcion: document.getElementById('product-descripcion').value,
+        precio: parseFloat(document.getElementById('product-precio').value),
+        moneda: document.getElementById('product-moneda').value,
+        imagen: document.getElementById('product-imagen').value
+      };
+
+      try {
+        const res = await fetch(`${API_URL}/products`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(product)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showSuccess('products-success', 'Producto creado exitosamente');
+          closeProductModal();
+          loadProducts();
+        } else {
+          showError('modal-error', data.error);
+        }
+      } catch (err) {
+        showError('modal-error', err.message);
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (confirm('¿Eliminar este producto?')) {
+        try {
+          const res = await fetch(`${API_URL}/products/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            showSuccess('products-success', 'Producto eliminado');
+            loadProducts();
+          }
+        } catch (err) {
+          showError('products-error', err.message);
+        }
+      }
+    }
+
+    // ============= ANALYTICS =============
+    async function loadAnalytics() {
+      try {
+        const res = await fetch(`${API_URL}/analytics`, { headers: getHeaders() });
+        const data = await res.json();
+
+        if (data.success) {
+          const stats = data.stats;
+          let html = `
+            <div class="stat-grid">
+              <div class="stat-card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">$${stats.totalRevenue.toLocaleString()}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Total Orders</div>
+                <div class="stat-value">${stats.totalOrders}</div>
+              </div>
+            </div>
+            <h3>Órdenes por Estado</h3>
+          `;
+
+          for (const [status, count] of Object.entries(stats.ordersByStatus)) {
+            const percentage = (count / stats.totalOrders) * 100;
+            html += `
+              <div style="margin-bottom: 16px;">
+                <div>${status}: ${count}</div>
+                <div class="chart-bar" style="width: ${percentage}%"></div>
+              </div>
+            `;
+          }
+
+          document.getElementById('analytics-content').innerHTML = html;
+        }
+      } catch (err) {
+        console.error('Error loading analytics:', err);
+      }
+    }
+
+    // ============= WEBHOOKS =============
+    async function loadWebhooks() {
+      try {
+        const res = await fetch(`${API_URL}/webhooks`, { headers: getHeaders() });
+        const data = await res.json();
+
+        if (data.success) {
+          let html = '<table><tr><th>Proveedor</th><th>Configurado</th><th>Estado</th></tr>';
+
+          for (const [provider, webhook] of Object.entries(data.webhooks)) {
+            const badge = webhook.configured ? '✅ Sí' : '❌ No';
+            html += `
+              <tr>
+                <td>${provider}</td>
+                <td>${badge}</td>
+                <td><span class="badge pending">${webhook.status}</span></td>
+              </tr>
+            `;
+          }
+
+          html += '</table>';
+          document.getElementById('webhooks-content').innerHTML = html;
+        }
+      } catch (err) {
+        console.error('Error loading webhooks:', err);
+      }
+    }
+
+    // ============= HELPERS =============
+    function showError(elementId, message) {
+      const el = document.getElementById(elementId);
+      el.textContent = '❌ ' + message;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 5000);
+    }
+
+    function showSuccess(elementId, message) {
+      const el = document.getElementById(elementId);
+      el.textContent = '✅ ' + message;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 3000);
+    }
+
+    // ============= INIT =============
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!authToken) {
+        const token = prompt('Ingresa el Admin Token:');
+        if (token) setToken(token);
+      }
+      loadDashboard();
+    });
+  </script>
+</body>
+</html>

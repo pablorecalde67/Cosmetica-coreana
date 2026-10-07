@@ -53,6 +53,26 @@ export const config = {
   // build (se toma en cada pedido desde la variable de entorno).
   transferAlias: process.env.TRANSFER_ALIAS || 'ALIAS.PENDIENTE.DE.CARGAR',
   transferHolderName: process.env.TRANSFER_HOLDER_NAME || '',
+
+  // --- Instagram Scraper ---
+  // Credenciales de Instagram para scraping automático de albums privados
+  instagramUsername: process.env.INSTAGRAM_USERNAME || '',
+  instagramPassword: process.env.INSTAGRAM_PASSWORD || '',
+  instagramAlbumUrl: process.env.INSTAGRAM_ALBUM_URL || '',
+  // Intervalo de scraping automático en minutos (0 = deshabilitado)
+  instagramSyncInterval: Number(process.env.INSTAGRAM_SYNC_INTERVAL || 0),
+
+  // --- Stripe & PayPal ---
+  stripePublicKey: process.env.STRIPE_PUBLIC_KEY || 'pk_test_123456789',
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+  paypalClientId: process.env.PAYPAL_CLIENT_ID || 'TEST-sandbox-id',
+  paypalClientSecret: process.env.PAYPAL_CLIENT_SECRET || '',
+  paypalWebhookId: process.env.PAYPAL_WEBHOOK_ID || '',
+
+  // --- Envíos ---
+  andreaniApiKey: process.env.ANDREANI_API_KEY || '',
+  shippoApiKey: process.env.SHIPPO_API_KEY || '',
 };
 
 export function isMetaConfigured() {
@@ -65,4 +85,16 @@ export function isPublicUrlConfigured() {
 
 export function isEmailConfigured() {
   return Boolean(config.emailUser && config.emailAppPassword);
+}
+
+export function isInstagramConfigured() {
+  return Boolean(config.instagramUsername && config.instagramPassword && config.instagramAlbumUrl);
+}
+
+export function isStripeConfigured() {
+  return Boolean(config.stripeSecretKey && config.stripeWebhookSecret);
+}
+
+export function isPayPalConfigured() {
+  return Boolean(config.paypalClientSecret && config.paypalWebhookId);
 }

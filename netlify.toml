@@ -4,21 +4,11 @@
   command = "echo 'Build complete'"
 
 [[redirects]]
-from = "/test"
-to = "/.netlify/functions/test"
-status = 200
-
-[[redirects]]
-from = "/simple-test"
-to = "/.netlify/functions/tiendas-api-simple"
-status = 200
-
-[[redirects]]
 from = "/api/tiendas"
-to = "/.netlify/functions/tiendas-api"
+to = "/.netlify/functions/tiendas-api-working"
 status = 200
 
 [[redirects]]
 from = "/api/tiendas/:id"
-to = "/.netlify/functions/tiendas-api"
+to = "/.netlify/functions/tiendas-api-working"
 status = 200

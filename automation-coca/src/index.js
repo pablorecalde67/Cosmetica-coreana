@@ -9,10 +9,12 @@ import shippingRouter from './routes/shipping.js';
 import webhooksRouter from './routes/webhooks.js';
 import instagramRouter from './routes/instagram.js';
 import adminRouter from './routes/admin.js';
+import monitoringRouter from './routes/monitoring.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import { startWhatsapp } from './whatsapp.js';
 import { startEmailIngest } from './email.js';
+import monitor from './monitoring.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +26,9 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/media', express.static(MEDIA_DIR));
 
+// Monitoring middleware
+app.use(monitor.middleware());
+
 app.use('/api/piel', pielRouter);
 app.use('/api', apiRouter);
 app.use('/api/checkout', checkoutRouter);
@@ -31,6 +36,7 @@ app.use('/api/shipping', shippingRouter);
 app.use('/api/webhooks', webhooksRouter);
 app.use('/api/instagram', instagramRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/monitoring', monitoringRouter);
 app.use('/', whatsappSetupRouter);
 
 app.listen(config.port, () => {

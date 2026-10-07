@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Beauty CDE · Cosmética Coreana</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #b8818b;
+      --secondary: #d4a5a5;
+      --accent: #a68a8a;
+      --light: #f5f1f0;
+      --dark: #2a2a2a;
+      --text: #3a3a3a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background: #ffffff;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid #f0f0f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    nav a {
+      margin-left: 32px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    /* Hero */
+    .hero {
+      height: 500px;
+      background: linear-gradient(135deg, #f5f1f0 0%, #ebe5e3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .hero-content h1 {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: var(--primary);
+      font-weight: 300;
+      letter-spacing: -1px;
+    }
+
+    .hero-content p {
+      font-size: 1.2rem;
+      color: var(--accent);
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: background 0.3s;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--light);
+    }
+
+    /* Section */
+    section {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 300;
+      margin-bottom: 48px;
+      text-align: center;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    /* Products Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    .product-card {
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 280px;
+      background: var(--light);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-name {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .product-price {
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .feature {
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .feature-text {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      background: var(--light);
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      margin-top: 48px;
+    }
+
+    .testimonial {
+      background: white;
+      padding: 32px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .testimonial-text {
+      color: var(--text);
+      margin-bottom: 16px;
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    .stars {
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+
+    /* Tiendas Section */
+    .tiendas-preview {
+      background: var(--light);
+    }
+
+    .tiendas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .tienda-card {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      transition: border-color 0.3s;
+    }
+
+    .tienda-card:hover {
+      border-color: var(--primary);
+    }
+
+    .tienda-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .tienda-category {
+      color: var(--accent);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .tienda-rating {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, var(--light) 0%, white 100%);
+    }
+
+    .cta-section h2 {
+      font-size: 2rem;
+      font-weight: 300;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--text);
+      color: white;
+      padding: 48px 20px;
+      margin-top: 80px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    .footer-section a {
+      display: block;
+      color: #ccc;
+      text-decoration: none;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .footer-section a:hover {
+      color: var(--secondary);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #444;
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+      }
+
+      nav a {
+        margin-left: 0;
+      }
+
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+
+      .hero-content p {
+        font-size: 1rem;
+      }
+
+      section {
+        padding: 40px 20px;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="logo">K-Beauty CDE</div>
+      <nav>
+        <a href="#productos">Productos</a>
+        <a href="#tiendas">Tiendas</a>
+        <a href="#analisis">Análisis de Piel</a>
+        <a href="#testimonios">Reseñas</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Belleza Coreana</h1>
+      <p>Descubre los mejores productos K-Beauty de Ciudad del Este</p>
+      <a href="/piel" class="btn">Analizar mi piel</a>
+      <a href="#productos" class="btn btn-secondary" style="margin-left: 12px;">Ver productos</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="caracteristicas">
+    <div class="section-title">¿Por qué elegir K-Beauty?</div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">✨</div>
+        <div class="feature-title">Productos Auténticos</div>
+        <div class="feature-text">Garantizamos 100% originalidad de todos nuestros productos directamente de Corea.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💎</div>
+        <div class="feature-title">Calidad Premium</div>
+        <div class="feature-text">Seleccionamos solo las mejores marcas y productos que funcionan realmente.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🚚</div>
+        <div class="feature-title">Envíos Rápidos</div>
+        <div class="feature-text">Recibe tus pedidos en los mejores tiempos a Ciudad del Este y zonas cercanas.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Productos -->
+  <section id="productos">
+    <div class="section-title">Productos Destacados</div>
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-image" style="background: linear-gradient(135deg, #ebe5e3, #d4a5a5);"></div>
+        <div class="product-name">Serum Facial Premium</div>
+        <div class="product-price">$45.000</div>
+        <a href="/productos.html" class="btn" style="font-size: 0.85rem; padding: 8px 20px;">Ver más</a>
+      </div>
+      <div class="product-card">
+        <div class="product-image" style="background: linear-gradient(135deg, #d4a5a5, #b8818b);"></div>
+        <div class="product-name">Mascarilla Hidratante</div>
+        <div class="product-price">$28.000</div>
+        <a href="/productos.html" class="btn" style="font-size: 0.85rem; padding: 8px 20px;">Ver más</a>
+      </div>
+      <div class="product-card">
+        <div class="product-image" style="background: linear-gradient(135deg, #f5f1f0, #a68a8a);"></div>
+        <div class="product-name">Tónico Facial</div>
+        <div class="product-price">$32.000</div>
+        <a href="/productos.html" class="btn" style="font-size: 0.85rem; padding: 8px 20px;">Ver más</a>
+      </div>
+      <div class="product-card">
+        <div class="product-image" style="background: linear-gradient(135deg, #b8818b, #ebe5e3);"></div>
+        <div class="product-name">Crema Facial Avanzada</div>
+        <div class="product-price">$52.000</div>
+        <a href="/productos.html" class="btn" style="font-size: 0.85rem; padding: 8px 20px;">Ver más</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tiendas -->
+  <section id="tiendas" class="tiendas-preview">
+    <div class="section-title">20 Tiendas Verificadas en Ciudad del Este</div>
+    <div class="tiendas-grid">
+      <div class="tienda-card">
+        <div class="tienda-name">MediCube CDE</div>
+        <div class="tienda-category">K-Beauty Skincare</div>
+        <div class="tienda-rating">⭐⭐⭐⭐⭐ 4.8</div>
+        <a href="/tiendas.html" class="btn" style="font-size: 0.85rem; padding: 8px 16px;">Ver tienda</a>
+      </div>
+      <div class="tienda-card">
+        <div class="tienda-name">Korean Essence</div>
+        <div class="tienda-category">Boutique Especializada</div>
+        <div class="tienda-rating">⭐⭐⭐⭐⭐ 4.8</div>
+        <a href="/tiendas.html" class="btn" style="font-size: 0.85rem; padding: 8px 16px;">Ver tienda</a>
+      </div>
+      <div class="tienda-card">
+        <div class="tienda-name">K-Beauty Direct</div>
+        <div class="tienda-category">Importador Directo</div>
+        <div class="tienda-rating">⭐⭐⭐⭐⭐ 4.9</div>
+        <a href="/tiendas.html" class="btn" style="font-size: 0.85rem; padding: 8px 16px;">Ver tienda</a>
+      </div>
+      <div class="tienda-card">
+        <div class="tienda-name">Piel Coreana</div>
+        <div class="tienda-category">Clínica Estética</div>
+        <div class="tienda-rating">⭐⭐⭐⭐⭐ 4.9</div>
+        <a href="/tiendas.html" class="btn" style="font-size: 0.85rem; padding: 8px 16px;">Ver tienda</a>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 48px;">
+      <a href="/tiendas.html" class="btn">Ver todas las 20 tiendas</a>
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section id="testimonios">
+    <div class="section-title">Lo que dicen nuestros clientes</div>
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Excelente calidad de productos. La recomendación de la IA para mi piel fue muy acertada. Mis amigas están todas celosas."</div>
+        <div class="testimonial-author">María, Ciudad del Este</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Encontré exactamente lo que necesitaba. El análisis de piel es súper preciso y los productos funcionan de verdad."</div>
+        <div class="testimonial-author">Lucía, Santiago del Estero</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"La mejor experiencia comprando K-Beauty. Los precios están bien y la atención es impecable. Voy a volver."</div>
+        <div class="testimonial-author">Sofía, Encarnación</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>¿Listo para descubrir tu rutina ideal?</h2>
+    <a href="/piel" class="btn">Comienza tu análisis de piel gratis</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Sobre nosotros</h3>
+        <a href="#">Quiénes somos</a>
+        <a href="#">Nuestras tiendas</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="footer-section">
+        <h3>Recursos</h3>
+        <a href="/piel">Análisis de piel</a>
+        <a href="/productos.html">Productos</a>
+        <a href="/tiendas.html">Tiendas</a>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <a href="https://wa.me/595972020202">WhatsApp</a>
+        <a href="mailto:info@kbeautycde.com">Email</a>
+        <a href="#">Instagram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 K-Beauty CDE. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+</body>
+</html>

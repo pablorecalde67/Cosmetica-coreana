@@ -9,6 +9,11 @@ to = "/.netlify/functions/test"
 status = 200
 
 [[redirects]]
+from = "/simple-test"
+to = "/.netlify/functions/tiendas-api-simple"
+status = 200
+
+[[redirects]]
 from = "/api/tiendas"
 to = "/.netlify/functions/tiendas-api"
 status = 200

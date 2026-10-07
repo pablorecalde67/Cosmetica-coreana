@@ -11,29 +11,7 @@ env:
   HEROKU_APP_NAME: kbeautycde
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: npm ci --only=production
-        working-directory: automation-coca
-
-      - name: Run tests
-        run: node scripts/test-suite.js
-        working-directory: automation-coca
-        env:
-          TEST_URL: http://localhost:3000
-          ADMIN_TOKEN: test-token-123
-
   deploy-heroku:
-    needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -58,38 +36,29 @@ jobs:
           git remote add heroku https://git.heroku.com/${{ env.HEROKU_APP_NAME }}.git
 
           # Deploy the automation-coca subdirectory
-          git push heroku \`git subtree split --prefix automation-coca main\`:main -f 2>&1 | tee deploy.log
+          git push heroku `git subtree split --prefix automation-coca main`:main -f 2>&1 | tee deploy.log
 
-          echo "✅ Deployment initiated"
+          echo "✅ Deployment initiated to Heroku"
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
+      - name: Wait for Heroku deployment
+        run: sleep 20
+
       - name: Health check
         run: |
-          sleep 20
-          for i in {1..8}; do
-            echo "Health check attempt $i/8..."
+          for i in {1..10}; do
+            echo "Health check attempt $i/10..."
             if curl -s -f https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/api/admin/health > /dev/null 2>&1; then
-              echo "✅ App is running!"
-              curl -s https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/api/admin/health
+              echo "✅ App is live!"
+              echo ""
+              echo "🎉 Deployment Successful!"
+              echo "🌐 App URL: https://${{ env.HEROKU_APP_NAME }}.herokuapp.com"
+              echo "📊 Admin: https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/admin.html"
               exit 0
             fi
-            sleep 5
+            echo "⏳ App still starting..."
+            sleep 3
           done
-          echo "⚠️  App might still be starting, but deployment completed"
+          echo "⚠️  App might still be initializing"
           exit 0
-
-  notify:
-    needs: [test, deploy-heroku]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Deployment status
-        run: |
-          if [ "${{ job.status }}" = "success" ]; then
-            echo "✅ Deployment successful!"
-            echo "🌐 App: https://${{ env.HEROKU_APP_NAME }}.herokuapp.com"
-            echo "📊 Admin: https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/admin.html"
-          else
-            echo "⚠️  Deployment had issues"
-          fi

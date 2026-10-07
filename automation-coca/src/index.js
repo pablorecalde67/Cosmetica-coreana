@@ -24,6 +24,8 @@ import productsRouter from './routes/products.js';
 import cartRouter from './routes/cart.js';
 import usersRouter from './routes/users.js';
 import viralAutomationRouter from './routes/viral-automation.js';
+import notificationsRouter from './routes/notifications.js';
+import catalogLoaderRouter from './routes/catalog-loader.js';
 
 // Import advanced middleware
 import {
@@ -79,6 +81,12 @@ app.use('/api/users', usersRouter);
 
 // Viral automation routes (PHASE 3)
 app.use('/api/viral', viralAutomationRouter);
+
+// Notifications & Push (PHASE 3)
+app.use('/api/notifications', notificationsRouter);
+
+// Catalog loader & Products (PHASE 3)
+app.use('/api/catalog', catalogLoaderRouter);
 
 // Existing routes
 app.use('/api/piel', pielRouter);

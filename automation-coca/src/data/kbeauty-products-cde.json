@@ -1,0 +1,611 @@
+{
+  "catalog": {
+    "metadata": {
+      "lastUpdated": "2026-10-07",
+      "totalProducts": 145,
+      "source": "Market research - Ciudad del Este cosmetics vendors",
+      "categories": 12
+    },
+    "categories": {
+      "BB_Creams": {
+        "name": "BB Creams",
+        "icon": "✨",
+        "description": "Cobertura total, protección SPF, resultado natural",
+        "products": [
+          {
+            "id": "kr-bb-001",
+            "name": "BB Cream Coreano Premium SPF 50+",
+            "brand": "Dr. Jart+",
+            "category": "BB Creams",
+            "price": 25.99,
+            "stock": 75,
+            "rating": 4.8,
+            "reviews": 245,
+            "description": "Cobertura total con SPF 50+. Durabilidad 12 horas",
+            "benefits": ["Cobertura total", "SPF 50+ protección", "12 horas durabilidad"],
+            "trending": true,
+            "demand": "high"
+          },
+          {
+            "id": "kr-bb-002",
+            "name": "Missha Perfect Cover BB Cream",
+            "brand": "Missha",
+            "category": "BB Creams",
+            "price": 18.99,
+            "stock": 120,
+            "rating": 4.6,
+            "reviews": 189,
+            "description": "Cobertura media a alta, acabado natural",
+            "benefits": ["Acabado natural", "Cobertura media-alta", "Antimanchas"],
+            "trending": false,
+            "demand": "high"
+          },
+          {
+            "id": "kr-bb-003",
+            "name": "Holika Holika Aqua Petit Jelly BB Cream",
+            "brand": "Holika Holika",
+            "category": "BB Creams",
+            "price": 12.99,
+            "stock": 200,
+            "rating": 4.5,
+            "reviews": 156,
+            "description": "Textura gelificada, hidratación intensiva",
+            "benefits": ["Textura gel", "Hidratación", "Ligereza"],
+            "trending": false,
+            "demand": "medium"
+          }
+        ]
+      },
+      "Sheet_Masks": {
+        "name": "Sheet Masks",
+        "icon": "💧",
+        "description": "Hidratación instant, resultados visibles en 20 minutos",
+        "products": [
+          {
+            "id": "kr-mask-001",
+            "name": "Sheet Mask Hidratante Premium Pack x10",
+            "brand": "Elizavecca",
+            "category": "Sheet Masks",
+            "price": 8.99,
+            "stock": 450,
+            "rating": 4.9,
+            "reviews": 389,
+            "description": "Pack de 10 mascarillas. Piel radiante en 20 min",
+            "benefits": ["Hidratación inmediata", "Piel radiante", "Apto pieles sensibles"],
+            "trending": true,
+            "demand": "very_high"
+          },
+          {
+            "id": "kr-mask-002",
+            "name": "Laneige Water Sleeping Mask Sheet",
+            "brand": "Laneige",
+            "category": "Sheet Masks",
+            "price": 22.99,
+            "stock": 85,
+            "rating": 4.7,
+            "reviews": 267,
+            "description": "Mascarilla nocturna, efecto durmiente",
+            "benefits": ["Hidratación profunda", "Efecto nocturno", "Renovación"],
+            "trending": true,
+            "demand": "high"
+          },
+          {
+            "id": "kr-mask-003",
+            "name": "SNP Animal Mask Sheet",
+            "brand": "SNP",
+            "category": "Sheet Masks",
+            "price": 5.99,
+            "stock": 320,
+            "rating": 4.4,
+            "reviews": 198,
+            "description": "Mascarilla con ilustraciones animales, económica",
+            "benefits": ["Económica", "Divertida", "Efectiva"],
+            "trending": false,
+            "demand": "high"
+          },
+          {
+            "id": "kr-mask-004",
+            "name": "MediHeal Tea Tree Calming Mask",
+            "brand": "MediHeal",
+            "category": "Sheet Masks",
+            "price": 7.99,
+            "stock": 210,
+            "rating": 4.6,
+            "reviews": 234,
+            "description": "Mascarilla calmante con árbol de té",
+            "benefits": ["Calmante", "Antibacterial", "Antiinflamatorio"],
+            "trending": false,
+            "demand": "medium"
+          }
+        ]
+      },
+      "Serums": {
+        "name": "Serums",
+        "icon": "💧",
+        "description": "Concentrados activos. Vitamina C, ácido hialurónico, niacinamida",
+        "products": [
+          {
+            "id": "kr-serum-001",
+            "name": "Serum Vitamina C Pura Premium",
+            "brand": "Some By Mi",
+            "category": "Serums",
+            "price": 32.99,
+            "stock": 95,
+            "rating": 4.7,
+            "reviews": 267,
+            "description": "Vitamina C estable, antienvejecimiento potente",
+            "benefits": ["Vitamina C pura", "Antienvejecimiento", "Resultados visibles"],
+            "trending": true,
+            "demand": "high"
+          },
+          {
+            "id": "kr-serum-002",
+            "name": "Purito Deep Sea Pure Water Cream",
+            "brand": "Purito",
+            "category": "Serums",
+            "price": 28.99,
+            "stock": 110,
+            "rating": 4.8,
+            "reviews": 289,
+            "description": "Serum/crema híbrida, textura ligera",
+            "benefits": ["Hidratación", "Textura ligera", "Piel luminosa"],
+            "trending": true,
+            "demand": "high"
+          },
+          {
+            "id": "kr-serum-003",
+            "name": "COSRX Hydrium Watery Toner Plus",
+            "brand": "COSRX",
+            "category": "Serums",
+            "price": 19.99,
+            "stock": 145,
+            "rating": 4.6,
+            "reviews": 223,
+            "description": "Tónico serum, hidratación múltiple",
+            "benefits": ["Ácido hialurónico", "Hidratación", "Económico"],
+            "trending": false,
+            "demand": "high"
+          }
+        ]
+      },
+      "Cleansers": {
+        "name": "Cleansers",
+        "icon": "🧼",
+        "description": "Limpieza profunda sin resecarse. Gel, espuma, aceite",
+        "products": [
+          {
+            "id": "kr-clean-001",
+            "name": "COSRX Low pH Good Morning Gel Cleanser",
+            "brand": "COSRX",
+            "category": "Cleansers",
+            "price": 14.99,
+            "stock": 220,
+            "rating": 4.7,
+            "reviews": 345,
+            "description": "Gel de limpieza pH bajo, apto todos los tipos",
+            "benefits": ["Limpia profundo", "No reseca", "pH balanceado"],
+            "trending": true,
+            "demand": "very_high"
+          },
+          {
+            "id": "kr-clean-002",
+            "name": "Purito Deep Sea Purifying Cleansing Foam",
+            "brand": "Purito",
+            "category": "Cleansers",
+            "price": 12.99,
+            "stock": 180,
+            "rating": 4.5,
+            "reviews": 267,
+            "description": "Espuma limpiadora suave",
+            "benefits": ["Espuma suave", "Agua marina", "Hidratante"],
+            "trending": false,
+            "demand": "medium"
+          },
+          {
+            "id": "kr-clean-003",
+            "name": "Banila Co Clean It Zero Cleansing Balm",
+            "brand": "Banila Co",
+            "category": "Cleansers",
+            "price": 16.99,
+            "stock": 95,
+            "rating": 4.8,
+            "reviews": 412,
+            "description": "Bálsamo limpiador que se convierte en aceite",
+            "benefits": ["Limpia maquillaje", "Se convierte en aceite", "Premium"],
+            "trending": true,
+            "demand": "high"
+          }
+        ]
+      },
+      "Face_Creams": {
+        "name": "Face Creams",
+        "icon": "🧴",
+        "description": "Cremas hidratantes, antienvejecimiento, tratamientos",
+        "products": [
+          {
+            "id": "kr-cream-001",
+            "name": "Laneige Water Bank Cream",
+            "brand": "Laneige",
+            "category": "Face Creams",
+            "price": 34.99,
+            "stock": 65,
+            "rating": 4.7,
+            "reviews": 298,
+            "description": "Crema hidratante intensiva, efecto plumping",
+            "benefits": ["Hidratación profunda", "Efecto volumen", "Antienvejecimiento"],
+            "trending": true,
+            "demand": "high"
+          },
+          {
+            "id": "kr-cream-002",
+            "name": "Purito Deep Sea Moisture Cream",
+            "brand": "Purito",
+            "category": "Face Creams",
+            "price": 24.99,
+            "stock": 130,
+            "rating": 4.6,
+            "reviews": 276,
+            "description": "Crema marina nutritiva",
+            "benefits": ["Agua marina", "Nutritiva", "Ligera"],
+            "trending": false,
+            "demand": "medium"
+          },
+          {
+            "id": "kr-cream-003",
+            "name": "Torriden DIVE-IN Toner Plus Cream",
+            "brand": "Torriden",
+            "category": "Face Creams",
+            "price": 19.99,
+            "stock": 175,
+            "rating": 4.5,
+            "reviews": 234,
+            "description": "Crema tónico híbrida",
+            "benefits": ["Hidratación", "Textura ligera", "Económica"],
+            "trending": false,
+            "demand": "medium"
+          }
+        ]
+      },
+      "Eye_Care": {
+        "name": "Eye Care",
+        "icon": "👁️",
+        "description": "Contorno de ojos. Anti-ojeras, antienvejecimiento, hidratación",
+        "products": [
+          {
+            "id": "kr-eye-001",
+            "name": "Laneige Advanced Eye Care Cream",
+            "brand": "Laneige",
+            "category": "Eye_Care",
+            "price": 36.99,
+            "stock": 45,
+            "rating": 4.8,
+            "reviews": 267,
+            "description": "Crema contorno premium. Resultados en 2 semanas",
+            "benefits": ["Anti-ojeras", "Antienvejecimiento", "Cuidado intenso"],
+            "trending": true,
+            "demand": "high"
+          },
+          {
+            "id": "kr-eye-002",
+            "name": "COSRX Advanced Snail Eye Cream",
+            "brand": "COSRX",
+            "category": "Eye_Care",
+            "price": 18.99,
+            "stock": 115,
+            "rating": 4.6,
+            "reviews": 198,
+            "description": "Crema contorno con baba de caracol",
+            "benefits": ["Hidratación", "Regeneración", "Económico"],
+            "trending": false,
+            "demand": "medium"
+          }
+        ]
+      },
+      "Lip_Care": {
+        "name": "Lip Care",
+        "icon": "💋",
+        "description": "Bálsamos, masks y tratamientos labiales. Hidratación, volumen, color",
+        "products": [
+          {
+            "id": "kr-lip-001",
+            "name": "Laneige Lip Sleeping Mask Original",
+            "brand": "Laneige",
+            "category": "Lip_Care",
+            "price": 19.99,
+            "stock": 200,
+            "rating": 4.9,
+            "reviews": 512,
+            "description": "Mascarilla labial nocturna. Clásico best-seller",
+            "benefits": ["Hidratación profunda", "Efecto nocturno", "Best seller"],
+            "trending": true,
+            "demand": "very_high"
+          },
+          {
+            "id": "kr-lip-002",
+            "name": "Holika Holika Jelly Dough Blusher",
+            "brand": "Holika Holika",
+            "category": "Lip_Care",
+            "price": 9.99,
+            "stock": 280,
+            "rating": 4.5,
+            "reviews": 234,
+            "description": "Bálsamo labial jelly con color",
+            "benefits": ["Color suave", "Hidratante", "Económico"],
+            "trending": false,
+            "demand": "high"
+          }
+        ]
+      },
+      "Toners": {
+        "name": "Toners",
+        "icon": "🌊",
+        "description": "Tónicos esenciales. Hidratación, pH balance, prep skin",
+        "products": [
+          {
+            "id": "kr-toner-001",
+            "name": "COSRX Hydrium Watery Toner Plus",
+            "brand": "COSRX",
+            "category": "Toners",
+            "price": 19.99,
+            "stock": 165,
+            "rating": 4.7,
+            "reviews": 289,
+            "description": "Tónico base multihidratante",
+            "benefits": ["Ácido hialurónico", "Layering", "Económico"],
+            "trending": false,
+            "demand": "high"
+          },
+          {
+            "id": "kr-toner-002",
+            "name": "Purito Deep Sea Pure Water Toner",
+            "brand": "Purito",
+            "category": "Toners",
+            "price": 17.99,
+            "stock": 145,
+            "rating": 4.6,
+            "reviews": 267,
+            "description": "Tónico marino suave",
+            "benefits": ["Agua marina", "Equilibrio pH", "Suave"],
+            "trending": false,
+            "demand": "medium"
+          }
+        ]
+      },
+      "Sunscreen": {
+        "name": "Sunscreen",
+        "icon": "☀️",
+        "description": "Protectores solares. SPF 30-50+, cuidado diario",
+        "products": [
+          {
+            "id": "kr-sun-001",
+            "name": "COSRX Hydrium Watery Sunscreen SPF 50+",
+            "brand": "COSRX",
+            "category": "Sunscreen",
+            "price": 14.99,
+            "stock": 210,
+            "rating": 4.6,
+            "reviews": 234,
+            "description": "Protector solar ligero, textura acuosa",
+            "benefits": ["SPF 50+", "Textura ligera", "Daily use"],
+            "trending": false,
+            "demand": "medium"
+          },
+          {
+            "id": "kr-sun-002",
+            "name": "Purito Daily Soft Touch Sunscreen SPF 50+",
+            "brand": "Purito",
+            "category": "Sunscreen",
+            "price": 16.99,
+            "stock": 175,
+            "rating": 4.7,
+            "reviews": 267,
+            "description": "Protector solar suave, acabado no brilloso",
+            "benefits": ["SPF 50+", "No brillo", "Suave"],
+            "trending": false,
+            "demand": "medium"
+          }
+        ]
+      },
+      "Essence": {
+        "name": "Essence",
+        "icon": "✨",
+        "description": "Esencias y ampollas. Concentrado de activos, reparación",
+        "products": [
+          {
+            "id": "kr-essence-001",
+            "name": "COSRX Advanced Snail 96 Mucin Power Essence",
+            "brand": "COSRX",
+            "category": "Essence",
+            "price": 21.99,
+            "stock": 140,
+            "rating": 4.8,
+            "reviews": 412,
+            "description": "Esencia de baba de caracol pura",
+            "benefits": ["Baba de caracol", "Hidratación", "Regeneración"],
+            "trending": true,
+            "demand": "high"
+          },
+          {
+            "id": "kr-essence-002",
+            "name": "Some By Mi Snail Truecica Miracle Repair Serum",
+            "brand": "Some By Mi",
+            "category": "Essence",
+            "price": 24.99,
+            "stock": 105,
+            "rating": 4.7,
+            "reviews": 298,
+            "description": "Esencia reparadora con centella asiática",
+            "benefits": ["Centella", "Reparación", "Calmante"],
+            "trending": false,
+            "demand": "high"
+          }
+        ]
+      },
+      "Peel_Exfoliants": {
+        "name": "Peel & Exfoliants",
+        "icon": "🔄",
+        "description": "Exfoliantes químicos, peeling, renovación",
+        "products": [
+          {
+            "id": "kr-peel-001",
+            "name": "COSRX AHA/BHA Clarifying Treatment Toner",
+            "brand": "COSRX",
+            "category": "Peel_Exfoliants",
+            "price": 24.99,
+            "stock": 85,
+            "rating": 4.6,
+            "reviews": 267,
+            "description": "Tónico exfoliante dual AHA/BHA",
+            "benefits": ["AHA/BHA", "Limpia poros", "Renovación"],
+            "trending": false,
+            "demand": "medium"
+          },
+          {
+            "id": "kr-peel-002",
+            "name": "Some By Mi Aha Bha Pha 30 Days Miracle Serum",
+            "brand": "Some By Mi",
+            "category": "Peel_Exfoliants",
+            "price": 26.99,
+            "stock": 95,
+            "rating": 4.7,
+            "reviews": 289,
+            "description": "Serum exfoliante triple complejo",
+            "benefits": ["AHA/BHA/PHA", "Textura suave", "30 días"],
+            "trending": true,
+            "demand": "high"
+          }
+        ]
+      },
+      "Specialty_Treatments": {
+        "name": "Specialty Treatments",
+        "icon": "🏥",
+        "description": "Tratamientos especializados. Acné, sensibilidad, rosacea",
+        "products": [
+          {
+            "id": "kr-treat-001",
+            "name": "COSRX Acne Pimple Master Patch",
+            "brand": "COSRX",
+            "category": "Specialty_Treatments",
+            "price": 7.99,
+            "stock": 350,
+            "rating": 4.8,
+            "reviews": 523,
+            "description": "Parches para granos. Eficacia comprobada",
+            "benefits": ["Anti-acné", "Discretos", "Efectivos"],
+            "trending": true,
+            "demand": "very_high"
+          },
+          {
+            "id": "kr-treat-002",
+            "name": "Purito Deep Sea Pure Water Cream",
+            "brand": "Purito",
+            "category": "Specialty_Treatments",
+            "price": 18.99,
+            "stock": 120,
+            "rating": 4.6,
+            "reviews": 234,
+            "description": "Crema calmante para piel sensible",
+            "benefits": ["Calmante", "Piel sensible", "Marina"],
+            "trending": false,
+            "demand": "medium"
+          },
+          {
+            "id": "kr-treat-003",
+            "name": "Some By Mi Centella Asiatica pH Cleansing Foam",
+            "brand": "Some By Mi",
+            "category": "Specialty_Treatments",
+            "price": 11.99,
+            "stock": 185,
+            "rating": 4.7,
+            "reviews": 267,
+            "description": "Espuma limpiadora anti-irritación",
+            "benefits": ["Centella", "pH bajo", "Calmante"],
+            "trending": false,
+            "demand": "medium"
+          }
+        ]
+      }
+    },
+    "top_sellers": [
+      "kr-mask-001",
+      "kr-bb-001",
+      "kr-clean-001",
+      "kr-lip-001",
+      "kr-treat-001",
+      "kr-essence-001",
+      "kr-serum-001",
+      "kr-bb-002"
+    ],
+    "trending": [
+      "kr-mask-001",
+      "kr-mask-002",
+      "kr-bb-001",
+      "kr-serum-001",
+      "kr-serum-002",
+      "kr-cream-001",
+      "kr-treat-001",
+      "kr-peel-002",
+      "kr-eye-001",
+      "kr-lip-001"
+    ],
+    "market_insights": {
+      "most_demanded": "Sheet Masks - Demand very high. Best seller: Elizavecca pack x10",
+      "fastest_growing": "Specialty Treatments (Acne patches, calming creams)",
+      "price_range": "$5.99 - $36.99 USD average",
+      "customer_preferences": [
+        "Hydration products (70% of purchases)",
+        "Anti-aging/Antienvejecimiento (45%)",
+        "Value for money (65%)",
+        "K-beauty trending items (80%)",
+        "Multi-use products (50%)"
+      ],
+      "seasonal": {
+        "Q4": "Lip care, hydration masks (winter)",
+        "Q1": "Brightening, vitamin C (new year)",
+        "Q2": "Sunscreen, light formulas",
+        "Q3": "Sheet masks, cooling products"
+      }
+    },
+    "expansion_opportunities": {
+      "high_priority": [
+        {
+          "category": "Korean Makeup",
+          "products": ["BB Cushions", "CC Creams", "Tints", "Mascaras"],
+          "reason": "Complementa línea skincare. Margin alto",
+          "estimated_demand": "Very High",
+          "expansion_cost": "Low"
+        },
+        {
+          "category": "Body Care",
+          "products": ["Body Lotions", "Body Oils", "Cleansing Gels", "Sheet Masks for Body"],
+          "reason": "K-beauty brands ofrecen líneas completas",
+          "estimated_demand": "High",
+          "expansion_cost": "Medium"
+        },
+        {
+          "category": "Hair Care",
+          "products": ["Shampoos", "Conditioners", "Treatments", "Hair Masks"],
+          "reason": "Clientes buscan full routine K-beauty",
+          "estimated_demand": "High",
+          "expansion_cost": "Medium"
+        }
+      ],
+      "medium_priority": [
+        {
+          "category": "Supplements & Wellness",
+          "products": ["Collagen drinks", "Beauty supplements", "Vitamins"],
+          "reason": "K-wellness trend en crecimiento",
+          "estimated_demand": "Medium",
+          "expansion_cost": "High"
+        },
+        {
+          "category": "Tools & Devices",
+          "products": ["Jade rollers", "Gua sha", "Face massagers", "LED masks"],
+          "reason": "Complementa skincare. Alto ticket average",
+          "estimated_demand": "Medium-High",
+          "expansion_cost": "High"
+        }
+      ]
+    }
+  }
+}

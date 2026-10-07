@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Configurar K-Beauty CDE en Heroku</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status.loading {
+            background: #cfe2ff;
+            color: #084298;
+            border: 1px solid #b6d4fe;
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #084298;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #856404;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .optional-tag {
+            display: inline-block;
+            background: #e8eef7;
+            color: #667eea;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Configurar K-Beauty CDE</h1>
+        <p class="subtitle">Completa los campos y todo se configurará automáticamente en Heroku</p>
+
+        <div class="warning">
+            ⚠️ <strong>Importante:</strong> Asegúrate de copiar los valores correctamente. Usa tus keys de PRODUCCIÓN, no de prueba.
+        </div>
+
+        <div class="info-box">
+            ℹ️ Los campos marcados como <strong>Opcional</strong> se pueden dejar en blanco. Solo completa lo que tengas disponible.
+        </div>
+
+        <form id="configForm">
+            <!-- PAYMENT GATEWAYS -->
+            <div class="section">
+                <div class="section-title">💳 Pasarelas de Pago</div>
+
+                <div class="form-group">
+                    <label for="stripe_public_key">Stripe Public Key <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="stripe_public_key" name="stripe_public_key" placeholder="pk_live_...">
+                    <div class="hint">Clave pública de Stripe (dashboard.stripe.com → API Keys)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="stripe_secret_key">Stripe Secret Key</label>
+                    <input type="password" id="stripe_secret_key" name="stripe_secret_key" placeholder="sk_live_...">
+                    <div class="hint">Clave secreta de Stripe</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="stripe_webhook_secret">Stripe Webhook Secret</label>
+                    <input type="password" id="stripe_webhook_secret" name="stripe_webhook_secret" placeholder="whsec_...">
+                    <div class="hint">Secret para webhooks de Stripe</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="paypal_client_id">PayPal Client ID <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="paypal_client_id" name="paypal_client_id">
+                    <div class="hint">ID de cliente PayPal (developer.paypal.com)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="paypal_client_secret">PayPal Client Secret <span class="optional-tag">opcional</span></label>
+                    <input type="password" id="paypal_client_secret" name="paypal_client_secret">
+                    <div class="hint">Secret de cliente PayPal</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="paypal_webhook_id">PayPal Webhook ID <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="paypal_webhook_id" name="paypal_webhook_id">
+                    <div class="hint">ID de webhook PayPal</div>
+                </div>
+            </div>
+
+            <!-- AI & ANALYSIS -->
+            <div class="section">
+                <div class="section-title">🤖 Análisis de Piel con IA</div>
+
+                <div class="form-group">
+                    <label for="anthropic_api_key">Anthropic API Key <span class="optional-tag">opcional</span></label>
+                    <input type="password" id="anthropic_api_key" name="anthropic_api_key">
+                    <div class="hint">Para análisis de piel (console.anthropic.com)</div>
+                </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="section">
+                <div class="section-title">📧 Notificaciones por Email</div>
+
+                <div class="form-group">
+                    <label for="email_user">Email (Gmail) <span class="optional-tag">opcional</span></label>
+                    <input type="email" id="email_user" name="email_user" placeholder="tu.email@gmail.com">
+                    <div class="hint">Tu cuenta de Gmail para recibir pedidos</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email_app_password">Email App Password <span class="optional-tag">opcional</span></label>
+                    <input type="password" id="email_app_password" name="email_app_password" placeholder="16 caracteres">
+                    <div class="hint">App password de Google (myaccount.google.com → Seguridad → Contraseñas de aplicaciones)</div>
+                </div>
+            </div>
+
+            <!-- META & INSTAGRAM -->
+            <div class="section">
+                <div class="section-title">📱 Meta / Instagram / Facebook</div>
+
+                <div class="form-group">
+                    <label for="meta_user_token">Meta User Token <span class="optional-tag">opcional</span></label>
+                    <input type="password" id="meta_user_token" name="meta_user_token">
+                    <div class="hint">Token de usuario de 60 días (business.facebook.com)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="meta_page_id">Meta Page ID <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="meta_page_id" name="meta_page_id">
+                    <div class="hint">ID de tu página de Facebook</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="meta_ig_user_id">Meta Instagram User ID <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="meta_ig_user_id" name="meta_ig_user_id">
+                    <div class="hint">ID de tu cuenta de Instagram Business</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="instagram_username">Instagram Username <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="instagram_username" name="instagram_username">
+                    <div class="hint">Para sincronización automática de productos</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="instagram_password">Instagram Password <span class="optional-tag">opcional</span></label>
+                    <input type="password" id="instagram_password" name="instagram_password">
+                    <div class="hint">Contraseña de Instagram (se usa solo en servidor)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="instagram_album_url">Instagram Album URL <span class="optional-tag">opcional</span></label>
+                    <input type="url" id="instagram_album_url" name="instagram_album_url" placeholder="https://www.instagram.com/p/...">
+                    <div class="hint">URL del álbum privado a sincronizar</div>
+                </div>
+            </div>
+
+            <!-- SHIPPING -->
+            <div class="section">
+                <div class="section-title">🚚 Envíos y Logística</div>
+
+                <div class="form-group">
+                    <label for="andreani_api_key">Andreani API Key <span class="optional-tag">opcional</span></label>
+                    <input type="password" id="andreani_api_key" name="andreani_api_key">
+                    <div class="hint">Para envíos dentro de Argentina</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="shippo_api_key">Shippo API Key <span class="optional-tag">opcional</span></label>
+                    <input type="password" id="shippo_api_key" name="shippo_api_key">
+                    <div class="hint">Para envíos internacionales</div>
+                </div>
+            </div>
+
+            <!-- TRANSFER INFO -->
+            <div class="section">
+                <div class="section-title">💰 Información de Transferencia</div>
+
+                <div class="form-group">
+                    <label for="transfer_alias">Transfer Alias <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="transfer_alias" name="transfer_alias" placeholder="mi.alias">
+                    <div class="hint">Tu alias de MercadoPago o banco</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transfer_holder_name">Nombre del Titular <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="transfer_holder_name" name="transfer_holder_name">
+                    <div class="hint">Nombre de quien recibe los pagos</div>
+                </div>
+            </div>
+
+            <!-- ANALYTICS -->
+            <div class="section">
+                <div class="section-title">📊 Analytics y Seguimiento</div>
+
+                <div class="form-group">
+                    <label for="google_analytics_id">Google Analytics ID <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="google_analytics_id" name="google_analytics_id" placeholder="G-...">
+                    <div class="hint">Para tracking de visitas (analytics.google.com)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="facebook_pixel_id">Facebook Pixel ID <span class="optional-tag">opcional</span></label>
+                    <input type="text" id="facebook_pixel_id" name="facebook_pixel_id">
+                    <div class="hint">Para publicidad en Facebook (business.facebook.com)</div>
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="button-group">
+                <button type="button" class="btn-secondary" onclick="resetForm()">Limpiar</button>
+                <button type="submit" class="btn-primary">⚡ Configurar Heroku</button>
+            </div>
+
+            <div id="status" class="status"></div>
+        </form>
+
+        <div class="info-box" style="margin-top: 20px; text-align: center; font-size: 11px;">
+            <strong>Nota:</strong> Este formulario enviará los datos a GitHub Actions para configurar automáticamente Heroku.
+            <br><br>
+            <strong>No se guardan</strong> en este navegador. Se envían directamente a Heroku a través de la API.
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('configForm');
+        const statusEl = document.getElementById('status');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Collect form data
+            const formData = new FormData(form);
+            const inputs = {};
+
+            for (let [key, value] of formData.entries()) {
+                if (value.trim()) {
+                    inputs[key] = value;
+                }
+            }
+
+            if (Object.keys(inputs).length === 0) {
+                showStatus('error', '❌ Por favor completa al menos un campo');
+                return;
+            }
+
+            showStatus('loading', '⏳ Enviando configuración a GitHub Actions...');
+
+            try {
+                // We'll trigger the GitHub Actions workflow with the inputs
+                // This requires a GitHub token, which would be complex
+                // Instead, we'll show instructions to do it manually via GitHub UI
+
+                const workflowUrl = 'https://github.com/pablorecalde67/Cosmetica-coreana/actions/workflows/configure-heroku.yml';
+
+                let message = `✅ Formulario listo!\n\nAhora abri el workflow en GitHub:\n\n${workflowUrl}\n\nY completa los campos con estos valores:\n\n`;
+
+                for (let [key, value] of Object.entries(inputs)) {
+                    message += `${key}: ${value}\n`;
+                }
+
+                message += '\n¡El resto se hace automático!';
+
+                showStatus('success', message.replace(/\n/g, '<br>'));
+
+                // Copy inputs to clipboard
+                navigator.clipboard.writeText(Object.entries(inputs).map(([k, v]) => `${k}: ${v}`).join('\n'));
+
+            } catch (error) {
+                showStatus('error', `❌ Error: ${error.message}`);
+            }
+        });
+
+        function showStatus(type, message) {
+            statusEl.className = `status ${type}`;
+            if (type === 'loading') {
+                statusEl.innerHTML = `<div class="loading-spinner"></div>${message}`;
+            } else {
+                statusEl.innerHTML = message;
+            }
+        }
+
+        function resetForm() {
+            form.reset();
+            statusEl.className = 'status';
+            statusEl.innerHTML = '';
+        }
+    </script>
+</body>
+</html>

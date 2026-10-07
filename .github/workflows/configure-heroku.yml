@@ -1,0 +1,267 @@
+name: 🔧 Configure Heroku Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      stripe_public_key:
+        description: 'Stripe Public Key (pk_live_...)'
+        required: false
+        type: string
+      stripe_secret_key:
+        description: 'Stripe Secret Key (sk_live_...)'
+        required: false
+        type: string
+      stripe_webhook_secret:
+        description: 'Stripe Webhook Secret (whsec_...)'
+        required: false
+        type: string
+      paypal_client_id:
+        description: 'PayPal Client ID'
+        required: false
+        type: string
+      paypal_client_secret:
+        description: 'PayPal Client Secret'
+        required: false
+        type: string
+      paypal_webhook_id:
+        description: 'PayPal Webhook ID'
+        required: false
+        type: string
+      anthropic_api_key:
+        description: 'Anthropic API Key'
+        required: false
+        type: string
+      email_user:
+        description: 'Email User (Gmail address)'
+        required: false
+        type: string
+      email_app_password:
+        description: 'Email App Password (16 chars from Google)'
+        required: false
+        type: string
+      meta_user_token:
+        description: 'Meta User Token (60-day token)'
+        required: false
+        type: string
+      meta_page_id:
+        description: 'Meta Page ID'
+        required: false
+        type: string
+      meta_ig_user_id:
+        description: 'Meta Instagram User ID'
+        required: false
+        type: string
+      instagram_username:
+        description: 'Instagram Username (optional, for scraping)'
+        required: false
+        type: string
+      instagram_password:
+        description: 'Instagram Password (optional, for scraping)'
+        required: false
+        type: string
+      instagram_album_url:
+        description: 'Instagram Album URL (optional, for scraping)'
+        required: false
+        type: string
+      andreani_api_key:
+        description: 'Andreani API Key (optional)'
+        required: false
+        type: string
+      shippo_api_key:
+        description: 'Shippo API Key (optional)'
+        required: false
+        type: string
+      transfer_alias:
+        description: 'Bank Transfer Alias (for payment info)'
+        required: false
+        type: string
+      transfer_holder_name:
+        description: 'Bank Account Holder Name'
+        required: false
+        type: string
+      google_analytics_id:
+        description: 'Google Analytics ID (G-...)'
+        required: false
+        type: string
+      facebook_pixel_id:
+        description: 'Facebook Pixel ID (optional)'
+        required: false
+        type: string
+
+env:
+  HEROKU_APP_NAME: kbeautycde
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Heroku API Key
+        run: |
+          if [ -z "${{ secrets.HEROKU_API_KEY }}" ]; then
+            echo "❌ ERROR: HEROKU_API_KEY not found in GitHub Secrets"
+            exit 1
+          fi
+          echo "✅ HEROKU_API_KEY configured"
+
+      - name: Build config vars JSON
+        id: config
+        run: |
+          CONFIG='{
+            "NODE_ENV": "production",
+            "PORT": "3000",
+            "PUBLIC_BASE_URL": "https://kbeautycde.herokuapp.com"'
+
+          # Add optional Stripe vars
+          if [ -n "${{ inputs.stripe_public_key }}" ]; then
+            CONFIG="$CONFIG, \"STRIPE_PUBLIC_KEY\": \"${{ inputs.stripe_public_key }}\""
+          fi
+          if [ -n "${{ inputs.stripe_secret_key }}" ]; then
+            CONFIG="$CONFIG, \"STRIPE_SECRET_KEY\": \"${{ inputs.stripe_secret_key }}\""
+          fi
+          if [ -n "${{ inputs.stripe_webhook_secret }}" ]; then
+            CONFIG="$CONFIG, \"STRIPE_WEBHOOK_SECRET\": \"${{ inputs.stripe_webhook_secret }}\""
+          fi
+
+          # Add optional PayPal vars
+          if [ -n "${{ inputs.paypal_client_id }}" ]; then
+            CONFIG="$CONFIG, \"PAYPAL_CLIENT_ID\": \"${{ inputs.paypal_client_id }}\""
+          fi
+          if [ -n "${{ inputs.paypal_client_secret }}" ]; then
+            CONFIG="$CONFIG, \"PAYPAL_CLIENT_SECRET\": \"${{ inputs.paypal_client_secret }}\""
+          fi
+          if [ -n "${{ inputs.paypal_webhook_id }}" ]; then
+            CONFIG="$CONFIG, \"PAYPAL_WEBHOOK_ID\": \"${{ inputs.paypal_webhook_id }}\""
+          fi
+
+          # Add optional Anthropic
+          if [ -n "${{ inputs.anthropic_api_key }}" ]; then
+            CONFIG="$CONFIG, \"ANTHROPIC_API_KEY\": \"${{ inputs.anthropic_api_key }}\", \"AI_MODEL\": \"claude-sonnet-5\""
+          fi
+
+          # Add optional Email vars
+          if [ -n "${{ inputs.email_user }}" ]; then
+            CONFIG="$CONFIG, \"EMAIL_USER\": \"${{ inputs.email_user }}\""
+          fi
+          if [ -n "${{ inputs.email_app_password }}" ]; then
+            CONFIG="$CONFIG, \"EMAIL_APP_PASSWORD\": \"${{ inputs.email_app_password }}\""
+          fi
+
+          # Add optional Meta vars
+          if [ -n "${{ inputs.meta_user_token }}" ]; then
+            CONFIG="$CONFIG, \"META_USER_TOKEN\": \"${{ inputs.meta_user_token }}\""
+          fi
+          if [ -n "${{ inputs.meta_page_id }}" ]; then
+            CONFIG="$CONFIG, \"META_PAGE_ID\": \"${{ inputs.meta_page_id }}\""
+          fi
+          if [ -n "${{ inputs.meta_ig_user_id }}" ]; then
+            CONFIG="$CONFIG, \"META_IG_USER_ID\": \"${{ inputs.meta_ig_user_id }}\""
+          fi
+
+          # Add optional Instagram scraping
+          if [ -n "${{ inputs.instagram_username }}" ]; then
+            CONFIG="$CONFIG, \"INSTAGRAM_USERNAME\": \"${{ inputs.instagram_username }}\""
+          fi
+          if [ -n "${{ inputs.instagram_password }}" ]; then
+            CONFIG="$CONFIG, \"INSTAGRAM_PASSWORD\": \"${{ inputs.instagram_password }}\""
+          fi
+          if [ -n "${{ inputs.instagram_album_url }}" ]; then
+            CONFIG="$CONFIG, \"INSTAGRAM_ALBUM_URL\": \"${{ inputs.instagram_album_url }}\", \"INSTAGRAM_SYNC_INTERVAL\": \"60\""
+          fi
+
+          # Add optional Shipping
+          if [ -n "${{ inputs.andreani_api_key }}" ]; then
+            CONFIG="$CONFIG, \"ANDREANI_API_KEY\": \"${{ inputs.andreani_api_key }}\""
+          fi
+          if [ -n "${{ inputs.shippo_api_key }}" ]; then
+            CONFIG="$CONFIG, \"SHIPPO_API_KEY\": \"${{ inputs.shippo_api_key }}\""
+          fi
+
+          # Add optional Transfer info
+          if [ -n "${{ inputs.transfer_alias }}" ]; then
+            CONFIG="$CONFIG, \"TRANSFER_ALIAS\": \"${{ inputs.transfer_alias }}\""
+          fi
+          if [ -n "${{ inputs.transfer_holder_name }}" ]; then
+            CONFIG="$CONFIG, \"TRANSFER_HOLDER_NAME\": \"${{ inputs.transfer_holder_name }}\""
+          fi
+
+          # Add optional Analytics
+          if [ -n "${{ inputs.google_analytics_id }}" ]; then
+            CONFIG="$CONFIG, \"GOOGLE_ANALYTICS_ID\": \"${{ inputs.google_analytics_id }}\""
+          fi
+          if [ -n "${{ inputs.facebook_pixel_id }}" ]; then
+            CONFIG="$CONFIG, \"FACEBOOK_PIXEL_ID\": \"${{ inputs.facebook_pixel_id }}\""
+          fi
+
+          CONFIG="$CONFIG}"
+
+          echo "config=$CONFIG" >> $GITHUB_OUTPUT
+          echo "✅ Configuration JSON built"
+
+      - name: Apply configuration to Heroku
+        run: |
+          echo "📤 Applying configuration to ${{ env.HEROKU_APP_NAME }}..."
+
+          HTTP_CODE=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+            -X PATCH https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }}/config-vars \
+            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '${{ steps.config.outputs.config }}')
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Configuration applied successfully (HTTP $HTTP_CODE)"
+            echo ""
+            echo "📋 Configured variables:"
+            jq 'keys | .[]' /tmp/response.json | head -20
+          else
+            echo "❌ Failed to apply configuration (HTTP $HTTP_CODE)"
+            echo "Response:"
+            cat /tmp/response.json
+            exit 1
+          fi
+
+      - name: Restart Heroku dyno
+        run: |
+          echo "🔄 Restarting app..."
+          curl -X DELETE https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }}/dynos \
+            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+            -s -o /dev/null
+
+          echo "✅ App restart initiated"
+
+      - name: Wait for app to restart
+        run: |
+          echo "⏳ Waiting for app to come back online..."
+          sleep 15
+
+          for i in {1..20}; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/ 2>/dev/null || echo "000")
+
+            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "404" ]; then
+              echo "✅ App is back online! (HTTP $HTTP_CODE)"
+              exit 0
+            fi
+
+            echo "[$i/20] Still restarting... (HTTP $HTTP_CODE)"
+            sleep 3
+          done
+
+          echo "⚠️  App may still be restarting. Check: https://dashboard.heroku.com/apps/kbeautycde/logs"
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "════════════════════════════════════════"
+          echo "✅ HEROKU CONFIGURATION COMPLETE"
+          echo "════════════════════════════════════════"
+          echo ""
+          echo "🌐 App URL: https://kbeautycde.herokuapp.com"
+          echo "📊 Dashboard: https://dashboard.heroku.com/apps/kbeautycde"
+          echo "📝 Logs: https://dashboard.heroku.com/apps/kbeautycde/logs"
+          echo ""
+          echo "Next steps:"
+          echo "1. Verify app is running: https://kbeautycde.herokuapp.com"
+          echo "2. Check health: https://kbeautycde.herokuapp.com/api/admin/health"
+          echo "3. Configure webhooks in payment provider dashboards"
+          echo ""
+          echo "Stripe Webhook: https://kbeautycde.herokuapp.com/api/webhooks/stripe"
+          echo "PayPal Webhook: https://kbeautycde.herokuapp.com/api/webhooks/paypal"

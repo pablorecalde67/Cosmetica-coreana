@@ -65,28 +65,35 @@
 
     /* Hero */
     .hero {
-      height: 500px;
-      background: linear-gradient(135deg, #f5f1f0 0%, #ebe5e3 100%);
+      min-height: 600px;
+      background: linear-gradient(135deg, #ffffff 0%, var(--light) 100%);
       display: flex;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 40px 20px;
+      justify-content: space-between;
+      padding: 60px 40px;
+      gap: 60px;
+    }
+
+    .hero-content {
+      text-align: left;
+      flex: 1;
     }
 
     .hero-content h1 {
-      font-size: 3rem;
-      margin-bottom: 16px;
+      font-size: 2.8rem;
+      margin-bottom: 20px;
       color: var(--primary);
       font-weight: 300;
       letter-spacing: -1px;
+      line-height: 1.2;
     }
 
     .hero-content p {
-      font-size: 1.2rem;
-      color: var(--accent);
-      margin-bottom: 32px;
+      font-size: 1.1rem;
+      color: var(--light-text);
+      margin-bottom: 40px;
       font-weight: 300;
+      line-height: 1.8;
     }
 
     .btn {
@@ -143,20 +150,25 @@
 
     .product-card {
       text-align: center;
-      transition: transform 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .product-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-8px);
     }
 
     .product-image {
       width: 100%;
-      height: 280px;
-      background: var(--light);
+      height: 320px;
+      background: linear-gradient(135deg, var(--light) 0%, var(--secondary) 100%);
       border-radius: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: rgba(255, 255, 255, 0.3);
     }
 
     .product-image img {
@@ -349,6 +361,42 @@
       font-size: 0.85rem;
     }
 
+    /* Gallery Section */
+    .gallery-section {
+      padding: 60px 20px;
+      background: var(--light);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.02);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header-content {
@@ -367,12 +415,18 @@
         margin-left: 0;
       }
 
+      .hero {
+        flex-direction: column;
+        padding: 40px 20px;
+        gap: 40px;
+      }
+
       .hero-content h1 {
         font-size: 2rem;
       }
 
       .hero-content p {
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
 
       section {
@@ -381,6 +435,12 @@
 
       .section-title {
         font-size: 1.5rem;
+      }
+
+      .products-grid,
+      .tiendas-grid,
+      .gallery-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -401,11 +461,18 @@
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-content">
-      <h1>Belleza Coreana</h1>
-      <p>Descubre los mejores productos K-Beauty de Ciudad del Este</p>
-      <a href="/piel" class="btn">Analizar mi piel</a>
-      <a href="#productos" class="btn btn-secondary" style="margin-left: 12px;">Ver productos</a>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+      <div class="hero-content">
+        <h1>Belleza Coreana en Ciudad del Este</h1>
+        <p>Descubre los mejores productos K-Beauty con nuestro análisis de piel con IA</p>
+        <div style="margin-top: 32px;">
+          <a href="/piel" class="btn">Analizar mi piel gratis</a>
+          <a href="#productos" class="btn btn-secondary" style="margin-left: 12px;">Ver productos</a>
+        </div>
+      </div>
+    </div>
+    <div style="flex: 1; min-height: 400px; background: linear-gradient(135deg, var(--light) 0%, var(--secondary) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+      📸
     </div>
   </section>
 
@@ -428,6 +495,21 @@
         <div class="feature-title">Envíos Rápidos</div>
         <div class="feature-text">Recibe tus pedidos en los mejores tiempos a Ciudad del Este y zonas cercanas.</div>
       </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gallery-section">
+    <div class="section-title" style="color: white; margin-bottom: 48px;">Nuestros Productos</div>
+    <div class="gallery-grid">
+      <div class="gallery-item">📦</div>
+      <div class="gallery-item">💄</div>
+      <div class="gallery-item">🧴</div>
+      <div class="gallery-item">✨</div>
+      <div class="gallery-item">💅</div>
+      <div class="gallery-item">🌸</div>
+      <div class="gallery-item">💎</div>
+      <div class="gallery-item">🛁</div>
     </div>
   </section>
 

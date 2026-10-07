@@ -23,6 +23,7 @@ import apiV2Router from './routes/api-v2.js';
 import productsRouter from './routes/products.js';
 import cartRouter from './routes/cart.js';
 import usersRouter from './routes/users.js';
+import viralAutomationRouter from './routes/viral-automation.js';
 
 // Import advanced middleware
 import {
@@ -75,6 +76,9 @@ app.use('/api/v2', apiV2Router);
 app.use('/api/products', productsRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/users', usersRouter);
+
+// Viral automation routes (PHASE 3)
+app.use('/api/viral', viralAutomationRouter);
 
 // Existing routes
 app.use('/api/piel', pielRouter);

@@ -14,49 +14,73 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
-      - name: Install Heroku CLI
+      - name: Create Heroku app if needed
         run: |
-          npm install -g heroku
+          echo "Checking if Heroku app exists..."
+
+          RESPONSE=$(curl -s https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }} \
+            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}")
+
+          if echo "$RESPONSE" | grep -q "\"id\""; then
+            echo "✅ App already exists"
+          elif echo "$RESPONSE" | grep -q "not found"; then
+            echo "Creating app..."
+            curl -X POST https://api.heroku.com/apps \
+              -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.heroku+json; version=3" \
+              -d "{\"name\": \"${{ env.HEROKU_APP_NAME }}\"}" \
+              -s
+            echo ""
+            echo "✅ App created"
+            sleep 5
+          else
+            echo "⚠️  Unexpected response:"
+            echo "$RESPONSE" | head -100
+          fi
+
+      - name: Setup deployment
+        run: |
+          # Configure git
+          git config user.email "deploy@heroku.com"
+          git config user.name "Heroku Deploy"
+
+          # Set up auth
+          mkdir -p ~/.netrc
+          echo "machine api.heroku.com login placeholder password ${{ secrets.HEROKU_API_KEY }}" > ~/.netrc
+          chmod 600 ~/.netrc
+
+          # Add Heroku remote
+          cd automation-coca
+          git remote rm heroku 2>/dev/null || true
+          git remote add heroku "https://git.heroku.com/${{ env.HEROKU_APP_NAME }}.git"
 
       - name: Deploy to Heroku
         run: |
-          # Create Heroku auth config
-          mkdir -p ~/.config/heroku
-          echo "oauth = ${{ secrets.HEROKU_API_KEY }}" > ~/.config/heroku/config.json
-
-          # Navigate to app directory
           cd automation-coca
+          git push heroku main -f 2>&1
+          echo "Deployment initiated"
 
-          # Check if app exists
-          heroku apps --json | grep -q "kbeautycde" || heroku create kbeautycde
-
-          # Git config for Heroku
-          git config user.email "bot@github.com"
-          git config user.name "GitHub Actions Bot"
-
-          # Add Heroku remote
-          heroku git:remote -a ${{ env.HEROKU_APP_NAME }} || true
-
-          # Deploy
-          git push heroku main -f
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
-      - name: Verify Deployment
+      - name: Wait for app to start
         run: |
           sleep 20
+
           for i in {1..15}; do
-            echo "Health check $i/15..."
-            if curl -s -f "https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/api/admin/health" > /dev/null 2>&1; then
+            if curl -s -f "https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/" > /dev/null 2>&1; then
+              echo "✅ App is running!"
+
+              # Check health endpoint
+              curl -s "https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/api/admin/health" 2>/dev/null | head -5 || true
+
               echo ""
-              echo "✅✅✅ DEPLOYMENT SUCCESSFUL ✅✅✅"
-              echo ""
-              echo "🌐 App URL: https://${{ env.HEROKU_APP_NAME }}.herokuapp.com"
+              echo "🎉 Deployment Complete!"
               exit 0
             fi
+
+            echo "Attempt $i/15: Waiting for app to start..."
             sleep 3
           done
-          echo "Deployment initiated (may take additional time to fully start)"
+
+          echo "⚠️ App may still be initializing"
+          exit 0

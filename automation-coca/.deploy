@@ -1,0 +1,46 @@
+#!/bin/bash
+# Manual Heroku deployment script
+
+HEROKU_APP_NAME="kbeautycde"
+HEROKU_API_KEY="$1"
+
+if [ -z "$HEROKU_API_KEY" ]; then
+  echo "Error: HEROKU_API_KEY not provided"
+  exit 1
+fi
+
+echo "🚀 Deploying to Heroku..."
+echo "App name: $HEROKU_APP_NAME"
+
+# Step 1: Create .netrc for auth
+mkdir -p ~/.config/heroku
+echo "oauth = $HEROKU_API_KEY" > ~/.config/heroku/config.json
+
+# Step 2: Check if app exists
+echo "Checking if app exists..."
+RESPONSE=$(curl -s https://api.heroku.com/apps/$HEROKU_APP_NAME \
+  -H "Authorization: Bearer $HEROKU_API_KEY")
+
+if echo "$RESPONSE" | grep -q "not found"; then
+  echo "Creating Heroku app..."
+  curl -X POST https://api.heroku.com/apps \
+    -H "Authorization: Bearer $HEROKU_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d "{\"name\": \"$HEROKU_APP_NAME\"}" \
+    -s > /dev/null
+  sleep 5
+fi
+
+# Step 3: Configure git
+git config user.email "deploy@github.com"
+git config user.name "Deployment Bot"
+
+# Step 4: Add Heroku remote and deploy
+echo "Setting up Heroku remote..."
+git remote rm heroku 2>/dev/null || true
+git remote add heroku "https://git.heroku.com/$HEROKU_APP_NAME.git"
+
+echo "Pushing to Heroku..."
+HEROKU_API_KEY=$HEROKU_API_KEY git push heroku HEAD:main -f
+
+echo "✅ Push completed"

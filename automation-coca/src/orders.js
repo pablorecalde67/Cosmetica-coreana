@@ -33,29 +33,94 @@ export function getOrder(id) {
 }
 
 /**
- * Crea un pedido automático generado por el flujo público de /piel.
- * NUNCA incluye la selfie: solo el tipo de piel detectado, los productos
- * elegidos y los datos de envío que cargó la propia clienta.
+ * Crea un pedido desde el flujo de checkout (carrito + pago).
+ * Soporta pagos con Stripe, PayPal, Mercado Pago y transferencia bancaria.
+ * También calcula envío dinámicamente según país.
  */
-export function createOrder({ skinType, concerns, products, name, phone, address, notes }) {
-  const total = products.reduce((sum, p) => sum + (Number(p.price) || 0), 0);
-  const order = {
-    id: nanoid(10),
-    skinType,
-    concerns,
-    products, // snapshot: [{ id, name, price }]
-    total,
-    name,
-    phone,
-    address,
-    notes: notes || '',
-    status: 'pendiente_transferencia',
-    createdAt: Date.now(),
-    fulfilledAt: null,
-  };
-  db.orders.push(order);
-  save(db);
-  return order;
+export function createOrder({
+  // Flujo checkout (con email, dirección, ciudad, etc.)
+  nombre,
+  email,
+  telefono,
+  direccion,
+  ciudad,
+  cp,
+  provincia,
+  pais,
+  products,
+  metodo,
+  subtotal,
+  envio,
+  descuento,
+  total,
+  shippingMethodId,
+  // Flujo /piel (skin analysis)
+  skinType,
+  concerns,
+  name,
+  phone,
+  address,
+  notes,
+}) {
+  // Detectar cuál flujo se está usando
+  const isCheckout = email && direccion && total !== undefined;
+
+  if (isCheckout) {
+    // Flujo checkout
+    const order = {
+      id: nanoid(10),
+      nombre,
+      email,
+      telefono,
+      direccion,
+      ciudad,
+      cp,
+      provincia,
+      pais,
+      products, // snapshot: [{ id, nombre, cantidad, precio }]
+      metodo, // 'stripe', 'paypal', 'mercadopago', 'transferencia'
+      subtotal,
+      envio,
+      descuento,
+      total,
+      // Campos de envío (se llenan después con webhooks)
+      trackingId: null,
+      shippingMethodId: shippingMethodId || null,
+      shippingProvider: null, // 'Andreani' o 'Shippo'
+      trackingStatus: null, // 'pending', 'picked_up', 'in_transit', 'out_for_delivery', 'delivered'
+      trackingLastUpdate: null,
+      // Campos de pago
+      status: metodo === 'transferencia' ? 'pending_transfer' : 'pending', // pending, paid, payment_failed, refunded
+      chargeId: null, // para Stripe
+      paypalCaptureId: null, // para PayPal
+      paidAt: null,
+      createdAt: Date.now(),
+      fulfilledAt: null,
+    };
+    db.orders.push(order);
+    save(db);
+    return order;
+  } else {
+    // Flujo /piel (skin analysis) — legacy
+    const orderTotal = products.reduce((sum, p) => sum + (Number(p.price) || 0), 0);
+    const order = {
+      id: nanoid(10),
+      skinType,
+      concerns,
+      products, // snapshot: [{ id, name, price }]
+      total: orderTotal,
+      name,
+      phone,
+      address,
+      notes: notes || '',
+      status: 'pendiente_transferencia',
+      createdAt: Date.now(),
+      fulfilledAt: null,
+    };
+    db.orders.push(order);
+    save(db);
+    return order;
+  }
 }
 
 export function updateOrder(id, patch) {

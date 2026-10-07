@@ -250,6 +250,75 @@
     margin-bottom: 20px;
   }
 
+  .opciones-envio {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .opcion-envio {
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .opcion-envio:hover {
+    border-color: var(--primary);
+    background: var(--light-bg);
+  }
+
+  .opcion-envio input[type="radio"] {
+    cursor: pointer;
+  }
+
+  .opcion-envio.selected {
+    border-color: var(--primary);
+    background: var(--light-bg);
+  }
+
+  .opcion-envio-info {
+    flex: 1;
+  }
+
+  .opcion-envio-nombre {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 4px;
+  }
+
+  .opcion-envio-detalle {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .opcion-envio-precio {
+    font-weight: 700;
+    color: var(--primary);
+    text-align: right;
+    font-size: 1.1rem;
+  }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
   @media (max-width: 768px) {
     .checkout-container {
       grid-template-columns: 1fr;
@@ -335,6 +404,14 @@
                 <label for="provincia">Provincia/Región *</label>
                 <input type="text" id="provincia" name="provincia" required>
               </div>
+            </div>
+
+            <div class="form-section">
+              <h3>Opciones de envío</h3>
+              <div id="shipping-loading" style="display: none; padding: 12px;">
+                <div class="loading-spinner"></div> Calculando opciones de envío...
+              </div>
+              <div id="opciones-envio-container" class="opciones-envio"></div>
             </div>
 
             <div class="form-section">
@@ -434,6 +511,55 @@
     let metodoActual = 'mercadopago';
     let paisActual = 'AR';
     let paypalLoaded = false;
+    let shippingMetodoSeleccionado = null;
+
+    // ============= CARGA DE OPCIONES DE ENVÍO =============
+    async function loadShippingOptions() {
+      const checkoutData = JSON.parse(localStorage.getItem('checkout_data')) || {};
+      paisActual = checkoutData.pais || 'AR';
+
+      const loading = document.getElementById('shipping-loading');
+      const container = document.getElementById('opciones-envio-container');
+
+      loading.style.display = 'flex';
+      container.innerHTML = '';
+
+      try {
+        const response = await fetch(`/api/shipping/calculate?pais=${paisActual}&peso=1&ciudad=${encodeURIComponent(document.getElementById('ciudad').value || '')}`);
+        const data = await response.json();
+
+        if (data.success && data.opciones && data.opciones.length > 0) {
+          container.innerHTML = data.opciones.map((opcion, idx) => `
+            <label class="opcion-envio" onclick="selectShipping(this, '${opcion.id}')">
+              <input type="radio" name="shipping" value="${opcion.id}" ${idx === 0 ? 'checked' : ''}>
+              <div class="opcion-envio-info">
+                <div class="opcion-envio-nombre">📦 ${opcion.nombre}</div>
+                <div class="opcion-envio-detalle">${opcion.dias} días de envío | Proveedor: ${data.provider}</div>
+              </div>
+              <div class="opcion-envio-precio">$${formatNumber(opcion.precio)}</div>
+            </label>
+          `).join('');
+
+          // Seleccionar la primera opción por defecto
+          selectShipping(container.querySelector('.opcion-envio'), data.opciones[0].id);
+        } else {
+          container.innerHTML = '<div class="info-box" style="border-left-color: #ff9800; background: #fff3e0;"><strong>⚠️ Sin opciones</strong><br>No hay opciones de envío disponibles para tu país.</div>';
+        }
+      } catch (err) {
+        container.innerHTML = `<div class="info-box" style="border-left-color: #d32f2f; background: #ffebee;"><strong>❌ Error</strong><br>No pudimos cargar las opciones de envío: ${err.message}</div>`;
+      } finally {
+        loading.style.display = 'none';
+      }
+    }
+
+    function selectShipping(element, shippingId) {
+      document.querySelectorAll('.opcion-envio').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      element.classList.add('selected');
+      element.querySelector('input[type="radio"]').checked = true;
+      shippingMetodoSeleccionado = shippingId;
+    }
 
     // ============= INICIALIZACIÓN DE MÉTODOS DE PAGO =============
     function initializePaymentMethods() {
@@ -653,6 +779,11 @@
     function handleCheckout(event) {
       event.preventDefault();
 
+      if (!shippingMetodoSeleccionado) {
+        showError('Por favor selecciona un método de envío');
+        return;
+      }
+
       const formData = {
         nombre: document.getElementById('nombre').value,
         email: document.getElementById('email').value,
@@ -662,6 +793,7 @@
         cp: document.getElementById('cp').value,
         provincia: document.getElementById('provincia').value,
         metodo: metodoActual,
+        shippingMethodId: shippingMetodoSeleccionado,
         items: JSON.parse(localStorage.getItem('checkout_data'))
       };
 
@@ -729,6 +861,7 @@
       loadResumen();
       initializePaymentMethods();
       initializeStripe();
+      loadShippingOptions();
     });
   </script>
 </body>

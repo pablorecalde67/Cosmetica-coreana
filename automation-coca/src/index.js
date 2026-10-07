@@ -5,6 +5,8 @@ import { config } from './config.js';
 import { MEDIA_DIR } from './store.js';
 import apiRouter from './routes/api.js';
 import checkoutRouter from './routes/checkout.js';
+import shippingRouter from './routes/shipping.js';
+import webhooksRouter from './routes/webhooks.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import { startWhatsapp } from './whatsapp.js';
@@ -23,6 +25,8 @@ app.use('/media', express.static(MEDIA_DIR));
 app.use('/api/piel', pielRouter);
 app.use('/api', apiRouter);
 app.use('/api/checkout', checkoutRouter);
+app.use('/api/shipping', shippingRouter);
+app.use('/api/webhooks', webhooksRouter);
 app.use('/', whatsappSetupRouter);
 
 app.listen(config.port, () => {

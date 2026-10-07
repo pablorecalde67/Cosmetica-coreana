@@ -40,7 +40,8 @@ function createOrderFromCheckout(data) {
     subtotal: data.items.subtotal,
     envio: data.items.envio,
     descuento: data.items.descuento,
-    total: data.items.total
+    total: data.items.total,
+    shippingMethodId: data.shippingMethodId || null
   });
 
   return order;

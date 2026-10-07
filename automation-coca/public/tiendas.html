@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>K-Beauty CDE · 20 Tiendas de Cosmética Coreana</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .stat-card .number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+    .stat-card .label {
+      color: #666;
+      margin-top: 5px;
+    }
+    .tiendas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+    }
+    .tienda-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .tienda-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .tienda-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+    }
+    .tienda-header h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+    .categoria {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+    .tienda-body {
+      padding: 20px;
+    }
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    .stars {
+      color: #ffc107;
+    }
+    .info-row {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+    .info-label {
+      font-weight: 600;
+      color: #667eea;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .info-value {
+      color: #555;
+      word-break: break-word;
+    }
+    .productos {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    .productos-list {
+      list-style: none;
+      font-size: 0.9rem;
+    }
+    .productos-list li {
+      padding: 4px 0;
+      color: #666;
+    }
+    .productos-list li:before {
+      content: "• ";
+      color: #667eea;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+    .contact {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    .contact a {
+      flex: 1;
+      min-width: 130px;
+      padding: 8px 12px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .whatsapp {
+      background: #25d366;
+      color: white;
+    }
+    .whatsapp:hover {
+      background: #1ea952;
+    }
+    .email {
+      background: #667eea;
+      color: white;
+    }
+    .email:hover {
+      background: #5568d3;
+    }
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1.2rem;
+      color: #666;
+    }
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .error {
+      background: #fee;
+      border: 1px solid #f99;
+      color: #c33;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🇰🇷 K-Beauty CDE</h1>
+    <p>Las mejores tiendas de cosmética coreana en Ciudad del Este</p>
+  </header>
+
+  <div class="container">
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Cargando tiendas...</p>
+    </div>
+
+    <div id="error" class="error" style="display:none;"></div>
+
+    <div id="content" style="display:none;">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="number" id="total-tiendas">20</div>
+          <div class="label">Tiendas activas</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="avg-rating">4.7</div>
+          <div class="label">Calificación promedio</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">Ciudad del Este</div>
+          <div class="label">Ubicación</div>
+        </div>
+      </div>
+
+      <div class="tiendas-grid" id="tiendas-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    async function cargarTiendas() {
+      try {
+        const res = await fetch('/api-tiendas');
+        if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+
+        const response = await res.json();
+        if (!response.success) throw new Error('Respuesta inválida del servidor');
+
+        const tiendas = response.data;
+
+        // Calcular promedio de calificación
+        const avgRating = (tiendas.reduce((sum, t) => sum + t.calificacion, 0) / tiendas.length).toFixed(1);
+        document.getElementById('avg-rating').textContent = avgRating;
+
+        // Renderizar tiendas
+        const grid = document.getElementById('tiendas-grid');
+        grid.innerHTML = tiendas.map(tienda => `
+          <div class="tienda-card">
+            <div class="tienda-header">
+              <h3>${tienda.nombre}</h3>
+              <span class="categoria">${tienda.categoria}</span>
+            </div>
+            <div class="tienda-body">
+              <div class="rating">
+                <span class="stars">${'⭐'.repeat(Math.round(tienda.calificacion))}</span>
+                <span>${tienda.calificacion}/5</span>
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">📍 Ubicación</span>
+                <span class="info-value">${tienda.ubicacion}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">🌐 Sitio web</span>
+                <span class="info-value"><a href="${tienda.sitio_web}" target="_blank">${tienda.sitio_web}</a></span>
+              </div>
+
+              <div class="productos">
+                <strong style="color: #667eea;">Productos destacados:</strong>
+                <ul class="productos-list">
+                  ${tienda.productos.map(p => `<li>${p}</li>`).join('')}
+                </ul>
+              </div>
+
+              <div class="contact">
+                <a href="https://wa.me/+595${tienda.telefono.replace(/^\+595\s?/, '')}" class="whatsapp" target="_blank">
+                  WhatsApp
+                </a>
+                <a href="mailto:${tienda.email}" class="email">
+                  Email
+                </a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Mostrar contenido, ocultar loading
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').innerHTML = `
+          <strong>⚠️ Error al cargar tiendas</strong><br>
+          ${error.message}
+        `;
+      }
+    }
+
+    // Cargar tiendas cuando la página cargue
+    document.addEventListener('DOMContentLoaded', cargarTiendas);
+  </script>
+</body>
+</html>

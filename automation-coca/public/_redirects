@@ -1,0 +1,2 @@
+/api/tiendas* /.netlify/functions/tiendas-api-working 200
+/api-tiendas /.netlify/functions/tiendas-api-working 200

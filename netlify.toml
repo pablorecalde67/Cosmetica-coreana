@@ -1,12 +1,6 @@
 [build]
   publish = "automation-coca/public"
   functions = "functions"
-  command = "echo 'Build complete'"
-
-[[redirects]]
-from = "/test-working"
-to = "/.netlify/functions/tiendas-api-working"
-status = 200
 
 [[redirects]]
 from = "/api-tiendas"

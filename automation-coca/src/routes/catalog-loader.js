@@ -18,11 +18,21 @@ const productSearch = new Map(); // For full-text search optimization
 let catalogLoaded = false;
 let catalogMetadata = {};
 
-// Cargar catálogo de productos (8,000+ items optimized)
+// Cargar catálogo de productos (1,000 verified CDE products)
 function loadCatalog() {
   try {
-    const catalogPath = path.join(__dirname, '../data/kbeauty-products-cde.json');
-    const catalogData = JSON.parse(readFileSync(catalogPath, 'utf-8'));
+    // Intenta cargar data verificada de CDE primero, si no existe carga la generada
+    let catalogPath = path.join(__dirname, '../data/kbeauty-products-cde-real.json');
+    let catalogData;
+
+    try {
+      catalogData = JSON.parse(readFileSync(catalogPath, 'utf-8'));
+      console.log('[CATALOG] ✅ Using VERIFIED CDE market data');
+    } catch {
+      catalogPath = path.join(__dirname, '../data/kbeauty-products-cde.json');
+      catalogData = JSON.parse(readFileSync(catalogPath, 'utf-8'));
+      console.log('[CATALOG] ℹ️  Using generated catalog (no verified data found)');
+    }
 
     // Clear indexes
     productDatabase.clear();

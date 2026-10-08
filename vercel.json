@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "automation-coca/src/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "automation-coca/src/index.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

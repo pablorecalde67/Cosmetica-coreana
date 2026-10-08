@@ -1,0 +1,8 @@
+{
+  "builder": "nixpacks",
+  "nixpacks": {
+    "pkgs": ["nodejs"],
+    "setup": ["npm install"],
+    "start": "cd automation-coca && npm start"
+  }
+}

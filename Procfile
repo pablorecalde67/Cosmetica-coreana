@@ -1,1 +1,1 @@
-web: cd automation-coca && npm install && npm start
+web: cd automation-coca && npm start

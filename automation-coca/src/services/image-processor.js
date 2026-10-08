@@ -82,9 +82,15 @@ class ImageProcessor {
    */
   async optimizeForWeb(imagePath) {
     // Comprimir, redimensionar, convertir formato
-    
+
+    if (!imagePath) {
+      return { success: false, reason: 'No image path provided' };
+    }
+
     return {
       success: true,
+      original_path: imagePath,
+      optimized_path: imagePath.replace('.jpg', '.webp'),
       original_size: Math.random() * 5000000,
       optimized_size: Math.random() * 500000,
       compression_ratio: '85%',
@@ -97,7 +103,11 @@ class ImageProcessor {
    */
   async uploadToHosting(imagePath) {
     // En producción: Subir a Cloudinary, AWS S3, o similar
-    
+
+    if (!imagePath || typeof imagePath !== 'string') {
+      return { success: false, reason: 'Invalid image path for upload' };
+    }
+
     const filename = imagePath.split('/').pop();
     return {
       success: true,
@@ -133,12 +143,24 @@ class ImageProcessor {
       
       // 3. Remover watermarks
       const cleaned = await this.removeWatermarks(download.local_path);
-      
+      if (!cleaned.success) {
+        this.rejected_count++;
+        return { success: false, reason: 'Failed to remove watermarks' };
+      }
+
       // 4. Optimizar
       const optimized = await this.optimizeForWeb(cleaned.cleaned);
-      
+      if (!optimized.success) {
+        this.rejected_count++;
+        return { success: false, reason: 'Failed to optimize image' };
+      }
+
       // 5. Subir
-      const uploaded = await this.uploadToHosting(optimized.original);
+      const uploaded = await this.uploadToHosting(optimized.optimized_path);
+      if (!uploaded.success) {
+        this.rejected_count++;
+        return { success: false, reason: 'Failed to upload image' };
+      }
       
       this.processed_count++;
       

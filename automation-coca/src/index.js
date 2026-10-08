@@ -26,6 +26,7 @@ import usersRouter from './routes/users.js';
 import viralAutomationRouter from './routes/viral-automation.js';
 import notificationsRouter from './routes/notifications.js';
 import catalogLoaderRouter from './routes/catalog-loader.js';
+import socialIntegrationRouter from './routes/social-integration.js';
 
 // Import advanced middleware
 import {
@@ -87,6 +88,9 @@ app.use('/api/notifications', notificationsRouter);
 
 // Catalog loader & Products (PHASE 3)
 app.use('/api/catalog', catalogLoaderRouter);
+
+// Social Media & Analytics Integration (PHASE 3)
+app.use('/api/social', socialIntegrationRouter);
 
 // Existing routes
 app.use('/api/piel', pielRouter);

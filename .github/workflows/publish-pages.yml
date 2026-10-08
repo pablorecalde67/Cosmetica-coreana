@@ -1,38 +1,37 @@
-name: Publish Static Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  publish:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: write
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup and publish
-        run: |
-          # Create gh-pages branch if it doesn't exist
-          git config user.name "Deploy Bot"
-          git config user.email "deploy@bot.com"
-          
-          # Copy files to temp location
-          mkdir -p /tmp/deploy
-          cp -r automation-coca/public/* /tmp/deploy/
-          
-          # Switch to gh-pages or create it
-          git fetch origin gh-pages 2>/dev/null || echo "Branch doesn't exist yet"
-          git checkout --orphan gh-pages 2>/dev/null || git checkout gh-pages 2>/dev/null || true
-          git rm -rf . 2>/dev/null || true
-          
-          # Copy files
-          cp -r /tmp/deploy/* .
-          
-          # Commit and push
-          git add .
-          git commit -m "Deploy from main" || echo "Nothing to commit"
-          git push origin gh-pages || git push -u origin gh-pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'automation-coca/public'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

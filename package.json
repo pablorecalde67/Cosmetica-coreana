@@ -1,0 +1,26 @@
+{
+  "name": "kbeautycde-monorepo",
+  "version": "2.0.0",
+  "description": "K-Beauty CDE - Automated catalog system with viral marketing",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "cd automation-coca && npm install && npm start",
+    "dev": "cd automation-coca && npm install && npm run dev",
+    "test": "cd automation-coca && npm test",
+    "heroku-prebuild": "cd automation-coca && npm install",
+    "heroku-postbuild": "echo 'Build complete'"
+  },
+  "keywords": [
+    "k-beauty",
+    "ecommerce",
+    "automation",
+    "viral-marketing",
+    "product-catalog"
+  ],
+  "author": "Pablo",
+  "license": "MIT"
+}

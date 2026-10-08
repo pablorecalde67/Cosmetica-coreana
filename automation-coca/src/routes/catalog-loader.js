@@ -10,27 +10,59 @@ import { nanoid } from 'nanoid';
 const router = express.Router();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// In-memory product database
+// In-memory product database with optimized indexing
 const productDatabase = new Map();
+const productsByBrand = new Map();
+const productsByCategory = new Map();
+const productSearch = new Map(); // For full-text search optimization
 let catalogLoaded = false;
+let catalogMetadata = {};
 
-// Cargar catálogo de productos
+// Cargar catálogo de productos (8,000+ items optimized)
 function loadCatalog() {
   try {
     const catalogPath = path.join(__dirname, '../data/kbeauty-products-cde.json');
     const catalogData = JSON.parse(readFileSync(catalogPath, 'utf-8'));
 
-    // Insertar productos en BD
+    // Clear indexes
+    productDatabase.clear();
+    productsByBrand.clear();
+    productsByCategory.clear();
+    productSearch.clear();
+
+    // Insertar productos con índices para búsqueda rápida
     let productCount = 0;
+    catalogMetadata = catalogData.catalog.metadata || {};
+
     for (const [categoryKey, categoryData] of Object.entries(catalogData.catalog.categories)) {
       if (categoryData.products && Array.isArray(categoryData.products)) {
         for (const product of categoryData.products) {
-          productDatabase.set(product.id, {
+          const enhancedProduct = {
             ...product,
             addedAt: new Date(),
             views: Math.floor(Math.random() * 1000),
             sold: Math.floor(Math.random() * 200),
-          });
+          };
+
+          // Main database
+          productDatabase.set(product.id, enhancedProduct);
+
+          // Index by brand
+          if (!productsByBrand.has(product.brand)) {
+            productsByBrand.set(product.brand, []);
+          }
+          productsByBrand.get(product.brand).push(product.id);
+
+          // Index by category
+          if (!productsByCategory.has(product.category)) {
+            productsByCategory.set(product.category, []);
+          }
+          productsByCategory.get(product.category).push(product.id);
+
+          // Search index (name + brand lowercase)
+          const searchKey = `${product.name.toLowerCase()} ${product.brand.toLowerCase()}`;
+          productSearch.set(product.id, searchKey);
+
           productCount++;
         }
       }
@@ -38,11 +70,14 @@ function loadCatalog() {
 
     catalogLoaded = true;
     console.log(`[CATALOG] ✅ ${productCount} productos cargados exitosamente`);
+    console.log(`[CATALOG] 📊 Índices creados: ${productsByBrand.size} brands, ${productsByCategory.size} categories`);
 
     return {
       success: true,
       productsLoaded: productCount,
-      categories: Object.keys(catalogData.catalog.categories).length,
+      categories: productsByCategory.size,
+      brands: productsByBrand.size,
+      metadata: catalogMetadata,
     };
   } catch (error) {
     console.error('[CATALOG] Error loading catalog:', error);
@@ -237,52 +272,68 @@ router.get('/best-sellers', (req, res) => {
 });
 
 // GET /api/catalog/search
-// Búsqueda avanzada
+// Búsqueda avanzada (optimizada para 8,000+ productos)
 router.get('/search', (req, res) => {
   try {
     const {
       query,
       category,
+      brand,
       minRating = 0,
       maxPrice = 999,
       inStock = true,
+      limit = 50,
+      offset = 0,
     } = req.query;
 
-    let products = Array.from(productDatabase.values());
+    let productIds = [];
 
-    // Buscar en nombre, descripción, brand
+    // Búsqueda inteligente con índices
     if (query) {
       const q = query.toLowerCase();
-      products = products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.brand.toLowerCase().includes(q) ||
-          (p.benefits && p.benefits.some((b) => b.toLowerCase().includes(q)))
-      );
+      productIds = Array.from(productSearch.entries())
+        .filter(([id, searchKey]) => searchKey.includes(q))
+        .map(([id]) => id);
+    } else if (brand) {
+      // Búsqueda por marca (usa índice)
+      productIds = productsByBrand.get(brand) || [];
+    } else if (category) {
+      // Búsqueda por categoría (usa índice)
+      productIds = productsByCategory.get(category) || [];
+    } else {
+      // Sin filtro: todos los productos
+      productIds = Array.from(productDatabase.keys());
     }
 
-    // Filtros
-    if (category) {
-      products = products.filter((p) => p.category === category);
-    }
-    products = products.filter((p) => p.rating >= parseFloat(minRating));
-    products = products.filter((p) => p.price <= parseFloat(maxPrice));
-    if (inStock === 'true') {
-      products = products.filter((p) => p.stock > 0);
+    // Filtrar por categoría adicional
+    if (category && query) {
+      productIds = productIds.filter(id => productDatabase.get(id).category === category);
     }
 
-    // Ordenar por relevancia (rating + reviews)
+    // Obtener productos y aplicar filtros
+    let products = productIds
+      .map(id => productDatabase.get(id))
+      .filter(p => p && p.rating >= parseFloat(minRating))
+      .filter(p => p.price <= parseFloat(maxPrice))
+      .filter(p => inStock !== 'true' || p.stock > 0);
+
+    // Ordenar por relevancia (rating * reviews)
     products.sort((a, b) => {
       const scoreA = a.rating * a.reviews;
       const scoreB = b.rating * b.reviews;
       return scoreB - scoreA;
     });
 
+    const total = products.length;
+    const paginatedProducts = products.slice(parseInt(offset), parseInt(offset) + parseInt(limit));
+
     res.json({
-      results: products,
-      total: products.length,
+      results: paginatedProducts,
+      total: total,
       query: query || 'all',
+      offset: parseInt(offset),
+      limit: parseInt(limit),
+      hasMore: parseInt(offset) + parseInt(limit) < total,
     });
   } catch (error) {
     console.error('[CATALOG] Error searching:', error);
@@ -291,14 +342,26 @@ router.get('/search', (req, res) => {
 });
 
 // GET /api/catalog/stats
-// Estadísticas del catálogo
+// Estadísticas del catálogo (optimized for 8,000+ products)
 router.get('/stats', (req, res) => {
   try {
     const products = Array.from(productDatabase.values());
 
+    const brandStats = {};
+    productsByBrand.forEach((productIds, brand) => {
+      brandStats[brand] = productIds.length;
+    });
+
+    const categoryStats = {};
+    productsByCategory.forEach((productIds, category) => {
+      categoryStats[category] = productIds.length;
+    });
+
     const stats = {
       totalProducts: products.length,
-      totalCategories: new Set(products.map((p) => p.category)).size,
+      totalBrands: productsByBrand.size,
+      totalCategories: productsByCategory.size,
+      metadata: catalogMetadata,
       averagePrice: (products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(2),
       priceRange: {
         min: Math.min(...products.map((p) => p.price)).toFixed(2),
@@ -308,7 +371,15 @@ router.get('/stats', (req, res) => {
       trendingProducts: products.filter((p) => p.trending).length,
       lowStockProducts: products.filter((p) => p.stock < 50).length,
       outOfStock: products.filter((p) => p.stock === 0).length,
-      catalogLoaded,
+      catalogLoaded: catalogLoaded,
+      topBrands: Object.entries(brandStats)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 10)
+        .reduce((acc, [brand, count]) => ({ ...acc, [brand]: count }), {}),
+      topCategories: Object.entries(categoryStats)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 10)
+        .reduce((acc, [category, count]) => ({ ...acc, [category]: count }), {}),
     };
 
     res.json(stats);

@@ -11,15 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and deploy
+      - name: Copy public files
         run: |
           mkdir -p _site
           cp -r automation-coca/public/* _site/
-          echo "Files ready: $(ls -la _site/ | wc -l) items"
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy with peaceiris
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
-          cname: kbeautycde.com

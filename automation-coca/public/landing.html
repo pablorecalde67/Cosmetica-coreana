@@ -6,7 +6,7 @@
   <title>K-Beauty CDE · Belleza Coreana en Argentina</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -15,14 +15,14 @@
     }
 
     :root {
-      --primary: #1a1a1a;
-      --accent: #ff4081;
-      --light: #ffffff;
-      --bg: #fdf3f8;
-      --coral: #ff6b9d;
-      --gold: #d4af37;
-      --text: #1a1a1a;
-      --text-light: #666;
+      --bg-light: #f9f7f4;
+      --bg-cream: #f5f1ed;
+      --accent-pink: #e8b4a8;
+      --accent-dark: #c89080;
+      --text-dark: #2c2c2c;
+      --text-light: #666666;
+      --white: #ffffff;
+      --border: #e8e8e8;
     }
 
     html {
@@ -31,26 +31,23 @@
 
     body {
       font-family: 'Montserrat', sans-serif;
-      color: var(--text);
-      background: linear-gradient(135deg, #fff 0%, #fdf3f8 50%, #fff 100%);
-      overflow-x: hidden;
+      color: var(--text-dark);
+      background: var(--bg-light);
       line-height: 1.6;
     }
 
-    /* Header minimalista elegante */
     header {
       position: fixed;
       top: 0;
       width: 100%;
-      padding: 16px 40px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
       z-index: 999;
-      border-bottom: 1px solid rgba(255, 64, 129, 0.1);
+      padding: 16px 40px;
     }
 
     .header-content {
-      max-width: 1600px;
+      max-width: 1400px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -59,12 +56,10 @@
 
     .logo {
       font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-dark);
     }
 
     nav {
@@ -76,1066 +71,419 @@
 
     nav a {
       text-decoration: none;
-      color: var(--text);
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      position: relative;
+      color: var(--text-dark);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
       transition: color 0.3s;
+      text-transform: uppercase;
     }
 
-    nav a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #ff4081, #ff6b9d);
-      transition: width 0.3s;
-    }
-
-    nav a:hover::after {
-      width: 100%;
+    nav a:hover {
+      color: var(--accent-pink);
     }
 
     .header-right {
       display: flex;
-      gap: 20px;
+      gap: 30px;
+      align-items: center;
     }
 
     .header-right a {
+      color: var(--text-dark);
       text-decoration: none;
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: all 0.3s;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.3s;
     }
 
-    /* Hero Section - Hermoso y llamativo */
+    .header-right a:hover {
+      color: var(--accent-pink);
+    }
+
     .hero {
       margin-top: 70px;
-      min-height: 95vh;
-      background: linear-gradient(135deg, #fff 0%, #fdf3f8 50%, #fff8fc 100%);
-      padding: 80px 40px;
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(135deg, #f9f7f4 0%, #f5f1ed 100%);
+      padding: 60px 40px;
+      min-height: 600px;
       display: flex;
       align-items: center;
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(255, 107, 157, 0.15) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-
     .hero-content {
-      max-width: 1600px;
+      max-width: 1400px;
       margin: 0 auto;
+      width: 100%;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 80px;
+      gap: 60px;
       align-items: center;
-      position: relative;
-      z-index: 2;
     }
 
     .hero-text h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 6.5rem;
-      line-height: 0.95;
-      margin-bottom: 32px;
-      color: var(--primary);
-      font-weight: 900;
-      letter-spacing: -2px;
-      animation: slideInLeft 0.8s ease-out;
-    }
-
-    .hero-text h1 span {
-      background: linear-gradient(135deg, #ff4081, #ff6b9d, #ff4081);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      display: inline;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      color: var(--text-dark);
     }
 
     .hero-text p {
-      font-size: 1.2rem;
+      font-size: 16px;
       color: var(--text-light);
-      margin-bottom: 48px;
+      margin-bottom: 30px;
       line-height: 1.8;
-      font-weight: 400;
-      animation: slideInLeft 0.8s ease-out 0.2s backwards;
     }
 
-    .cta-buttons {
+    .hero-buttons {
       display: flex;
       gap: 20px;
-      animation: slideInLeft 0.8s ease-out 0.4s backwards;
-    }
-
-    .btn {
-      padding: 18px 50px;
-      border: none;
-      border-radius: 50px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      text-decoration: none;
-      display: inline-block;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.2);
-      transition: left 0.4s;
-    }
-
-    .btn:hover::before {
-      left: 100%;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      color: white;
-      box-shadow: 0 10px 40px rgba(255, 64, 129, 0.3);
+      padding: 14px 40px;
+      background: var(--white);
+      color: var(--text-dark);
+      border: 2px solid var(--text-dark);
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 0.5px;
     }
 
     .btn-primary:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 60px rgba(255, 64, 129, 0.5);
+      background: var(--text-dark);
+      color: var(--white);
     }
 
     .btn-secondary {
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
+      padding: 14px 40px;
+      background: var(--accent-pink);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 0.5px;
     }
 
     .btn-secondary:hover {
-      background: var(--primary);
-      color: white;
-      transform: translateY(-5px);
+      background: var(--accent-dark);
     }
 
-    .hero-visual {
+    .hero-image {
       position: relative;
       height: 500px;
-      animation: float 6s ease-in-out infinite;
+      overflow: hidden;
+      border-radius: 20px;
     }
 
-    .hero-visual::before {
-      content: '';
-      position: absolute;
+    .hero-image img {
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(255, 64, 129, 0.1));
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      animation: rotate 20s linear infinite;
-    }
-
-    .hero-visual-text {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8rem;
-      z-index: 2;
-    }
-
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-30px);
-      }
-    }
-
-    @keyframes rotate {
-      0% {
-        transform: rotate(-45deg);
-      }
-      100% {
-        transform: rotate(315deg);
-      }
-    }
-
-    /* Sección Destacados */
-    .featured {
-      padding: 120px 40px;
-      background: linear-gradient(180deg, #fff8fc 0%, #fdf3f8 100%);
-      position: relative;
-    }
-
-    .featured::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .featured-container {
-      max-width: 1600px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .section-label {
-      font-size: 0.8rem;
-      color: var(--accent);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .section-label::before {
-      content: '';
-      width: 30px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
+      object-fit: cover;
     }
 
     .section-title {
       font-family: 'Playfair Display', serif;
-      font-size: 4rem;
-      font-weight: 900;
-      margin-bottom: 80px;
-      color: var(--primary);
-      letter-spacing: -1px;
-    }
-
-    .featured-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
-      margin-bottom: 100px;
-    }
-
-    .featured-card {
-      position: relative;
-      height: 400px;
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-      group: 'card';
-    }
-
-    .featured-card:hover {
-      transform: translateY(-20px);
-      box-shadow: 0 30px 80px rgba(255, 64, 129, 0.2);
-    }
-
-    .featured-card-bg {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 6rem;
-      opacity: 0.9;
-    }
-
-    .featured-card-info {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-      color: white;
-      padding: 40px 24px 24px;
-      transform: translateY(40px);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .featured-card:hover .featured-card-info {
-      transform: translateY(0);
-    }
-
-    .featured-card-brand {
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-      opacity: 0.8;
-    }
-
-    .featured-card-name {
-      font-size: 1.5rem;
+      font-size: 36px;
       font-weight: 700;
-      line-height: 1.2;
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--text-dark);
     }
 
-    /* Productos Grid */
     .products-section {
-      padding: 120px 40px;
-      background: white;
-      position: relative;
-    }
-
-    .products-section::before {
-      content: '';
-      position: absolute;
-      bottom: -10%;
-      right: -5%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(255, 107, 157, 0.08) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .products-container {
-      max-width: 1600px;
+      max-width: 1400px;
       margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .products-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 4rem;
-      font-weight: 900;
-      margin-bottom: 80px;
-      color: var(--primary);
-      letter-spacing: -1px;
+      padding: 80px 40px;
+      background: var(--white);
     }
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      margin-bottom: 80px;
     }
 
-    .product {
-      background: white;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      border-radius: 12px;
+    .product-card {
+      background: var(--bg-light);
+      border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .product:hover {
-      transform: translateY(-15px);
-      box-shadow: 0 25px 60px rgba(255, 64, 129, 0.15);
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
     .product-image {
-      width: 100%;
-      aspect-ratio: 1;
-      background: linear-gradient(135deg, #fdf3f8, #ff6b9d);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3.5rem;
       position: relative;
+      width: 100%;
+      height: 280px;
       overflow: hidden;
+      background: var(--bg-cream);
     }
 
     .product-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center;
-    }
-
-    .product-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      color: white;
-      padding: 6px 12px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      z-index: 1;
-      border-radius: 20px;
     }
 
     .product-info {
-      padding: 16px;
+      padding: 25px 20px;
     }
 
     .product-brand {
-      font-size: 0.7rem;
-      color: var(--accent);
-      font-weight: 800;
-      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--accent-pink);
+      font-weight: 600;
       letter-spacing: 1px;
-      margin-bottom: 6px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
     .product-name {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--primary);
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-dark);
       margin-bottom: 10px;
-      line-height: 1.3;
+      line-height: 1.4;
     }
 
-    .product-rating {
-      font-size: 0.75rem;
-      color: var(--accent);
-      margin-bottom: 12px;
-      font-weight: 600;
+    .product-description {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 15px;
+      line-height: 1.6;
     }
 
     .product-price {
       display: flex;
-      gap: 10px;
-      align-items: baseline;
-      margin-bottom: 12px;
+      gap: 15px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      font-weight: 600;
     }
 
     .price-usd {
-      font-size: 1.3rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .price-usd::before {
-      content: "U$S";
+      color: var(--accent-dark);
     }
 
     .price-ars {
-      font-size: 0.75rem;
       color: var(--text-light);
-      background: var(--bg);
-      padding: 3px 8px;
-      border-radius: 4px;
+      font-size: 12px;
     }
 
     .product-btn {
       width: 100%;
       padding: 12px;
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      color: white;
-      border: none;
-      font-weight: 700;
+      background: var(--white);
+      color: var(--text-dark);
+      border: 2px solid var(--text-dark);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      border-radius: 8px;
     }
 
     .product-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(255, 64, 129, 0.3);
+      background: var(--text-dark);
+      color: var(--white);
     }
 
-    /* Banner Análisis */
-    .banner {
-      padding: 140px 40px;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
-      color: white;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .banner::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(255, 107, 157, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .banner-content {
-      max-width: 900px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .banner h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 5rem;
-      font-weight: 900;
-      margin-bottom: 32px;
-      letter-spacing: -1px;
-      line-height: 1;
-    }
-
-    .banner h2 span {
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .banner p {
-      font-size: 1.1rem;
-      margin-bottom: 48px;
-      font-weight: 300;
-      line-height: 1.8;
-      opacity: 0.9;
-    }
-
-    .banner-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 60px;
-      margin-top: 80px;
-      padding-top: 80px;
-      border-top: 1px solid rgba(255, 107, 157, 0.2);
-    }
-
-    .stat {
-      text-align: center;
-    }
-
-    .stat-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      font-weight: 900;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #ff4081, #ff6b9d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .stat-label {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      opacity: 0.7;
-      font-weight: 600;
-    }
-
-    /* Footer */
     footer {
-      background: #0f0f0f;
-      color: #999;
-      padding: 100px 40px 40px;
-      position: relative;
-    }
-
-    .footer-grid {
-      max-width: 1600px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 60px;
-      margin-bottom: 60px;
-    }
-
-    .footer-col h4 {
-      color: white;
-      font-size: 0.85rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 24px;
-    }
-
-    .footer-col a {
-      display: block;
-      color: #999;
-      text-decoration: none;
-      font-size: 0.85rem;
-      margin-bottom: 14px;
-      transition: all 0.3s;
-      font-weight: 500;
-    }
-
-    .footer-col a:hover {
-      color: var(--accent);
-      transform: translateX(5px);
-    }
-
-    .footer-bottom {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding-top: 40px;
-      border-top: 1px solid #333;
+      background: var(--text-dark);
+      color: var(--white);
+      padding: 40px;
       text-align: center;
-      font-size: 0.8rem;
-      opacity: 0.6;
+      font-size: 14px;
     }
 
-    /* Responsive */
-    @media (max-width: 1200px) {
+    @media (max-width: 1024px) {
       .hero-content {
         grid-template-columns: 1fr;
-        gap: 60px;
       }
-
-      .hero-text h1 {
-        font-size: 3.5rem;
-      }
-
-      .featured-grid {
+      .products-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-
-      .products-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .banner-stats {
-        grid-template-columns: 1fr;
+      nav {
+        display: none;
       }
     }
 
     @media (max-width: 768px) {
+      header {
+        padding: 12px 20px;
+      }
       .logo {
-        font-size: 1.2rem;
+        font-size: 18px;
       }
-
-      nav {
-        gap: 15px;
-        font-size: 0.7rem;
-      }
-
       .hero {
         padding: 40px 20px;
-        margin-top: 50px;
       }
-
       .hero-text h1 {
-        font-size: 2.2rem;
+        font-size: 32px;
       }
-
-      .section-title,
-      .products-title,
-      .banner h2 {
-        font-size: 2.2rem;
+      .hero-buttons {
+        flex-direction: column;
       }
-
-      .featured,
-      .products-section,
-      .banner {
-        padding: 80px 20px;
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        text-align: center;
       }
-
       .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-      }
-
-      .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-      }
-
-      .featured-grid {
         grid-template-columns: 1fr;
+      }
+      .products-section {
+        padding: 40px 20px;
       }
     }
   </style>
-
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TEST123456789"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-TEST123456789');
-  </script>
-
-  <!-- Facebook Pixel -->
-  <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    n.queue=[];t=document.createElement('img');t.async=!0;t.src=v;
-    s=document.getElementsByTagName('img')[0];s.parentNode.insertBefore(t,s)}(window, document,
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'test_facebook_pixel_id');
-    fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=test_facebook_pixel_id&ev=PageView&noscript=1" /></noscript>
 </head>
 <body>
-
-<!-- Header -->
-<header>
-  <div class="header-content">
-    <div class="logo">K-BEAUTY</div>
-    <nav>
-      <a href="#featured">Destacados</a>
-      <a href="#analisis">Análisis IA</a>
-      <a href="#productos">Tienda</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
-    <div class="header-right">
-      <a href="https://wa.me/595972020202">💬 Chat</a>
-    </div>
-  </div>
-</header>
-
-<!-- Hero Section -->
-<section class="hero">
-  <div class="hero-content">
-    <div class="hero-text">
-      <h1>Belleza <span>Coreana</span></h1>
-      <p>1,020+ productos autenticados directamente desde Corea. Análisis de piel con IA. Tu rutina perfecta en 30 segundos. Envío a toda Argentina.</p>
-      <div class="cta-buttons">
-        <a href="#analisis" class="btn btn-primary">Analizar mi piel</a>
-        <a href="#productos" class="btn btn-secondary">Explorar tienda</a>
+  <header>
+    <div class="header-content">
+      <div class="logo">K-BEAUTY</div>
+      <nav>
+        <a href="#featured">Destacados</a>
+        <a href="#productos">Productos</a>
+        <a href="#brands">Marcas</a>
+        <a href="#about">Sobre Nosotros</a>
+      </nav>
+      <div class="header-right">
+        <a href="#search">🔍</a>
+        <a href="#cart">🛒</a>
+        <a href="#account">👤</a>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="hero-visual-text">✨</div>
-    </div>
-  </div>
-</section>
+  </header>
 
-<!-- Featured Section -->
-<section class="featured" id="featured">
-  <div class="featured-container">
-    <div class="section-label">⚡ Los Más Deseados</div>
-    <div class="section-title">Trending Ahora</div>
-
-    <div class="featured-grid">
-      <div class="featured-card">
-        <div class="featured-card-bg">💄</div>
-        <div class="featured-card-info">
-          <div class="featured-card-brand">COSRX</div>
-          <div class="featured-card-name">Advanced Snail 96 Mucin</div>
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>Descubre el Secreto de la Belleza Coreana</h1>
+        <p>Ilumina tu piel con nuestra selección premium de K-Beauty auténtica. Productos de las marcas más prestigiosas de Corea del Sur, ahora en Argentina.</p>
+        <div class="hero-buttons">
+          <a href="#productos" class="btn-primary">Explorar Productos</a>
+          <a href="#consulta" class="btn-secondary">Consulta Personalizada</a>
         </div>
       </div>
-
-      <div class="featured-card">
-        <div class="featured-card-bg">✨</div>
-        <div class="featured-card-info">
-          <div class="featured-card-brand">Laneige</div>
-          <div class="featured-card-name">Lip Sleeping Mask</div>
-        </div>
-      </div>
-
-      <div class="featured-card">
-        <div class="featured-card-bg">🎨</div>
-        <div class="featured-card-info">
-          <div class="featured-card-brand">3CE</div>
-          <div class="featured-card-name">Velvet Lip Tint</div>
-        </div>
+      <div class="hero-image">
+        <img src="./piel/img/products/beauty-of-joseon-glow-deep-serum.webp" alt="Belleza Coreana">
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Products Section -->
-<section class="products-section" id="productos">
-  <div class="products-container">
-    <div class="products-title">Explora la Tienda</div>
-
+  <section class="products-section" id="productos">
+    <h2 class="section-title">Nuestros Imprescindibles</h2>
     <div class="products-grid">
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/anua-peach-70-niacinamide-serum.webp" alt="Anua Foam Cleanser">
-          <div class="product-badge">TOP</div>
-        </div>
-        <div class="product-info">
-          <div class="product-brand">Anua</div>
-          <div class="product-name">Foam Cleanser</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">16.22</span>
-            <span class="price-ars">16.058 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
-        </div>
-      </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/beauty-of-joseon-glow-deep-serum.webp" alt="Beauty of Joseon Soothing Toner">
-          <div class="product-badge">TRENDING</div>
-        </div>
-        <div class="product-info">
-          <div class="product-brand">Beauty of Joseon</div>
-          <div class="product-name">Soothing Toner</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">27.85</span>
-            <span class="price-ars">27.572 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
-        </div>
-      </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/cosrx-aha-bha-clarifying-toner.webp" alt="Cosrx Toner Pads">
-          <div class="product-badge">FAVORITO</div>
-        </div>
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/cosrx-aha-bha-clarifying-toner.webp" alt="Cosrx"></div>
         <div class="product-info">
           <div class="product-brand">Cosrx</div>
-          <div class="product-name">Toner Pads</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">32.37</span>
-            <span class="price-ars">32.046 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
+          <div class="product-name">AHA BHA Clarifying Toner</div>
+          <div class="product-description">Exfoliante suave para purificar poros</div>
+          <div class="product-price"><span class="price-usd">$28.50</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/cosrx-advanced-snail-96-mucin-essence.webp" alt="Medicube Snail Essence">
-          <div class="product-badge">NUEVO</div>
-        </div>
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/anua-peach-70-niacinamide-serum.webp" alt="Anua"></div>
         <div class="product-info">
-          <div class="product-brand">Medicube</div>
-          <div class="product-name">Snail Essence</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">28.72</span>
-            <span class="price-ars">28.433 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
+          <div class="product-brand">Anua</div>
+          <div class="product-name">Peach 70 Niacinamide Serum</div>
+          <div class="product-description">Sérum luminoso para controlar sebo</div>
+          <div class="product-price"><span class="price-usd">$24.99</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/skin1004-centella-ampoule.webp" alt="Torriden Centella Ampoule">
-          <div class="product-badge">FAV</div>
-        </div>
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/beauty-of-joseon-glow-deep-serum.webp" alt="Beauty of Joseon"></div>
         <div class="product-info">
-          <div class="product-brand">Torriden</div>
+          <div class="product-brand">Beauty of Joseon</div>
+          <div class="product-name">Glow Deep Serum</div>
+          <div class="product-description">Sérum profundo con ginseng rojo</div>
+          <div class="product-price"><span class="price-usd">$32.80</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/skin1004-centella-ampoule.webp" alt="Skin1004"></div>
+        <div class="product-info">
+          <div class="product-brand">Skin1004</div>
           <div class="product-name">Centella Ampoule</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">20.97</span>
-            <span class="price-ars">20.760 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
+          <div class="product-description">Ampolla calmante con centella</div>
+          <div class="product-price"><span class="price-usd">$18.90</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/somebymi-galactomyces-vitamin-c-glow-serum.webp" alt="Round Lab Vitamin C Serum">
-          <div class="product-badge">STOCK</div>
-        </div>
+    </div>
+
+    <h2 class="section-title">Lo Nuevo de la Semana</h2>
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/tocobo-bio-watery-sun-cream-spf50.webp" alt="Tocobo"></div>
         <div class="product-info">
-          <div class="product-brand">Round Lab</div>
-          <div class="product-name">Vitamin C Serum</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">18.69</span>
-            <span class="price-ars">18.503 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
+          <div class="product-brand">Tocobo</div>
+          <div class="product-name">Bio Watery Sun Cream SPF50</div>
+          <div class="product-description">Protector solar ligero y resistente</div>
+          <div class="product-price"><span class="price-usd">$22.50</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/mixsoon-bean-toner.webp" alt="Mixsoon Moisturizing Cream">
-          <div class="product-badge">TOP</div>
-        </div>
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/somebymi-galactomyces-vitamin-c-glow-serum.webp" alt="Some By Mi"></div>
         <div class="product-info">
-          <div class="product-brand">Mixsoon</div>
-          <div class="product-name">Moisturizing Cream</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">25.35</span>
-            <span class="price-ars">25.097 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
+          <div class="product-brand">Some By Mi</div>
+          <div class="product-name">Galactomyces Vitamin C Glow</div>
+          <div class="product-description">Sérum con vitamina C y galactomices</div>
+          <div class="product-price"><span class="price-usd">$26.70</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/dr-althea-345-relief-cream.webp" alt="Dr. Althea Water-Fit Sunscreen">
-          <div class="product-badge">TRENDING</div>
-        </div>
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/dr-althea-345-relief-cream.webp" alt="Dr. Althea"></div>
         <div class="product-info">
           <div class="product-brand">Dr. Althea</div>
-          <div class="product-name">Water-Fit Sunscreen</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">21.35</span>
-            <span class="price-ars">21.137 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
+          <div class="product-name">345 Relief Cream</div>
+          <div class="product-description">Crema calmante para piel sensible</div>
+          <div class="product-price"><span class="price-usd">$29.99</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/tocobo-bio-watery-sun-cream-spf50.webp" alt="Sungboon Editor Sun Stick">
-          <div class="product-badge">FAVORITO</div>
-        </div>
+      <div class="product-card">
+        <div class="product-image"><img src="./piel/img/products/jumiso-snail-mucin-88-peptide-cream.webp" alt="Jumiso"></div>
         <div class="product-info">
-          <div class="product-brand">Sungboon Editor</div>
-          <div class="product-name">Sun Stick</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">24.91</span>
-            <span class="price-ars">24.661 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
-        </div>
-      </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/red-cream-plus.webp" alt="Dr. Melaxin Lip Sleeping Mask">
-          <div class="product-badge">NUEVO</div>
-        </div>
-        <div class="product-info">
-          <div class="product-brand">Dr. Melaxin</div>
-          <div class="product-name">Lip Sleeping Mask</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">22.89</span>
-            <span class="price-ars">22.661 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
-        </div>
-      </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/pdrn-hydrating-serum.webp" alt="Celimax PDRN Salmon Cream">
-          <div class="product-badge">FAV</div>
-        </div>
-        <div class="product-info">
-          <div class="product-brand">Celimax</div>
-          <div class="product-name">PDRN Salmon Cream</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">47.12</span>
-            <span class="price-ars">46.649 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
-        </div>
-      </div>
-      <div class="product">
-        <div class="product-image">
-          <img src="./piel/img/products/anua-heartleaf-pore-control-cleansing-oil.webp" alt="Goodal Cleansing Oil">
-          <div class="product-badge">STOCK</div>
-        </div>
-        <div class="product-info">
-          <div class="product-brand">Goodal</div>
-          <div class="product-name">Cleansing Oil</div>
-          <div class="product-rating">★★★★★ 45</div>
-          <div class="product-price">
-            <span class="price-usd">21.52</span>
-            <span class="price-ars">21.305 ARS</span>
-          </div>
-          <button class="product-btn">Comprar</button>
+          <div class="product-brand">Jumiso</div>
+          <div class="product-name">Snail Mucin 88 Peptide Cream</div>
+          <div class="product-description">Crema regeneradora con mucina</div>
+          <div class="product-price"><span class="price-usd">$31.20</span></div>
+          <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Banner Análisis -->
-<section class="banner" id="analisis">
-  <div class="banner-content">
-    <h2>Tu Rutina <span>Perfecta</span></h2>
-    <p>Descubre qué productos son ideales para tu tipo de piel con nuestro análisis de inteligencia artificial. Basado en ingredientes, preocupaciones específicas y resultados comprobados.</p>
-    <a href="/piel" class="btn btn-primary">Comenzar Ahora</a>
-
-    <div class="banner-stats">
-      <div class="stat">
-        <div class="stat-num">1,020+</div>
-        <div class="stat-label">Productos Auténticos</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">20</div>
-        <div class="stat-label">Marcas Verificadas</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">AR</div>
-        <div class="stat-label">Envío Argentina</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer id="contacto">
-  <div class="footer-grid">
-    <div class="footer-col">
-      <h4>Tienda</h4>
-      <a href="#productos">Todos los productos</a>
-      <a href="#">Skincare</a>
-      <a href="#">Makeup</a>
-      <a href="#">Best Sellers</a>
-    </div>
-    <div class="footer-col">
-      <h4>Información</h4>
-      <a href="#">Sobre nosotros</a>
-      <a href="#">Envíos</a>
-      <a href="#">Cambios y devoluciones</a>
-      <a href="#">Preguntas frecuentes</a>
-    </div>
-    <div class="footer-col">
-      <h4>Conecta</h4>
-      <a href="https://wa.me/595972020202">WhatsApp</a>
-      <a href="#">Instagram</a>
-      <a href="#">TikTok</a>
-      <a href="#">Email</a>
-    </div>
-    <div class="footer-col">
-      <h4>Legal</h4>
-      <a href="#">Términos y condiciones</a>
-      <a href="#">Privacidad</a>
-      <a href="#">Cookies</a>
-      <a href="#">Devoluciones</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2026 K-Beauty CDE · Belleza Coreana · Autenticidad desde Ciudad del Este · Envío a toda Argentina</p>
-  </div>
-</footer>
-
+  <footer>
+    <p>&copy; 2026 K-Beauty CDE. Belleza Coreana Auténtica en Argentina.</p>
+    <p>Envíos a todo el país | Productos 100% Originales</p>
+  </footer>
 </body>
 </html>

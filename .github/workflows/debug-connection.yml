@@ -1,0 +1,122 @@
+name: Debug Database Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install psycopg2
+        run: pip install psycopg2-binary
+
+      - name: Test Connection and Print Debug Info
+        env:
+          SUPABASE_HOST: db.baddsoyjxthsldksinxo.supabase.co
+          SUPABASE_USER: postgres
+          SUPABASE_PASSWORD: potdy1-Qexpaq-tejqiz
+          SUPABASE_DB: postgres
+        run: python3 << 'DEBUGEOF'
+import psycopg2
+import os
+import sys
+
+print("\n" + "="*60)
+print("DATABASE CONNECTION DEBUG")
+print("="*60 + "\n")
+
+# Print environment
+print("ENVIRONMENT:")
+print(f"  HOST: {os.environ.get('SUPABASE_HOST')}")
+print(f"  USER: {os.environ.get('SUPABASE_USER')}")
+print(f"  DB: {os.environ.get('SUPABASE_DB')}")
+print(f"  PASSWORD: {'***' + os.environ.get('SUPABASE_PASSWORD', '')[-4:] if os.environ.get('SUPABASE_PASSWORD') else 'NOT SET'}")
+print()
+
+# Try connection with detailed error reporting
+print("ATTEMPTING CONNECTION...\n")
+
+try:
+    conn = psycopg2.connect(
+        host=os.environ.get('SUPABASE_HOST'),
+        port=5432,
+        user=os.environ.get('SUPABASE_USER'),
+        password=os.environ.get('SUPABASE_PASSWORD'),
+        database=os.environ.get('SUPABASE_DB'),
+        sslmode='require',
+        connect_timeout=10
+    )
+    
+    print("✅ CONNECTION SUCCESSFUL!\n")
+    
+    cursor = conn.cursor()
+    
+    # Check if tables exist
+    print("CHECKING EXISTING TABLES...\n")
+    
+    cursor.execute("""
+        SELECT table_name FROM information_schema.tables 
+        WHERE table_schema = 'public'
+    """)
+    
+    tables = cursor.fetchall()
+    if tables:
+        print(f"Found {len(tables)} tables:")
+        for table in tables:
+            print(f"  - {table[0]}")
+    else:
+        print("No tables found (database is empty)")
+    
+    # Try to count products
+    try:
+        cursor.execute("SELECT COUNT(*) FROM productos")
+        count = cursor.fetchone()[0]
+        print(f"\nProductos en BD: {count}")
+    except Exception as e:
+        print(f"\n⚠️  Tabla 'productos' no existe: {str(e)[:50]}")
+    
+    cursor.close()
+    conn.close()
+    
+    print("\n" + "="*60)
+    print("✅ All checks passed!")
+    print("="*60)
+    
+except psycopg2.OperationalError as e:
+    print(f"❌ CONNECTION FAILED:\n")
+    error_str = str(e)
+    print(f"Error: {error_str}\n")
+    
+    # Analyze error
+    if "authentication failed" in error_str.lower():
+        print("→ Possible causes:")
+        print("  1. Password is incorrect")
+        print("  2. User/host/database name is wrong")
+    elif "could not translate" in error_str.lower() or "name or service" in error_str.lower():
+        print("→ Possible causes:")
+        print("  1. Host name is incorrect or doesn't resolve")
+        print("  2. No network connectivity")
+    elif "timeout" in error_str.lower():
+        print("→ Possible causes:")
+        print("  1. Server is not responding")
+        print("  2. Network connectivity issue")
+        print("  3. Firewall blocking connection")
+    
+    sys.exit(1)
+
+except Exception as e:
+    print(f"❌ UNEXPECTED ERROR:\n")
+    print(f"Type: {type(e).__name__}")
+    print(f"Message: {str(e)}")
+    sys.exit(1)
+
+DEBUGEOF

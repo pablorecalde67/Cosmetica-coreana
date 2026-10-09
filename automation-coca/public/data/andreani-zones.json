@@ -1,0 +1,190 @@
+{
+  "description": "Zonas de envío Andreani para Argentina - Costos en ARS",
+  "baseUrl": "https://www.andreani.com",
+  "zones": [
+    {
+      "provincia": "Buenos Aires",
+      "zona": 1,
+      "costoPorKg": 450,
+      "costoBase": 450,
+      "diasEntrega": 2,
+      "regiones": ["La Plata", "Quilmes", "Avellaneda", "Lanús", "GBA Sur", "GBA Oeste"]
+    },
+    {
+      "provincia": "CABA",
+      "zona": 1,
+      "costoPorKg": 400,
+      "costoBase": 400,
+      "diasEntrega": 1,
+      "regiones": ["Ciudad de Buenos Aires"]
+    },
+    {
+      "provincia": "Mendoza",
+      "zona": 3,
+      "costoPorKg": 850,
+      "costoBase": 850,
+      "diasEntrega": 5,
+      "regiones": ["Mendoza Capital", "Godoy Cruz", "Las Heras"]
+    },
+    {
+      "provincia": "Córdoba",
+      "zona": 2,
+      "costoPorKg": 650,
+      "costoBase": 650,
+      "diasEntrega": 4,
+      "regiones": ["Córdoba Capital", "Zona Sur", "Zona Oeste"]
+    },
+    {
+      "provincia": "Santa Fe",
+      "zona": 2,
+      "costoPorKg": 620,
+      "costoBase": 620,
+      "diasEntrega": 4,
+      "regiones": ["Rosario", "Santa Fe Capital", "Zona Norte"]
+    },
+    {
+      "provincia": "Entre Ríos",
+      "zona": 2,
+      "costoPorKg": 600,
+      "costoBase": 600,
+      "diasEntrega": 4,
+      "regiones": ["Paraná", "Concordia", "Zona Sur"]
+    },
+    {
+      "provincia": "Misiones",
+      "zona": 4,
+      "costoPorKg": 950,
+      "costoBase": 950,
+      "diasEntrega": 6,
+      "regiones": ["Posadas", "Oberá", "Puerto Iguazú"]
+    },
+    {
+      "provincia": "Corrientes",
+      "zona": 4,
+      "costoPorKg": 920,
+      "costoBase": 920,
+      "diasEntrega": 6,
+      "regiones": ["Corrientes Capital", "Paso de la Cruz"]
+    },
+    {
+      "provincia": "Santiago del Estero",
+      "zona": 3,
+      "costoPorKg": 780,
+      "costoBase": 780,
+      "diasEntrega": 5,
+      "regiones": ["Santiago Capital", "La Banda", "Zona Sur"]
+    },
+    {
+      "provincia": "Tucumán",
+      "zona": 3,
+      "costoPorKg": 820,
+      "costoBase": 820,
+      "diasEntrega": 5,
+      "regiones": ["San Miguel de Tucumán", "Zona Metropolitana"]
+    },
+    {
+      "provincia": "Catamarca",
+      "zona": 4,
+      "costoPorKg": 900,
+      "costoBase": 900,
+      "diasEntrega": 6,
+      "regiones": ["San Fernando del Valle", "Andalgalá"]
+    },
+    {
+      "provincia": "La Rioja",
+      "zona": 3,
+      "costoPorKg": 850,
+      "costoBase": 850,
+      "diasEntrega": 5,
+      "regiones": ["La Rioja Capital", "Chilecito"]
+    },
+    {
+      "provincia": "San Juan",
+      "zona": 3,
+      "costoPorKg": 870,
+      "costoBase": 870,
+      "diasEntrega": 5,
+      "regiones": ["San Juan Capital", "Chimbas"]
+    },
+    {
+      "provincia": "San Luis",
+      "zona": 3,
+      "costoPorKg": 800,
+      "costoBase": 800,
+      "diasEntrega": 5,
+      "regiones": ["San Luis Capital", "Merlo"]
+    },
+    {
+      "provincia": "La Pampa",
+      "zona": 3,
+      "costoPorKg": 750,
+      "costoBase": 750,
+      "diasEntrega": 5,
+      "regiones": ["Santa Rosa", "General Pico"]
+    },
+    {
+      "provincia": "Neuquén",
+      "zona": 4,
+      "costoPorKg": 1050,
+      "costoBase": 1050,
+      "diasEntrega": 7,
+      "regiones": ["Neuquén Capital", "San Martín de los Andes"]
+    },
+    {
+      "provincia": "Río Negro",
+      "zona": 4,
+      "costoPorKg": 1050,
+      "costoBase": 1050,
+      "diasEntrega": 7,
+      "regiones": ["Bariloche", "Viedma", "San Carlos de Bariloche"]
+    },
+    {
+      "provincia": "Chubut",
+      "zona": 4,
+      "costoPorKg": 1100,
+      "costoBase": 1100,
+      "diasEntrega": 7,
+      "regiones": ["Comodoro Rivadavia", "Puerto Madryn"]
+    },
+    {
+      "provincia": "Santa Cruz",
+      "zona": 4,
+      "costoPorKg": 1200,
+      "costoBase": 1200,
+      "diasEntrega": 8,
+      "regiones": ["Río Gallegos", "El Calafate"]
+    },
+    {
+      "provincia": "Tierra del Fuego",
+      "zona": 5,
+      "costoPorKg": 1350,
+      "costoBase": 1350,
+      "diasEntrega": 9,
+      "regiones": ["Ushuaia"]
+    },
+    {
+      "provincia": "Jujuy",
+      "zona": 4,
+      "costoPorKg": 1000,
+      "costoBase": 1000,
+      "diasEntrega": 6,
+      "regiones": ["San Salvador de Jujuy", "Palpalá"]
+    },
+    {
+      "provincia": "Salta",
+      "zona": 4,
+      "costoPorKg": 950,
+      "costoBase": 950,
+      "diasEntrega": 6,
+      "regiones": ["Salta Capital", "Tartagal", "Orán"]
+    },
+    {
+      "provincia": "Formosa",
+      "zona": 4,
+      "costoPorKg": 1000,
+      "costoBase": 1000,
+      "diasEntrega": 6,
+      "regiones": ["Formosa Capital", "Clorinda"]
+    }
+  ]
+}

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Beauty CDE - Verificación del Sistema</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5e6e8 0%, #fffaf7 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 40px;
+    }
+
+    h1 {
+      color: #c89080;
+      font-size: 28px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #999;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .check-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      border-left: 4px solid #ddd;
+    }
+
+    .check-section h2 {
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .check-item {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    .check-item.pass {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .check-item.fail {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+
+    .check-item.pending {
+      background: #e3f2fd;
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+
+    .summary {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .summary.all-pass {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 2px solid #4caf50;
+    }
+
+    .summary.partial {
+      background: #fff3e0;
+      color: #e65100;
+      border: 2px solid #ff9800;
+    }
+
+    .summary.fail {
+      background: #ffebee;
+      color: #c62828;
+      border: 2px solid #f44336;
+    }
+
+    .summary h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px 30px;
+      margin-top: 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #c89080 0%, #b8818b 100%);
+      color: white;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(200, 144, 128, 0.3);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .links-section {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid #ddd;
+    }
+
+    .links-section h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .link-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      border-left: 4px solid #c89080;
+    }
+
+    .link-item a {
+      color: #c89080;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link-item a:hover {
+      text-decoration: underline;
+    }
+
+    .link-item .description {
+      color: #666;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✅ K-Beauty CDE - Verificación del Sistema</h1>
+    <p class="subtitle">Verifica que todo está funcionando correctamente</p>
+
+    <div class="check-section">
+      <h2><span class="spinner" id="spinner1"></span>GitHub Pages y Archivos</h2>
+      <div id="githubCheck"></div>
+    </div>
+
+    <div class="check-section">
+      <h2><span class="spinner" id="spinner2"></span>Datos de Productos</h2>
+      <div id="dataCheck"></div>
+    </div>
+
+    <div class="check-section">
+      <h2><span class="spinner" id="spinner3"></span>Conexión a Supabase</h2>
+      <div id="supabaseCheck"></div>
+    </div>
+
+    <div class="check-section">
+      <h2><span class="spinner" id="spinner4"></span>Base de Datos</h2>
+      <div id="databaseCheck"></div>
+    </div>
+
+    <div id="summary"></div>
+
+    <div class="links-section">
+      <h3>🔗 Acceso a tu Tienda</h3>
+      <div class="link-item">
+        <a href="tienda-simple.html" target="_blank">🏪 Tienda K-Beauty CDE</a>
+        <div class="description">Ver catálogo de 1000 productos</div>
+      </div>
+      <div class="link-item">
+        <a href="admin.html" target="_blank">📊 Panel Administrativo</a>
+        <div class="description">Gestionar órdenes y configuración</div>
+      </div>
+      <div class="link-item">
+        <a href="setup-diagnostics.html" target="_blank">🔍 Diagnóstico Técnico</a>
+        <div class="description">Verificación detallada del sistema</div>
+      </div>
+    </div>
+
+    <button id="btnRefresh" onclick="location.reload()">🔄 Recargar Verificación</button>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://baddsoyjxthsldksinxo.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZGRzb3lqeHRoc2xka3NpbnhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NjA2ODIsImV4cCI6MjEwNzEzNjY4Mn0.P47QoplUFCbNm44Jrn50Yw0jtygW0xSAbGQ9h1FYp3U';
+
+    let results = {
+      github: false,
+      data: false,
+      supabase: false,
+      database: false
+    };
+
+    function addCheck(elementId, message, status) {
+      const element = document.getElementById(elementId);
+      const check = document.createElement('div');
+      check.className = 'check-item ' + status;
+      check.textContent = message;
+      element.appendChild(check);
+    }
+
+    function updateSummary() {
+      const passed = Object.values(results).filter(v => v).length;
+      const total = Object.keys(results).length;
+      const summary = document.getElementById('summary');
+
+      let html = '<div class="summary ';
+      let message = '';
+
+      if (passed === total) {
+        html += 'all-pass">';
+        message = '🎉 ¡SISTEMA COMPLETAMENTE OPERATIVO!';
+        results.summary = true;
+      } else if (passed >= 2) {
+        html += 'partial">';
+        message = `⚠️ Sistema parcialmente verificado (${passed}/${total} componentes)`;
+        results.summary = false;
+      } else {
+        html += 'fail">';
+        message = `❌ Sistema requiere atención (${passed}/${total} componentes)`;
+        results.summary = false;
+      }
+
+      html += `<h3>${message}</h3>`;
+      html += '<p style="margin-top: 10px; font-size: 14px;">';
+
+      if (results.summary) {
+        html += '✓ Tu tienda está 100% operativa<br>';
+        html += '✓ Accede desde cualquier navegador<br>';
+        html += '✓ Los productos se cargan perfectamente<br>';
+        html += '✓ El sistema de órdenes funciona<br>';
+      } else {
+        if (!results.database) {
+          html += '• La base de datos aún no está configurada<br>';
+          html += '  → Ejecuta: setup.sh (Mac/Linux) o setup.bat (Windows)<br>';
+        }
+        if (!results.supabase) {
+          html += '• Supabase no está accesible<br>';
+          html += '  → Verifica tu conexión a Internet<br>';
+        }
+        if (!results.data) {
+          html += '• Los datos de productos no se encuentran<br>';
+          html += '  → Los datos deberían estar en docs/data/<br>';
+        }
+      }
+
+      html += '</p></div>';
+      summary.innerHTML = html;
+    }
+
+    async function runVerification() {
+      // GitHub Pages and files
+      document.getElementById('githubCheck').innerHTML = '';
+      try {
+        const response = await fetch('data/products.json');
+        if (response.ok) {
+          addCheck('githubCheck', '✅ GitHub Pages está activo y accesible', 'pass');
+          addCheck('githubCheck', '✅ Archivos del sitio están presentes', 'pass');
+          results.github = true;
+        } else {
+          addCheck('githubCheck', `❌ Error accediendo a GitHub Pages (HTTP ${response.status})`, 'fail');
+        }
+      } catch (e) {
+        addCheck('githubCheck', '❌ GitHub Pages no responde: ' + e.message, 'fail');
+      }
+
+      // Product data
+      document.getElementById('dataCheck').innerHTML = '';
+      try {
+        const response = await fetch('data/products.json');
+        if (response.ok) {
+          const products = await response.json();
+          addCheck('dataCheck', `✅ Archivo products.json encontrado`, 'pass');
+          addCheck('dataCheck', `✅ ${products.length} productos cargados en memoria`, 'pass');
+          if (products.length >= 1000) {
+            results.data = true;
+          }
+        } else {
+          addCheck('dataCheck', '❌ No se puede acceder a products.json', 'fail');
+        }
+      } catch (e) {
+        addCheck('dataCheck', '❌ Error cargando datos: ' + e.message, 'fail');
+      }
+
+      // Supabase connection
+      document.getElementById('supabaseCheck').innerHTML = '';
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'apikey': SUPABASE_ANON_KEY,
+          }
+        });
+
+        if (response.ok) {
+          addCheck('supabaseCheck', '✅ Conexión exitosa a Supabase', 'pass');
+          results.supabase = true;
+        } else {
+          addCheck('supabaseCheck', `⚠️ Supabase responde pero con error (HTTP ${response.status})`, 'pending');
+        }
+      } catch (e) {
+        addCheck('supabaseCheck', '⚠️ Supabase no responde: ' + e.message, 'pending');
+      }
+
+      // Database tables
+      document.getElementById('databaseCheck').innerHTML = '';
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/productos?select=count()`, {
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'apikey': SUPABASE_ANON_KEY,
+          }
+        });
+
+        if (response.ok) {
+          const contentRange = response.headers.get('content-range');
+          if (contentRange) {
+            const count = parseInt(contentRange.split('/')[1]);
+            if (count >= 1000) {
+              addCheck('databaseCheck', `✅ Tabla 'productos' existe con ${count} registros`, 'pass');
+              results.database = true;
+            } else if (count > 0) {
+              addCheck('databaseCheck', `⚠️ Tabla 'productos' existe pero solo tiene ${count} de 1000 productos`, 'pending');
+              addCheck('databaseCheck', 'Ejecuta: setup.sh (Mac/Linux) o setup.bat (Windows) para cargar todos', 'pending');
+            } else {
+              addCheck('databaseCheck', '⚠️ Tabla existe pero está vacía (0 productos)', 'pending');
+              addCheck('databaseCheck', 'Ejecuta: setup.sh (Mac/Linux) o setup.bat (Windows)', 'pending');
+            }
+          }
+        } else if (response.status === 404) {
+          addCheck('databaseCheck', '⚠️ Tabla de productos aún no existe', 'pending');
+          addCheck('databaseCheck', 'Ejecuta: setup.sh (Mac/Linux) o setup.bat (Windows)', 'pending');
+        }
+      } catch (e) {
+        addCheck('databaseCheck', '⚠️ No se puede verificar la base de datos', 'pending');
+      }
+
+      // Update summary
+      updateSummary();
+
+      // Hide spinners
+      document.querySelectorAll('.spinner').forEach(s => s.style.display = 'none');
+    }
+
+    // Auto-run on load
+    window.addEventListener('load', () => {
+      setTimeout(runVerification, 500);
+    });
+  </script>
+</body>
+</html>

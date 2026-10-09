@@ -238,7 +238,7 @@
 
   <script>
     // Configuración
-    const SUPABASE_URL = 'https://baddsoyjxthsldksinxo.supabase.co';
+    const SUPABASE_URL = 'https://sky-grass.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZGRzb3lqeHRoc2xka3NpbnhvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTU2MDY4MiwiZXhwIjoyMTA3MTM2NjgyfQ.4Lt3HjONaYYJTUQZSvvQuvcI7AruIti6aAPWaMZpT4E';
 
     let setupSQL = '';
@@ -274,7 +274,7 @@
         if (response.ok) {
           log('✅ Conectado a Supabase', 'success');
           document.getElementById('connectionStatus').textContent = '✅ Conectado a Supabase';
-          document.getElementById('projectInfo').textContent = '📍 Proyecto: supabase-sky-grass (baddsoyjxthsldksinxo)';
+          document.getElementById('projectInfo').textContent = '📍 Proyecto: sky-grass';
           return true;
         } else {
           log('❌ Error de conexión: ' + response.status, 'error');

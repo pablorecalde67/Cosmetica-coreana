@@ -26,7 +26,7 @@ jobs:
 
       - name: Run Database Setup
         env:
-          SUPABASE_HOST: db.baddsoyjxthsldksinxo.supabase.co
+          SUPABASE_HOST: db.sky-grass.supabase.co
           SUPABASE_PORT: 5432
           SUPABASE_USER: postgres
           SUPABASE_PASSWORD: potdy1-Qexpaq-tejqiz
@@ -48,7 +48,7 @@ try:
     print("1️⃣  Conectando a PostgreSQL...")
 
     conn = psycopg2.connect(
-        host=os.environ.get("SUPABASE_HOST", "db.baddsoyjxthsldksinxo.supabase.co"),
+        host=os.environ.get("SUPABASE_HOST", "db.sky-grass.supabase.co"),
         port=int(os.environ.get("SUPABASE_PORT", 5432)),
         user=os.environ.get("SUPABASE_USER", "postgres"),
         password=os.environ.get("SUPABASE_PASSWORD", ""),

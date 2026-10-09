@@ -8,7 +8,7 @@ import subprocess
 import sys
 import json
 
-SUPABASE_URL = "https://baddsoyjxthsldksinxo.supabase.co"
+SUPABASE_URL = "https://sky-grass.supabase.co"
 SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZGRzb3lqeHRoc2xka3NpbnhvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTU2MDY4MiwiZXhwIjoyMTA3MTM2NjgyfQ.4Lt3HjONaYYJTUQZSvvQuvcI7AruIti6aAPWaMZpT4E"
 
 print("""
@@ -66,7 +66,7 @@ print(f"   URL: {SUPABASE_URL}\n")
 try:
     # Primero intentar sin contraseña
     conn = psycopg2.connect(
-        host="baddsoyjxthsldksinxo.supabase.co",
+        host="sky-grass.supabase.co",
         user="postgres",
         database="postgres",
         port=5432,
@@ -84,7 +84,7 @@ except psycopg2.OperationalError as e:
         
         try:
             conn = psycopg2.connect(
-                host="baddsoyjxthsldksinxo.supabase.co",
+                host="sky-grass.supabase.co",
                 user="postgres",
                 password=password,
                 database="postgres",

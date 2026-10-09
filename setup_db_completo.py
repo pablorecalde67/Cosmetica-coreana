@@ -57,7 +57,7 @@ def main():
     print("[3/4] 🔌 Conectando a Supabase...\n")
 
     # Credenciales
-    SUPABASE_HOST = "db.baddsoyjxthsldksinxo.supabase.co"
+    SUPABASE_HOST = "db.sky-grass.supabase.co"
     SUPABASE_USER = "postgres"
     SUPABASE_DB = "postgres"
 

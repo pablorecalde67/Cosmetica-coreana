@@ -90,7 +90,7 @@ def setup_database():
     import psycopg2
 
     # Credentials (hardcoded for auto setup)
-    HOST = "db.baddsoyjxthsldksinxo.supabase.co"
+    HOST = "db.sky-grass.supabase.co"
     USER = "postgres"
     PASSWORD = "potdy1-Qexpaq-tejqiz"
     DB = "postgres"

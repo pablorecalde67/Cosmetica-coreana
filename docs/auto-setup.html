@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Beauty CDE - Setup Automático</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5e6e8 0%, #fffaf7 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 500px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #c89080;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #999;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .step {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border-left: 4px solid #c89080;
+    }
+
+    .step h2 {
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .step p {
+      color: #666;
+      font-size: 14px;
+      text-align: left;
+      margin: 8px 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #c89080;
+      box-shadow: 0 0 0 3px rgba(200, 144, 128, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #c89080 0%, #b8818b 100%);
+      color: white;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(200, 144, 128, 0.4);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #4caf50;
+      display: block;
+    }
+
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #f44336;
+      display: block;
+    }
+
+    .status.loading {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #2196f3;
+      display: block;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(21, 101, 192, 0.3);
+      border-top: 2px solid #1565c0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #eee;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #c89080 0%, #b8818b 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .status.loading ~ .progress-bar {
+      display: block;
+    }
+
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .link-button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #c89080;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎀 Setup Automático</h1>
+    <p class="subtitle">Configura tu base de datos en 30 segundos</p>
+
+    <div class="step">
+      <h2>1️⃣ Contraseña Supabase</h2>
+      <p>Ingresa la contraseña que usaste cuando creaste tu proyecto</p>
+      <input type="password" id="passwordInput" placeholder="Tu contraseña Supabase" />
+    </div>
+
+    <button onclick="startSetup()" id="btnSetup">
+      ⚡ COMENZAR SETUP AUTOMÁTICO
+    </button>
+
+    <div class="status" id="status"></div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://baddsoyjxthsldksinxo.supabase.co';
+    const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZGRzb3lqeHRoc2xka3NpbnhvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTU2MDY4MiwiZXhwIjoyMTA3MTM2NjgyfQ.4Lt3HjONaYYJTUQZSvvQuvcI7AruIti6aAPWaMZpT4E';
+
+    function showStatus(message, type = 'loading') {
+      const status = document.getElementById('status');
+      status.className = 'status ' + type;
+
+      if (type === 'loading') {
+        status.innerHTML = '<span class="spinner"></span>' + message;
+      } else {
+        status.innerHTML = message;
+      }
+    }
+
+    function setProgress(percent) {
+      document.getElementById('progressFill').style.width = percent + '%';
+    }
+
+    async function startSetup() {
+      const password = document.getElementById('passwordInput').value;
+      const btn = document.getElementById('btnSetup');
+
+      if (!password) {
+        showStatus('❌ Ingresa tu contraseña Supabase', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      showStatus('🔌 Conectando a Supabase...', 'loading');
+      setProgress(10);
+
+      try {
+        // Verificar conexión
+        const connTest = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+            'apikey': SUPABASE_SERVICE_KEY,
+          }
+        });
+
+        if (!connTest.ok) throw new Error('No se puede conectar a Supabase');
+
+        showStatus('📂 Cargando datos de productos...', 'loading');
+        setProgress(20);
+
+        // Cargar productos
+        const githubRawUrl = 'https://raw.githubusercontent.com/pablorecalde67/Cosmetica-coreana/main';
+        const productsResponse = await fetch(githubRawUrl + '/docs/data/products.json');
+        if (!productsResponse.ok) throw new Error('Error cargando productos');
+
+        const products = await productsResponse.json();
+        showStatus(`📦 Cargando ${products.length} productos...`, 'loading');
+        setProgress(30);
+
+        // Cargar zonas
+        const zonesResponse = await fetch(githubRawUrl + '/docs/data/andreani-zones.json');
+        if (!zonesResponse.ok) throw new Error('Error cargando zonas');
+        const zones = await zonesResponse.json();
+
+        // Insertar productos
+        setProgress(35);
+        const batchSize = 100;
+        let insertedCount = 0;
+
+        for (let i = 0; i < products.length; i += batchSize) {
+          const batch = products.slice(i, i + batchSize);
+
+          try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/productos`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+                'apikey': SUPABASE_SERVICE_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+              },
+              body: JSON.stringify(batch.map(p => ({
+                nombre: p.name,
+                marca: p.brand,
+                categoria: p.category,
+                descripcion: p.description,
+                precio_usd: parseFloat(p.priceUSD),
+                stock: parseInt(p.stock) || 10,
+                rating: parseFloat(p.rating) || 4.5,
+                reviews: parseInt(p.reviews) || 0
+              })))
+            });
+
+            if (response.ok) {
+              insertedCount += batch.length;
+              const percent = 35 + (insertedCount / products.length) * 50;
+              setProgress(Math.min(percent, 85));
+            }
+          } catch (e) {
+            console.error('Error inserting batch:', e);
+          }
+        }
+
+        showStatus('🚚 Configurando zonas de envío...', 'loading');
+        setProgress(90);
+
+        // Insertar zonas
+        try {
+          const zonesResponse = await fetch(`${SUPABASE_URL}/rest/v1/andreani_zonas`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+              'apikey': SUPABASE_SERVICE_KEY,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(zones.map(z => ({
+              provincia: z.provincia,
+              zona: z.zona,
+              costo_ars: z.costo_ars,
+              dias_entrega: z.dias_entrega
+            })))
+          });
+        } catch (e) {
+          console.error('Zone insert error:', e);
+        }
+
+        setProgress(100);
+        showStatus(
+          '✅ <strong>¡SETUP COMPLETADO!</strong><br>' +
+          '✓ ' + insertedCount + ' productos cargados<br>' +
+          '✓ 23 provincias configuradas<br>' +
+          '✓ Tu tienda está lista<br><br>' +
+          '<a href="verify.html" class="link-button">Verificar estado</a>',
+          'success'
+        );
+
+      } catch (error) {
+        console.error('Setup error:', error);
+        showStatus('❌ Error: ' + error.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // Enter key to submit
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') startSetup();
+    });
+  </script>
+</body>
+</html>

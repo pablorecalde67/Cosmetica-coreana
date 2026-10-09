@@ -324,19 +324,27 @@
 
     .product-price {
       display: flex;
-      gap: 15px;
+      flex-direction: column;
+      gap: 8px;
       margin-bottom: 15px;
       font-size: 14px;
       font-weight: 600;
     }
 
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .price-usd {
       color: var(--accent-dark);
+      font-size: 14px;
     }
 
     .price-ars {
       color: var(--text-light);
-      font-size: 12px;
+      font-size: 13px;
     }
 
     .product-btn {
@@ -459,7 +467,9 @@
           <div class="product-brand">Cosrx</div>
           <div class="product-name">AHA BHA Clarifying Toner</div>
           <div class="product-description">Exfoliante suave para purificar poros</div>
-          <div class="product-price"><span class="price-usd">$28.50</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 28.50</span><span class="price-ars">$30.000</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
@@ -469,7 +479,9 @@
           <div class="product-brand">Anua</div>
           <div class="product-name">Peach 70 Niacinamide Serum</div>
           <div class="product-description">Sérum luminoso para controlar sebo</div>
-          <div class="product-price"><span class="price-usd">$24.99</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 24.99</span><span class="price-ars">$26.240</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
@@ -479,7 +491,9 @@
           <div class="product-brand">Beauty of Joseon</div>
           <div class="product-name">Glow Deep Serum</div>
           <div class="product-description">Sérum profundo con ginseng rojo</div>
-          <div class="product-price"><span class="price-usd">$32.80</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 32.80</span><span class="price-ars">$34.440</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
@@ -489,7 +503,9 @@
           <div class="product-brand">Skin1004</div>
           <div class="product-name">Centella Ampoule</div>
           <div class="product-description">Ampolla calmante con centella</div>
-          <div class="product-price"><span class="price-usd">$18.90</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 18.90</span><span class="price-ars">$19.845</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
@@ -503,7 +519,9 @@
           <div class="product-brand">Tocobo</div>
           <div class="product-name">Bio Watery Sun Cream SPF50</div>
           <div class="product-description">Protector solar ligero y resistente</div>
-          <div class="product-price"><span class="price-usd">$22.50</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 22.50</span><span class="price-ars">$23.625</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
@@ -513,7 +531,9 @@
           <div class="product-brand">Some By Mi</div>
           <div class="product-name">Galactomyces Vitamin C Glow</div>
           <div class="product-description">Sérum con vitamina C y galactomices</div>
-          <div class="product-price"><span class="price-usd">$26.70</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 26.70</span><span class="price-ars">$28.035</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
@@ -523,7 +543,9 @@
           <div class="product-brand">Dr. Althea</div>
           <div class="product-name">345 Relief Cream</div>
           <div class="product-description">Crema calmante para piel sensible</div>
-          <div class="product-price"><span class="price-usd">$29.99</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 29.99</span><span class="price-ars">$31.489</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
@@ -533,7 +555,9 @@
           <div class="product-brand">Jumiso</div>
           <div class="product-name">Snail Mucin 88 Peptide Cream</div>
           <div class="product-description">Crema regeneradora con mucina</div>
-          <div class="product-price"><span class="price-usd">$31.20</span></div>
+          <div class="product-price">
+            <div class="price-row"><span class="price-usd">u$s 31.20</span><span class="price-ars">$32.760</span></div>
+          </div>
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>

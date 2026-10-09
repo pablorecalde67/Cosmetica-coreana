@@ -389,6 +389,34 @@
       color: var(--white);
     }
 
+    .see-more-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+      margin-bottom: 30px;
+    }
+
+    .see-more-btn {
+      padding: 12px 40px;
+      background: transparent;
+      color: var(--accent-dark);
+      border: 2px solid var(--accent-dark);
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .see-more-btn:hover {
+      background: var(--accent-dark);
+      color: var(--white);
+    }
+
     footer {
       background: var(--text-dark);
       color: var(--white);
@@ -535,6 +563,9 @@
         </div>
       </div>
     </div>
+    <div class="see-more-container">
+      <button class="see-more-btn">Ver Más Imprescindibles</button>
+    </div>
 
     <h2 class="section-title">Lo Nuevo de la Semana</h2>
     <div class="products-grid">
@@ -586,6 +617,9 @@
           <button class="product-btn">Añadir al Carrito</button>
         </div>
       </div>
+    </div>
+    <div class="see-more-container">
+      <button class="see-more-btn">Ver Nuevos Productos</button>
     </div>
   </section>
 

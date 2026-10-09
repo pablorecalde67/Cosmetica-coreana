@@ -54,11 +54,23 @@
       align-items: center;
     }
 
-    .logo {
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-img {
+      height: 40px;
+      width: 40px;
+      object-fit: contain;
+    }
+
+    .logo-text {
       font-family: 'Playfair Display', serif;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       color: var(--text-dark);
     }
 
@@ -258,21 +270,23 @@
     .analysis-cta {
       display: inline-block;
       padding: 16px 50px;
-      background: var(--accent-pink);
+      background: #d4897a;
       color: var(--white);
       border: none;
       border-radius: 50px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.3s;
       text-decoration: none;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
     }
 
     .analysis-cta:hover {
       background: var(--accent-dark);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(200, 144, 128, 0.3);
     }
 
     .product-image {
@@ -419,7 +433,10 @@
 <body>
   <header>
     <div class="header-content">
-      <div class="logo">K-BEAUTY</div>
+      <div class="logo-container">
+        <img src="./logo.svg" alt="K-Beauty CDE Logo" class="logo-img">
+        <span class="logo-text">K-BEAUTY CDE</span>
+      </div>
       <nav>
         <a href="#featured">Destacados</a>
         <a href="#productos">Productos</a>

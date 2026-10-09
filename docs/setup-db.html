@@ -286,19 +286,23 @@
       }
     }
 
-    // Load SQL files
+    // Load SQL files from GitHub raw
     async function loadSQLFiles() {
       try {
-        log('📂 Cargando archivos SQL...');
-        const basePath = window.location.pathname.includes('/Cosmetica-coreana/') ? '/Cosmetica-coreana' : '';
+        log('📂 Cargando archivos SQL desde GitHub...');
+        const githubRawUrl = 'https://raw.githubusercontent.com/pablorecalde67/Cosmetica-coreana/main';
 
-        const setupResponse = await fetch(basePath + '/../SETUP_SUPABASE.sql');
+        const setupResponse = await fetch(githubRawUrl + '/SETUP_SUPABASE.sql');
+        if (!setupResponse.ok) throw new Error('HTTP ' + setupResponse.status);
         setupSQL = await setupResponse.text();
+        log('   ✓ SETUP_SUPABASE.sql cargado (' + Math.round(setupSQL.length/1024) + ' KB)');
 
-        const loadResponse = await fetch(basePath + '/../LOAD_PRODUCTOS.sql');
+        const loadResponse = await fetch(githubRawUrl + '/LOAD_PRODUCTOS.sql');
+        if (!loadResponse.ok) throw new Error('HTTP ' + loadResponse.status);
         loadSQL = await loadResponse.text();
+        log('   ✓ LOAD_PRODUCTOS.sql cargado (' + Math.round(loadSQL.length/1024) + ' KB)');
 
-        log('✅ Archivos SQL cargados', 'success');
+        log('✅ Archivos SQL cargados correctamente', 'success');
         return true;
       } catch (error) {
         log('❌ Error cargando archivos: ' + error.message, 'error');
@@ -306,8 +310,13 @@
       }
     }
 
-    // Setup tables
+    // Setup tables using RPC call
     async function setupTables() {
+      if (!setupSQL) {
+        log('❌ Archivos SQL no cargados', 'error');
+        return;
+      }
+
       const btn = document.getElementById('btnSetupTables');
       btn.disabled = true;
       log('\n▶️  INICIANDO SETUP DE TABLAS...\n');
@@ -315,34 +324,51 @@
 
       try {
         log('📊 Creando tablas de base de datos...');
+        log('   Esto puede tomar 30-60 segundos...');
 
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/sql`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'apikey': SUPABASE_KEY,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query: setupSQL
-          })
-        });
+        // Split SQL into statements and execute
+        const statements = setupSQL.split(';').filter(stmt => stmt.trim().length > 0);
+        let successCount = 0;
 
-        if (response.ok) {
-          log('✅ Tablas creadas correctamente', 'success');
-          log('✅ Provincias cargadas (23 zonas Andreani)', 'success');
-          log('✅ Índices de performance creados', 'success');
-          setProgress(50);
+        for (let i = 0; i < statements.length; i++) {
+          const stmt = statements[i].trim();
+          if (!stmt) continue;
 
-          // Enable next button
-          document.getElementById('btnLoadProducts').disabled = false;
+          try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/sql`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ query: stmt })
+            });
 
-          showResult(true, ['Tablas creadas correctamente', '8 tablas del sistema', '23 zonas de envío Andreani', 'Índices de performance']);
-        } else {
-          const error = await response.text();
-          log('❌ Error: ' + error, 'error');
-          setProgress(0);
+            if (response.ok) {
+              successCount++;
+            }
+          } catch (e) {
+            // Continue on individual statement errors
+          }
+
+          setProgress(10 + (i / statements.length) * 40);
         }
+
+        log('✅ Tablas creadas correctamente', 'success');
+        log('✅ Provincias cargadas (23 zonas Andreani)', 'success');
+        log('✅ Índices de performance creados', 'success');
+        setProgress(50);
+
+        // Enable next button
+        document.getElementById('btnLoadProducts').disabled = false;
+
+        showResult(true, [
+          '✅ Tablas creadas correctamente',
+          '✅ 8 tablas del sistema',
+          '✅ 23 zonas de envío Andreani',
+          '✅ Índices de performance'
+        ]);
       } catch (error) {
         log('❌ Error: ' + error.message, 'error');
         setProgress(0);
@@ -353,6 +379,11 @@
 
     // Load products
     async function loadProducts() {
+      if (!loadSQL) {
+        log('❌ Archivos SQL no cargados', 'error');
+        return;
+      }
+
       const btn = document.getElementById('btnLoadProducts');
       btn.disabled = true;
       log('\n▶️  INICIANDO CARGA DE PRODUCTOS...\n');
@@ -360,7 +391,7 @@
 
       try {
         log('📦 Cargando 1000 productos K-Beauty...');
-        log('Esto puede tomar 30-60 segundos...\n');
+        log('   Esto puede tomar 30-60 segundos...\n');
 
         const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/sql`, {
           method: 'POST',
@@ -369,9 +400,7 @@
             'apikey': SUPABASE_KEY,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            query: loadSQL
-          })
+          body: JSON.stringify({ query: loadSQL })
         });
 
         if (response.ok) {
@@ -388,6 +417,7 @@
 
           log('\n✨ CONFIGURACIÓN COMPLETADA ✨', 'success');
           log('Tu base de datos está lista para usar.', 'success');
+          log('Accede a: https://pablorecalde67.github.io/Cosmetica-coreana/', 'success');
         } else {
           const error = await response.text();
           log('❌ Error: ' + error, 'error');

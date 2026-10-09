@@ -1,37 +1,42 @@
-name: Deploy to GitHub Pages
+name: Publicar a GitHub Pages
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/publish-pages.yml'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'automation-coca/public'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Copiar contenido de docs a un directorio temporal
+          mkdir -p /tmp/pages
+          cp -r docs/* /tmp/pages/
+          
+          # Cambiar a rama gh-pages
+          git fetch origin gh-pages 2>/dev/null || true
+          git checkout --orphan gh-pages-temp
+          git rm -rf . || true
+          
+          # Copiar archivos publicados
+          cp -r /tmp/pages/* .
+          
+          # Commit y push
+          git add -A
+          git commit --allow-empty -m "Deploy a GitHub Pages desde main - $(date)"
+          git push origin gh-pages-temp:gh-pages --force

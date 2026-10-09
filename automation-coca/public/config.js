@@ -2,7 +2,7 @@
 const config = {
   // WhatsApp Business
   whatsapp: {
-    number: '5493624123456', // Reemplazar con número real
+    number: '5493855756444', // Número real de Pablo
     businessName: 'K-Beauty CDE',
   },
 
@@ -39,7 +39,7 @@ const config = {
   social: {
     instagram: 'https://instagram.com/kbeautycde',
     tiktok: 'https://tiktok.com/@kbeautycde',
-    whatsapp: 'https://wa.me/5493624123456',
+    whatsapp: 'https://wa.me/5493855756444',
   },
 
   // Product Images Path

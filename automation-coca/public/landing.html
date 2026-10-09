@@ -228,18 +228,69 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
+    .analysis-section {
+      max-width: 1400px;
+      margin: 80px auto;
+      padding: 60px 40px;
+      background: linear-gradient(135deg, #f5f1ed 0%, #f9f7f4 100%);
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .analysis-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-dark);
+    }
+
+    .analysis-subtitle {
+      font-size: 16px;
+      color: var(--text-light);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.8;
+    }
+
+    .analysis-cta {
+      display: inline-block;
+      padding: 16px 50px;
+      background: var(--accent-pink);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    .analysis-cta:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+    }
+
     .product-image {
       position: relative;
       width: 100%;
       height: 280px;
       overflow: hidden;
-      background: var(--bg-cream);
+      background: linear-gradient(135deg, #fafaf8 0%, #f5f1ed 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .product-image img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      padding: 15px;
     }
 
     .product-info {
@@ -388,6 +439,14 @@
       <div class="hero-image">
         <img src="./piel/img/products/beauty-of-joseon-glow-deep-serum.webp" alt="Belleza Coreana">
       </div>
+    </div>
+  </section>
+
+  <section class="analysis-section" id="analisis">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 40px;">
+      <h2 class="analysis-title">Análisis de Piel Personalizado</h2>
+      <p class="analysis-subtitle">Descubre qué productos de K-Beauty son perfectos para tu tipo de piel. Nuestros especialistas analizan tu piel y recomiendan la rutina ideal para obtener resultados visibles en semanas.</p>
+      <a href="#consulta" class="analysis-cta">Solicitar Análisis Gratuito</a>
     </div>
   </section>
 

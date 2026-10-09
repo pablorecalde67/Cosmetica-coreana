@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurar Supabase - K-Beauty CDE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #b8818b;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 30px;
+      letter-spacing: 0.5px;
+    }
+
+    .step {
+      margin-bottom: 30px;
+    }
+
+    .step-number {
+      background: #b8818b;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .step-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .step-desc {
+      color: #666;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #b8818b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #b8818b;
+      background: white;
+    }
+
+    input::placeholder {
+      color: #bbb;
+    }
+
+    .info-box {
+      background: #f5f0f0;
+      border-left: 4px solid #b8818b;
+      padding: 12px 16px;
+      margin: 20px 0;
+      font-size: 12px;
+      color: #666;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #b8818b 0%, #a68a8a 100%);
+      color: white;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(184, 129, 139, 0.3);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-help {
+      background: #e8e8e8;
+      color: #333;
+    }
+
+    .btn-help:hover {
+      background: #ddd;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: none;
+    }
+
+    .status.success {
+      background: #e6f7e6;
+      color: #2d662d;
+      display: block;
+    }
+
+    .status.error {
+      background: #ffe6e6;
+      color: #992d2d;
+      display: block;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 30px 0;
+    }
+
+    .instructions {
+      background: #f9f9f9;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .instructions strong {
+      color: #333;
+    }
+
+    .code-hint {
+      background: #f0f0f0;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #666;
+      margin: 8px 0;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Configurar K-Beauty CDE</h1>
+    <p class="subtitle">Supabase - Base de Datos</p>
+
+    <div class="instructions">
+      <strong>Instrucciones:</strong><br>
+      1. Abre Supabase en otra pestaña<br>
+      2. Ve a Settings → API<br>
+      3. Copia Project URL y anon key<br>
+      4. Pégalos aquí abajo<br>
+      5. Click en "Configurar"
+    </div>
+
+    <form id="configForm">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-title">Project URL</div>
+        <div class="step-desc">Debe empezar con https://</div>
+        <div class="input-group">
+          <label for="url">URL Completa</label>
+          <input
+            type="text"
+            id="url"
+            placeholder="https://xxxxx.supabase.co"
+            required
+          >
+          <div class="code-hint">Ejemplo: https://abc123.supabase.co</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-title">Anon Public Key</div>
+        <div class="step-desc">La larga cadena que empieza con eyJ</div>
+        <div class="input-group">
+          <label for="key">API Key</label>
+          <input
+            type="text"
+            id="key"
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            required
+          >
+          <div class="code-hint">Ejemplo: eyJhbGc... (muy larga)</div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        ℹ️ Estos datos se guardan LOCALMENTE en tu navegador. No se envían a ningún servidor.
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn-help" onclick="showHelp()">❓ Ayuda</button>
+        <button type="submit" class="btn-submit">✨ Configurar</button>
+      </div>
+
+      <div id="status" class="status"></div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('configForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const url = document.getElementById('url').value.trim();
+      const key = document.getElementById('key').value.trim();
+      const status = document.getElementById('status');
+
+      // Validar formato básico
+      if (!url.startsWith('https://') || !url.includes('.supabase.co')) {
+        status.textContent = '❌ URL inválida. Debe ser https://xxxxx.supabase.co';
+        status.className = 'status error';
+        return;
+      }
+
+      if (key.length < 100) {
+        status.textContent = '❌ API Key parece muy corta. Cópiala completa.';
+        status.className = 'status error';
+        return;
+      }
+
+      // Guardar localmente
+      localStorage.setItem('SUPABASE_URL', url);
+      localStorage.setItem('SUPABASE_ANON_KEY', key);
+
+      status.textContent = '✅ ¡Guardado! Avísale a Claude con estos valores.';
+      status.className = 'status success';
+
+      // Mostrar los valores para copiar
+      console.log('SUPABASE_URL:', url);
+      console.log('SUPABASE_ANON_KEY:', key);
+
+      setTimeout(() => {
+        alert('✅ Datos guardados.\n\nAhora vuelve a Claude y pega estos valores:\n\nURL: ' + url + '\n\nKEY: ' + key);
+      }, 500);
+    });
+
+    function showHelp() {
+      alert(`DÓNDE ENCONTRAR LAS CREDENCIALES:
+
+1. En Supabase, ve a tu proyecto
+2. Click en ⚙️ Settings (abajo a la izquierda)
+3. Click en "API" (en el menú)
+4. Busca:
+   - "Project URL" - es la URL completa
+   - "anon public" - busca donde dice "anon" y copia la llave
+
+Si no encuentras, pregúntame y vuelvo a explicar.`);
+    }
+  </script>
+</body>
+</html>

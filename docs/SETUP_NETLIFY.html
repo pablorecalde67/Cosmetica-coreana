@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Beauty CDE - Activar Netlify</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5e6e8 0%, #fffaf7 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 40px;
+    }
+
+    h1 {
+      color: #c89080;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #999;
+      margin-bottom: 30px;
+    }
+
+    .success-box {
+      background: #e8f5e9;
+      border: 2px solid #4caf50;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      color: #2e7d32;
+    }
+
+    .step {
+      background: #f9f9f9;
+      border-left: 4px solid #c89080;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .step h3 {
+      color: #2c2c2c;
+      margin-bottom: 10px;
+    }
+
+    .step-number {
+      display: inline-block;
+      background: #c89080;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 40px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .screenshot {
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-x: auto;
+    }
+
+    .link-button {
+      display: inline-block;
+      background: #c89080;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+    }
+
+    .link-button:hover {
+      background: #b8818b;
+      transform: translateY(-2px);
+    }
+
+    .warning {
+      background: #fff3e0;
+      border: 1px solid #ffe0b2;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      color: #e65100;
+    }
+
+    .timer {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .time {
+      font-weight: bold;
+      color: #1565c0;
+    }
+
+    .final-step {
+      background: #c89080;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .final-step h2 {
+      margin-bottom: 15px;
+    }
+
+    .final-step p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+
+    .copy-hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Activar Netlify Automático</h1>
+    <p class="subtitle">Tu sitio kbeautycde.com en vivo en menos de 10 minutos</p>
+
+    <div class="success-box">
+      <strong>✅ Lo que lograrás:</strong>
+      <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Tu sitio estará en VIVO en kbeautycde.com</li>
+        <li>Cada push a GitHub se despliega automáticamente</li>
+        <li>Cero pasos manuales después (TODO AUTOMÁTICO)</li>
+      </ul>
+    </div>
+
+    <h2 style="color: #c89080; margin-top: 30px;">⏱️ Tiempo Total: 10 minutos</h2>
+
+    <!-- PASO 1 -->
+    <div class="step">
+      <h3><span class="step-number">1</span> Obtener Token de Netlify (5 min)</h3>
+
+      <p style="margin: 15px 0;"><strong>Desde tu navegador en iPad:</strong></p>
+
+      <ol style="margin-left: 20px; line-height: 1.8;">
+        <li>Abre: <a href="https://app.netlify.com/user/applications#personal-access-tokens" class="link-button" target="_blank">Netlify - Personal Access Tokens</a></li>
+        <li>Haz clic en <strong>"New access token"</strong></li>
+        <li>Dale un nombre (ej: "GitHub Auto Deploy")</li>
+        <li>Haz clic en <strong>"Generate token"</strong></li>
+        <li>Verás una cadena larga - <strong>CÓPIALA COMPLETA</strong></li>
+      </ol>
+
+      <div class="screenshot">
+NETLIFY_AUTH_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+(una cadena muy larga que copiarás de Netlify)
+      </div>
+
+      <div class="copy-hint">💡 En iPad: presiona y mantén → Copiar</div>
+    </div>
+
+    <!-- PASO 2 -->
+    <div class="step">
+      <h3><span class="step-number">2</span> Agregar Token a GitHub (3 min)</h3>
+
+      <p style="margin: 15px 0;"><strong>Pasos en iPad:</strong></p>
+
+      <ol style="margin-left: 20px; line-height: 1.8;">
+        <li>Abre: <a href="https://github.com/pablorecalde67/Cosmetica-coreana/settings/secrets/actions" class="link-button" target="_blank">GitHub - Repository Secrets</a></li>
+        <li>Haz clic en <strong>"New repository secret"</strong></li>
+        <li>Nombre: <code>NETLIFY_AUTH_TOKEN</code> (exactamente así)</li>
+        <li>Valor: Pega el token que copiaste de Netlify</li>
+        <li>Haz clic en <strong>"Add secret"</strong></li>
+      </ol>
+
+      <div class="screenshot">
+Name: NETLIFY_AUTH_TOKEN
+Secret: (Pega aquí el token de Netlify)
+      </div>
+    </div>
+
+    <!-- PASO 3 -->
+    <div class="step">
+      <h3><span class="step-number">3</span> Activar Despliegue (2 min)</h3>
+
+      <p style="margin: 15px 0;"><strong>Una única acción:</strong></p>
+
+      <ol style="margin-left: 20px; line-height: 1.8;">
+        <li>Abre: <a href="https://github.com/pablorecalde67/Cosmetica-coreana/actions" class="link-button" target="_blank">GitHub - Actions</a></li>
+        <li>Busca el workflow: <strong>"Auto Deploy to Netlify"</strong></li>
+        <li>Haz clic en él</li>
+        <li>Haz clic en <strong>"Run workflow"</strong></li>
+        <li>Espera 2-3 minutos</li>
+      </ol>
+
+      <div class="warning">
+        <strong>✓ Esto gatilla:</strong>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>GitHub compila tu sitio</li>
+          <li>Lo empaqueta</li>
+          <li>Lo sube a Netlify automáticamente</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="final-step">
+      <h2>✅ ¡LISTO!</h2>
+      <p>Tu sitio está EN VIVO en:</p>
+      <p style="font-size: 24px; font-weight: bold; margin: 20px 0;">
+        https://kbeautycde.com
+      </p>
+      <p>🎉 Abre tu navegador y verás tu tienda K-Beauty completa</p>
+    </div>
+
+    <h2 style="color: #c89080; margin-top: 40px;">📅 Después de Esto: TODO AUTOMÁTICO</h2>
+
+    <div class="step">
+      <h3>Cada cambio que hagas:</h3>
+      <ol style="margin-left: 20px; line-height: 1.8;">
+        <li>Editas un archivo en tu código</li>
+        <li><code>git push</code> a GitHub</li>
+        <li>GitHub Actions se ejecuta automáticamente</li>
+        <li>Tu sitio se actualiza en Netlify automáticamente</li>
+        <li>Cambios en vivo en <strong>30 segundos</strong</li>
+      </ol>
+
+      <p style="margin-top: 20px;"><strong>CERO pasos manuales después del setup inicial.</strong></p>
+    </div>
+
+    <h2 style="color: #c89080; margin-top: 40px;">🆘 Si Algo No Funciona</h2>
+
+    <div class="step">
+      <h3>Verificación Rápida:</h3>
+      <ol style="margin-left: 20px; line-height: 1.8;">
+        <li>¿Copiaste el token COMPLETO de Netlify? (debe ser muy largo)</li>
+        <li>¿El nombre en GitHub es exactamente <code>NETLIFY_AUTH_TOKEN</code>?</li>
+        <li>¿Esperaste 2-3 minutos después de "Run workflow"?</li>
+        <li>Abre: <a href="https://app.netlify.com/sites/serene-axolotl-437b9f" class="link-button" target="_blank">Tu Panel Netlify</a> y verifica que hay un deploy reciente</li>
+      </ol>
+    </div>
+
+    <div class="timer" style="margin-top: 40px;">
+      <div class="time">⏱️ Tiempo restante estimado:</div>
+      <p style="margin-top: 10px; font-size: 18px;">
+        ✓ Obtener token: 5 min<br>
+        ✓ Configurar GitHub: 3 min<br>
+        ✓ Ejecutar despliegue: 2 min<br>
+        ✓ Esperar finalización: 3 min<br>
+        <strong style="font-size: 20px;">= 13 minutos TOTAL</strong>
+      </p>
+    </div>
+
+    <div class="success-box" style="margin-top: 40px;">
+      <strong>🎯 Objetivo Alcanzado:</strong>
+      <p style="margin-top: 10px;">Tu tienda K-Beauty está completamente automatizada. Nunca volverás a hacer un paso manual de despliegue.</p>
+    </div>
+
+  </div>
+
+  <script>
+    // Verificar si el sitio ya está en Netlify
+    if (window.location.hostname === 'kbeautycde.com') {
+      document.body.innerHTML = '<div style="text-align:center; padding:60px 20px;"><h1 style="color:#4caf50;">🎉 ¡Ya Está Activo!</h1><p style="font-size:18px; color:#666;">Tu sitio kbeautycde.com está en vivo y funcionando.</p><a href="/" style="display:inline-block; padding:12px 24px; background:#c89080; color:white; text-decoration:none; border-radius:6px; font-weight:600; margin-top:20px;">Ir a la Tienda</a></div>';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+name: Auto Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm install archiver
+
+      - name: Empaquetar sitio
+        run: |
+          cd docs
+          zip -r ../deploy.zip .
+          cd ..
+          ls -lh deploy.zip
+
+      - name: Desplegar a Netlify
+        env:
+          NETLIFY_SITE_ID: serene-axolotl-437b9f
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          curl -X POST "https://api.netlify.com/api/v1/sites/${NETLIFY_SITE_ID}/deploys" \
+            -H "Authorization: Bearer ${NETLIFY_AUTH_TOKEN}" \
+            -H "Content-Type: application/zip" \
+            --data-binary @deploy.zip \
+            --silent --show-error
+
+      - name: Verificar despliegue
+        run: |
+          echo "✅ Sitio desplegado en Netlify"
+          echo "🌐 https://kbeautycde.com"

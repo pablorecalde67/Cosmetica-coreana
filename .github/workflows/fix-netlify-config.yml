@@ -52,15 +52,6 @@ jobs:
           cd ..
           echo "Tamaño: $(du -h deploy.zip | cut -f1)"
       
-      - name: Limpiar despliegues previos en Netlify
-        run: |
-          curl -s -H "Authorization: Bearer ${{ secrets.NETLIFY_AUTH_TOKEN }}" \
-            https://api.netlify.com/api/v1/sites/serene-axolotl-437b9f/deploys \
-            | jq -r '.[0].id' > /tmp/deploy_id.txt
-          
-          DEPLOY_ID=$(cat /tmp/deploy_id.txt)
-          echo "Último deploy: $DEPLOY_ID"
-      
       - name: Desplegar a Netlify (producción)
         run: |
           curl -X POST \

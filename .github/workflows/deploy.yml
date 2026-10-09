@@ -1,107 +1,30 @@
-name: Deploy to Production
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
-
-env:
-  HEROKU_APP_NAME: kbeautycde
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          fetch-depth: 0
+          path: 'docs'
 
-      - name: Create Heroku app if needed
-        run: |
-          echo "🚀 Checking/creating Heroku app..."
-          APP_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
-            https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }} \
-            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}")
-
-          if [ "$APP_EXISTS" = "404" ]; then
-            echo "Creating new app..."
-            curl -X POST https://api.heroku.com/apps \
-              -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
-              -H "Content-Type: application/json" \
-              -d "{\"name\": \"${{ env.HEROKU_APP_NAME }}\"}" \
-              -s -o /dev/null
-            sleep 5
-          fi
-          echo "✅ App ready"
-
-      - name: Configure app and set buildpack
-        run: |
-          echo "📦 Configuring Heroku app..."
-
-          # Set buildpack to Node.js
-          curl -X PUT https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }}/buildpack-installations \
-            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"updates": [{"buildpack": "heroku/nodejs"}]}' \
-            -s -o /dev/null
-
-          # Set essential environment variables
-          curl -X PATCH https://api.heroku.com/apps/${{ env.HEROKU_APP_NAME }}/config-vars \
-            -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "NODE_ENV": "production",
-              "PORT": "3000",
-              "PUBLIC_BASE_URL": "https://kbeautycde.herokuapp.com",
-              "ADMIN_TOKEN": "coca-prod-'"$(openssl rand -hex 16)"'",
-              "EMAIL_IMAP_HOST": "imap.gmail.com",
-              "EMAIL_IMAP_PORT": "993",
-              "EMAIL_SUBJECT_TAG": "COCA"
-            }' \
-            -s -o /dev/null
-
-          echo "✅ App configured"
-
-      - name: Deploy code to Heroku
-        run: |
-          # Configure git
-          git config user.email "deploy@github.com"
-          git config user.name "GitHub Actions"
-
-          # Set up Heroku authentication
-          mkdir -p ~/.netrc
-          echo "machine api.heroku.com login x password ${{ secrets.HEROKU_API_KEY }}" > ~/.netrc
-          chmod 600 ~/.netrc
-
-          # Add Heroku remote and deploy entire repo
-          git remote rm heroku 2>/dev/null || true
-          git remote add heroku https://git.heroku.com/${{ env.HEROKU_APP_NAME }}.git
-
-          # Create a commit with only automation-coca content for deployment
-          echo "📤 Deploying automation-coca to Heroku..."
-
-          git push heroku $(git subtree split --prefix automation-coca HEAD):main -f
-
-          echo "✅ Code pushed to Heroku"
-
-      - name: Wait for app to be ready
-        run: |
-          echo "⏳ Waiting for app to start (this may take 2-3 minutes)..."
-          sleep 30
-
-          for i in {1..40}; do
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/ 2>/dev/null || echo "000")
-
-            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "404" ]; then
-              echo "✅ App is live! (HTTP $HTTP_CODE)"
-              curl -s https://${{ env.HEROKU_APP_NAME }}.herokuapp.com/api/admin/health || echo "Health check endpoint pending"
-              exit 0
-            fi
-
-            echo "[$i/40] Waiting... (HTTP $HTTP_CODE)"
-            sleep 3
-          done
-
-          echo "⚠️  App may still be starting. Check Heroku dashboard for logs."
-          echo "URL: https://dashboard.heroku.com/apps/${{ env.HEROKU_APP_NAME }}/logs"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

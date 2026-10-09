@@ -238,8 +238,15 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://sky-grass.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZGRzb3lqeHRoc2xka3NpbnhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NjA2ODIsImV4cCI6MjEwNzEzNjY4Mn0.P47QoplUFCbNm44Jrn50Yw0jtygW0xSAbGQ9h1FYp3U';
+    // Cargar configuración desde localStorage
+    const SUPABASE_URL = localStorage.getItem('SUPABASE_URL') || 'https://sky-grass.supabase.co';
+    const SUPABASE_ANON_KEY = localStorage.getItem('SUPABASE_ANON_KEY');
+
+    // Verificar si está configurado
+    if (!SUPABASE_ANON_KEY) {
+      document.body.innerHTML = '<div style="padding:40px; text-align:center;"><h1>⚠️ Configuración requerida</h1><p>Necesitas configurar tus tokens de Supabase primero.</p><a href="config.html" style="display:inline-block; padding:10px 20px; background:#c89080; color:white; text-decoration:none; border-radius:6px; margin-top:20px;">Ir a Configuración</a></div>';
+      throw new Error('Supabase not configured');
+    }
 
     let results = {
       github: false,

@@ -1,13 +1,14 @@
+# Configuración de Netlify para K-Beauty CDE
+# Los archivos públicos están en la carpeta /docs
+
 [build]
-  publish = "automation-coca/public"
-  functions = "functions"
+  command = "echo 'Deploy K-Beauty CDE'"
+  publish = "docs"
+
+[context.production]
+  publish = "docs"
 
 [[redirects]]
-from = "/api-tiendas"
-to = "/.netlify/functions/tiendas-api-working"
-status = 200
-
-[[redirects]]
-from = "/api/tiendas*"
-to = "/.netlify/functions/tiendas-api-working"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200

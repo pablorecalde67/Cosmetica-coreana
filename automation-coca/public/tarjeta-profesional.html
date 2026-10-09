@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarjeta Profesional - Pablo Recalde</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    .title h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #b8818b;
+    }
+
+    .title p {
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .card-container {
+      perspective: 1000px;
+      margin-bottom: 60px;
+      height: 300px;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(184, 129, 139, 0.2);
+      overflow: hidden;
+      padding: 40px;
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #f5e6e8 0%, #f9e8eb 100%);
+      color: #b8818b;
+      position: relative;
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+      color: #666;
+      transform: rotateY(180deg);
+    }
+
+    /* Decorative geometric elements - Front */
+    .geometric-top-left {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      width: 150px;
+      height: 150px;
+      opacity: 0.1;
+    }
+
+    .geometric-bottom-right {
+      position: absolute;
+      bottom: -30px;
+      right: -30px;
+      width: 180px;
+      height: 180px;
+      opacity: 0.1;
+    }
+
+    .geometric-accent {
+      position: absolute;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #d4a574 0%, transparent 100%);
+    }
+
+    .accent-top {
+      top: 60px;
+      right: 40px;
+      transform: rotate(-15deg);
+    }
+
+    .accent-bottom {
+      bottom: 60px;
+      left: 40px;
+      transform: rotate(15deg);
+    }
+
+    /* Front content */
+    .logo-container {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-container svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 12px rgba(184, 129, 139, 0.15));
+    }
+
+    .brand-name {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+      color: #b8818b;
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #d4a574;
+      margin-top: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Back content */
+    .back-content {
+      text-align: center;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .contact-item {
+      margin-bottom: 14px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .contact-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #b8818b;
+      margin-bottom: 3px;
+    }
+
+    .contact-value {
+      font-size: 13px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #d4a574, transparent);
+      margin: 15px auto;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #b8818b 0%, #a68a8a 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(184, 129, 139, 0.3);
+    }
+
+    .btn.secondary {
+      background: linear-gradient(135deg, #d4a574 0%, #c89968 100%);
+    }
+
+    .instruction {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-top: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+      }
+
+      .title,
+      .button-group,
+      .instruction {
+        display: none;
+      }
+
+      .card-container {
+        height: 300px;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        transform: none !important;
+      }
+
+      .card-face {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+
+      .card-back {
+        transform: none !important;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .card-face {
+        padding: 30px 20px;
+      }
+
+      .brand-name {
+        font-size: 20px;
+        letter-spacing: 2px;
+      }
+
+      .logo-container {
+        width: 80px;
+        height: 80px;
+      }
+
+      .contact-name {
+        font-size: 18px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">
+      <h1>Tarjeta Profesional</h1>
+      <p>Click para voltear • Tap to flip</p>
+    </div>
+
+    <div class="card-container" onclick="flipCard()">
+      <div class="card" id="card">
+        <!-- FRENTE -->
+        <div class="card-face card-front">
+          <div class="geometric-top-left">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="50,0 100,38 82,100 18,100 0,38" fill="#d4a574" opacity="0.3"/>
+              <rect x="20" y="20" width="60" height="60" fill="none" stroke="#d4a574" stroke-width="1" opacity="0.2" transform="rotate(15 50 50)"/>
+            </svg>
+          </div>
+
+          <div class="geometric-bottom-right">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="30" fill="none" stroke="#d4a574" stroke-width="1" opacity="0.2"/>
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#d4a574" stroke-width="0.8" opacity="0.15"/>
+              <circle cx="50" cy="50" r="60" fill="none" stroke="#d4a574" stroke-width="0.6" opacity="0.1"/>
+            </svg>
+          </div>
+
+          <div class="geometric-accent accent-top"></div>
+          <div class="geometric-accent accent-bottom"></div>
+
+          <div class="logo-container">
+            <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#b8818b;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#a68a8a;stop-opacity:1" />
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <circle cx="150" cy="150" r="148" fill="white" stroke="#b8818b" stroke-width="2"/>
+
+              <g id="petal" filter="url(#glow)">
+                <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="url(#logoGradient)" opacity="0.8"/>
+              </g>
+
+              <g transform="rotate(120 150 150)">
+                <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="url(#logoGradient)" opacity="0.8"/>
+              </g>
+
+              <g transform="rotate(240 150 150)">
+                <path d="M 150 50 Q 130 80 140 110 Q 150 120 160 110 Q 170 80 150 50" fill="url(#logoGradient)" opacity="0.8"/>
+              </g>
+
+              <circle cx="150" cy="150" r="35" fill="url(#logoGradient)"/>
+              <circle cx="150" cy="150" r="30" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+
+              <text x="150" y="160" font-family="'Noto Sans CJK KR', sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle" dy="0.3em">미</text>
+
+              <text x="150" y="220" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" font-weight="600" fill="#b8818b" text-anchor="middle" letter-spacing="2">K-BEAUTY</text>
+
+              <line x1="90" y1="235" x2="210" y2="235" stroke="#b8818b" stroke-width="1.5" opacity="0.5"/>
+
+              <text x="150" y="255" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="500" fill="#a68a8a" text-anchor="middle" letter-spacing="1">CIUDAD DEL ESTE</text>
+            </svg>
+          </div>
+
+          <div class="brand-name">Korean Beauty</div>
+          <div class="brand-tagline">Belleza Coreana Premium</div>
+        </div>
+
+        <!-- REVERSO -->
+        <div class="card-face card-back">
+          <div class="geometric-top-left">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="80" height="80" fill="none" stroke="#d4a574" stroke-width="1" opacity="0.1"/>
+            </svg>
+          </div>
+
+          <div class="geometric-bottom-right">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="50,0 100,50 50,100 0,50" fill="none" stroke="#d4a574" stroke-width="1" opacity="0.1"/>
+            </svg>
+          </div>
+
+          <div class="back-content">
+            <div class="contact-name">PABLO RECALDE</div>
+
+            <div class="divider"></div>
+
+            <div class="contact-item">
+              <div class="contact-label">Teléfono / WhatsApp</div>
+              <div class="contact-value">+54 93855756444</div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-label">Website</div>
+              <div class="contact-value">www.kbeautycde.com</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="contact-item" style="font-size: 10px; color: #b8818b; margin-top: 20px;">
+              K-BEAUTY CDE
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn" onclick="window.print()">🖨️ Imprimir</button>
+      <button class="btn secondary" onclick="shareWhatsApp()">📱 Compartir</button>
+    </div>
+
+    <div class="instruction">
+      ✨ Haz click en la tarjeta para voltear • Imprimible en 90mm x 50mm (estándar)
+    </div>
+  </div>
+
+  <script>
+    let isFlipped = false;
+
+    function flipCard() {
+      isFlipped = !isFlipped;
+      const card = document.getElementById('card');
+      card.classList.toggle('flipped');
+    }
+
+    function shareWhatsApp() {
+      const message = encodeURIComponent(
+        '🌸 *K-Beauty CDE* 🌸\n\n' +
+        '*PABLO RECALDE*\n' +
+        'Korean Beauty\n\n' +
+        '📱 +54 93855756444\n' +
+        '🌐 www.kbeautycde.com\n\n' +
+        '✨ Belleza Coreana Premium desde Ciudad del Este'
+      );
+      window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+  </script>
+</body>
+</html>

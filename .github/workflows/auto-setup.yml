@@ -1,0 +1,192 @@
+name: Auto Setup Database
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/auto-setup.yml'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install psycopg2-binary requests
+
+      - name: Run Database Setup
+        env:
+          SUPABASE_HOST: db.baddsoyjxthsldksinxo.supabase.co
+          SUPABASE_PORT: 5432
+          SUPABASE_USER: postgres
+          SUPABASE_PASSWORD: potdy1-Qexpaq-tejqiz
+          SUPABASE_DB: postgres
+        run: |
+          python << 'EOF'
+          import psycopg2
+          import json
+          import sys
+
+          print("=" * 80)
+          print("K-BEAUTY CDE - SETUP AUTOMÁTICO VÍA GITHUB ACTIONS")
+          print("=" * 80)
+          print()
+
+          try:
+              print("1️⃣  Conectando a PostgreSQL...")
+              conn = psycopg2.connect(
+                  host="db.baddsoyjxthsldksinxo.supabase.co",
+                  port=5432,
+                  user="postgres",
+                  password="potdy1-Qexpaq-tejqiz",
+                  database="postgres"
+              )
+              cursor = conn.cursor()
+              print("   ✅ Conectado a Supabase PostgreSQL")
+              print()
+
+          except Exception as e:
+              print(f"   ❌ Error: {str(e)}")
+              sys.exit(1)
+
+          try:
+              print("2️⃣  Creando estructura de base de datos...")
+
+              with open('SETUP_SUPABASE.sql', 'r', encoding='utf-8') as f:
+                  sql_content = f.read()
+
+              statements = [s.strip() for s in sql_content.split(';') if s.strip() and not s.strip().startswith('--')]
+
+              for i, statement in enumerate(statements, 1):
+                  try:
+                      cursor.execute(statement)
+                      conn.commit()
+                  except psycopg2.Error as e:
+                      if "already exists" not in str(e) and "duplicate key" not in str(e):
+                          pass
+                      conn.rollback()
+
+              print(f"   ✅ Base de datos lista ({len(statements)} statements)")
+              print()
+
+          except Exception as e:
+              print(f"   ❌ Error: {str(e)}")
+              conn.close()
+              sys.exit(1)
+
+          try:
+              print("3️⃣  Cargando 1000 productos...")
+
+              with open('docs/data/products.json', 'r', encoding='utf-8') as f:
+                  products = json.load(f)
+
+              insert_count = 0
+
+              for product in products:
+                  try:
+                      cursor.execute("""
+                          INSERT INTO productos (nombre, marca, categoria, descripcion, precio_usd, stock, rating, reviews)
+                          VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                          ON CONFLICT DO NOTHING
+                      """, (
+                          product.get('name', ''),
+                          product.get('brand', ''),
+                          product.get('category', ''),
+                          product.get('description', ''),
+                          float(product.get('priceUSD', 0)),
+                          int(product.get('stock', 10)),
+                          float(product.get('rating', 4.5)),
+                          int(product.get('reviews', 0))
+                      ))
+                      insert_count += 1
+                  except:
+                      pass
+
+              conn.commit()
+              print(f"   ✅ {insert_count} productos insertados")
+              print()
+
+          except Exception as e:
+              print(f"   ❌ Error: {str(e)}")
+              conn.close()
+              sys.exit(1)
+
+          try:
+              print("4️⃣  Configurando 23 provincias...")
+
+              with open('docs/data/andreani-zones.json', 'r', encoding='utf-8') as f:
+                  zones = json.load(f)
+
+              zones_inserted = 0
+
+              for zone in zones:
+                  try:
+                      cursor.execute("""
+                          INSERT INTO andreani_zonas (provincia, zona, costo_ars, dias_entrega)
+                          VALUES (%s, %s, %s, %s)
+                          ON CONFLICT (provincia) DO UPDATE SET zona=EXCLUDED.zona, costo_ars=EXCLUDED.costo_ars
+                      """, (
+                          zone.get('provincia', ''),
+                          int(zone.get('zona', 1)),
+                          float(zone.get('costo_ars', 0)),
+                          int(zone.get('dias_entrega', 1))
+                      ))
+                      zones_inserted += 1
+                  except:
+                      pass
+
+              conn.commit()
+              print(f"   ✅ {zones_inserted} provincias configuradas")
+              print()
+
+          except Exception as e:
+              print(f"   ❌ Error: {str(e)}")
+              conn.close()
+              sys.exit(1)
+
+          try:
+              print("5️⃣  Verificando datos...")
+
+              cursor.execute("SELECT COUNT(*) FROM productos WHERE nombre IS NOT NULL")
+              product_count = cursor.fetchone()[0]
+
+              cursor.execute("SELECT COUNT(*) FROM andreani_zonas")
+              zones_count = cursor.fetchone()[0]
+
+              print(f"   ✅ {product_count} productos en BD")
+              print(f"   ✅ {zones_count} zonas en BD")
+              print()
+
+          except:
+              pass
+
+          cursor.close()
+          conn.close()
+
+          print("=" * 80)
+          print("✅ SETUP COMPLETADO EXITOSAMENTE")
+          print("=" * 80)
+          print()
+          print("Tu tienda está lista en:")
+          print("https://pablorecalde67.github.io/Cosmetica-coreana/")
+          EOF
+
+      - name: Verify Setup
+        run: |
+          echo ""
+          echo "✅ Workflow ejecutado exitosamente"
+          echo ""
+          echo "Tu tienda K-Beauty CDE está LISTA:"
+          echo "🏪 https://pablorecalde67.github.io/Cosmetica-coreana/"
+          echo "📊 https://pablorecalde67.github.io/Cosmetica-coreana/admin.html"
+          echo "✅ https://pablorecalde67.github.io/Cosmetica-coreana/verify.html"

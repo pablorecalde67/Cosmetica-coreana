@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Beauty CDE - Configuración DNS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5e6e8 0%, #fffaf7 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 40px;
+    }
+
+    h1 {
+      color: #c89080;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #999;
+      margin-bottom: 30px;
+    }
+
+    .info-box {
+      background: #f0f4f8;
+      border-left: 4px solid #c89080;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .step {
+      background: #f9f9f9;
+      border-left: 4px solid #c89080;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .step h3 {
+      color: #2c2c2c;
+      margin-bottom: 10px;
+    }
+
+    .code-block {
+      background: #1e1e1e;
+      color: #00ff00;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    .copy-btn {
+      background: #c89080;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .copy-btn:hover {
+      background: #b8818b;
+    }
+
+    .warning {
+      background: #fff3e0;
+      border: 1px solid #ffe0b2;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      color: #e65100;
+    }
+
+    .success {
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      color: #2e7d32;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      background: white;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #c89080;
+      color: white;
+    }
+
+    tr:hover {
+      background: #f5f5f5;
+    }
+
+    .faq {
+      margin-top: 40px;
+      border-top: 2px solid #ddd;
+      padding-top: 30px;
+    }
+
+    .faq-item {
+      margin: 20px 0;
+    }
+
+    .faq-item h4 {
+      color: #c89080;
+      margin-bottom: 10px;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .status-active {
+      background: #4caf50;
+    }
+
+    .status-pending {
+      background: #ff9800;
+    }
+
+    .navbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      background: #c89080;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background: #b8818b;
+      transform: translateY(-2px);
+    }
+
+    .nav-btn.active {
+      background: #2c2c2c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="navbar">
+      <a href="/start.html" class="nav-btn">📊 Panel Principal</a>
+      <a href="/tienda-simple.html" class="nav-btn">🛍️ Tienda</a>
+      <a href="/SETUP_DNS.html" class="nav-btn active">⚙️ DNS</a>
+      <a href="/config.html" class="nav-btn">🔐 Supabase</a>
+    </div>
+
+    <h1>⚙️ Configuración DNS para kbeautycde.com</h1>
+    <p class="subtitle">Apuntar tu dominio a GitHub Pages (Paso final - una sola vez)</p>
+
+    <div class="success">
+      <strong>✓ Buena noticia:</strong> Tu sitio está completamente construido y listo.
+      Solo necesitas un último paso en tu registrador de dominio.
+    </div>
+
+    <div class="info-box">
+      <strong>📍 Dónde está tu dominio:</strong>
+      <p>Tu dominio <code>kbeautycde.com</code> está registrado en <strong>Netlify DNS</strong> o tu registrador original.</p>
+      <p>Para usar GitHub Pages, necesitas actualizar los registros DNS.</p>
+    </div>
+
+    <h2>🚀 Paso Único: Actualizar DNS</h2>
+
+    <div class="step">
+      <h3>Opción A: Si usas Netlify DNS (Recomendado)</h3>
+      <p>Accede a tu proyecto en Netlify:</p>
+      <ol style="margin-left: 20px;">
+        <li>Ve a <strong>Settings → Domain management</strong></li>
+        <li>Busca <strong>kbeautycde.com</strong></li>
+        <li>Haz clic en <strong>Change DNS provider</strong></li>
+        <li>Selecciona <strong>Use GitHub Pages</strong> o configura manualmente (ver abajo)</li>
+        <li>Guarda los cambios</li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h3>Opción B: DNS Manual (Cualquier Registrador)</h3>
+      <p>Si tu dominio está en Namecheap, GoDaddy, etc.</p>
+
+      <h4 style="margin-top: 15px;">Método 1: A Records (Más rápido)</h4>
+      <p>Reemplaza los registros A existentes con estos 4 valores:</p>
+      <table>
+        <tr>
+          <th>Tipo</th>
+          <th>Nombre</th>
+          <th>Valor</th>
+          <th>TTL</th>
+        </tr>
+        <tr>
+          <td><strong>A</strong></td>
+          <td>@</td>
+          <td><code>185.199.108.153</code></td>
+          <td>3600</td>
+        </tr>
+        <tr>
+          <td><strong>A</strong></td>
+          <td>@</td>
+          <td><code>185.199.109.153</code></td>
+          <td>3600</td>
+        </tr>
+        <tr>
+          <td><strong>A</strong></td>
+          <td>@</td>
+          <td><code>185.199.110.153</code></td>
+          <td>3600</td>
+        </tr>
+        <tr>
+          <td><strong>A</strong></td>
+          <td>@</td>
+          <td><code>185.199.111.153</code></td>
+          <td>3600</td>
+        </tr>
+      </table>
+
+      <h4 style="margin-top: 20px;">Método 2: CNAME (Alternativa)</h4>
+      <p>O simplemente añade un registro CNAME:</p>
+      <table>
+        <tr>
+          <th>Tipo</th>
+          <th>Nombre</th>
+          <th>Valor</th>
+          <th>TTL</th>
+        </tr>
+        <tr>
+          <td><strong>CNAME</strong></td>
+          <td>@</td>
+          <td><code>pablorecalde67.github.io</code></td>
+          <td>3600</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="warning">
+      ⚠️ <strong>Importante:</strong> Los cambios DNS pueden tomar 15-48 horas en propagarse completamente.
+      Tu sitio estará accesible en GitHub Pages de inmediato, pero puede que algunos ISP tarde tiempo en actualizarse.
+    </div>
+
+    <h2>✓ Verificación Automática</h2>
+
+    <div class="step">
+      <p>Una vez hayas actualizado el DNS, abre esta página:</p>
+      <div class="code-block">
+        https://kbeautycde.com
+      </div>
+      <p style="margin-top: 10px;">El navegador te mostrará tu tienda K-Beauty CDE completamente funcional.</p>
+    </div>
+
+    <div class="success">
+      <strong>🎉 ¡Eso es todo!</strong> No hay más pasos después de esto.
+      <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>✓ Cada push a GitHub se despliega automáticamente</li>
+        <li>✓ Tu tienda se actualiza en vivo sin intervención</li>
+        <li>✓ Todo funciona en iOS Safari</li>
+        <li>✓ Los productos se cargan automáticamente</li>
+      </ul>
+    </div>
+
+    <div class="faq">
+      <h2>❓ Preguntas Frecuentes</h2>
+
+      <div class="faq-item">
+        <h4>¿Puedo seguir usando Netlify?</h4>
+        <p>Sí, pero no será automático. Netlify requiere autenticación en GitHub.
+        GitHub Pages es automático sin pasos adicionales.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Qué pasa con mis datos en Supabase?</h4>
+        <p>Supabase sigue funcionando independientemente. El sitio cargará productos tanto de
+        la base de datos como del archivo JSON local.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Tengo que hacer esto en cada actualización?</h4>
+        <p><strong>No.</strong> Una vez configurado el DNS, cada push a main actualiza automáticamente
+        tu sitio en vivo en kbeautycde.com. Sin más pasos manuales.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Cuánto tarda en funcionar?</h4>
+        <p>GitHub Pages es instantáneo (segundos). DNS puede tardar 15-48 horas en propagarse,
+        pero generalmente funciona en menos de 1 hora.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Y si algo falla?</h4>
+        <p>El sitio siempre estará disponible en GitHub Pages (en github.io).
+        Si DNS falla, puedes volver a cambiar rapidamente.</p>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top: 40px;">
+      <strong>💡 Resumen:</strong>
+      <p>Este es el ÚNICO paso manual requerido. Después, TODO es automático.</p>
+      <p>Tiempo estimado: 5 minutos para configurar DNS + 15-48 horas de propagación.</p>
+    </div>
+
+  </div>
+
+  <script>
+    // Verificar si DNS está correctamente configurado
+    function checkDNS() {
+      const currentHost = window.location.hostname;
+      const isConfigured = currentHost === 'kbeautycde.com' || currentHost === 'www.kbeautycde.com';
+
+      if (isConfigured) {
+        document.body.innerHTML = '<div style="text-align:center; padding:40px;"><h1 style="color:#4caf50;">✓ DNS Correctamente Configurado</h1><p>Tu dominio kbeautycde.com está funcionando.</p><a href="/start.html" style="display:inline-block; padding:10px 20px; background:#c89080; color:white; text-decoration:none; border-radius:6px; margin-top:20px;">Ir al Panel Principal</a></div>';
+      }
+    }
+
+    // Verificar al cargar
+    window.addEventListener('load', checkDNS);
+  </script>
+</body>
+</html>

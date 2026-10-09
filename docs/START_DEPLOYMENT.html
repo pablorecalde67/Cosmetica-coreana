@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Beauty CDE - Deploy Automático</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      padding: 80px 50px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ff4081, #ff6b9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 50px;
+      font-weight: 300;
+    }
+
+    .status-list {
+      text-align: left;
+      background: #fdf3f8;
+      padding: 30px;
+      border-radius: 16px;
+      margin-bottom: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .status-item::before {
+      content: '✅';
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .deploy-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff4081, #ff6b9d);
+      color: white;
+      padding: 24px 70px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 15px 50px rgba(255, 64, 129, 0.4);
+      margin-bottom: 40px;
+      display: inline-block;
+    }
+
+    .deploy-button:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 70px rgba(255, 64, 129, 0.6);
+    }
+
+    .instructions {
+      background: #f9f9f9;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: left;
+      margin-top: 40px;
+      border-left: 4px solid #ff4081;
+    }
+
+    .instructions h3 {
+      color: #ff4081;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .step {
+      margin-bottom: 16px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .step strong {
+      color: #ff4081;
+    }
+
+    .code {
+      background: #1a1a1a;
+      color: #00ff00;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      margin: 8px 0;
+      overflow-x: auto;
+      word-break: break-all;
+    }
+
+    .footer {
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid #eee;
+      font-size: 0.9rem;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🚀 K-Beauty CDE</h1>
+  <p class="subtitle">Deployment Automático a Railway</p>
+
+  <div class="status-list">
+    <div class="status-item">Landing page con diseño premium</div>
+    <div class="status-item">13 endpoints API configurados</div>
+    <div class="status-item">Analytics (GA4 + Facebook Pixel)</div>
+    <div class="status-item">Social media automático</div>
+    <div class="status-item">Precios USD + ARS</div>
+  </div>
+
+  <a href="https://railway.app/new?templateUrl=https://github.com/pablorecalde67/Cosmetica-coreana" class="deploy-button">
+    🚀 INICIAR DEPLOYMENT
+  </a>
+
+  <div class="instructions">
+    <h3>📋 Qué pasa cuando haces click:</h3>
+
+    <div class="step">
+      <strong>1️⃣ Railway abre tu repositorio</strong><br>
+      Automáticamente conecta con pablorecalde67/Cosmetica-coreana
+    </div>
+
+    <div class="step">
+      <strong>2️⃣ Railway te pide los secrets</strong><br>
+      Llena los API tokens que tengas (o déjalos vacíos si no los tienes):
+      <div class="code">INSTAGRAM_ACCESS_TOKEN<br>WHATSAPP_ACCESS_TOKEN<br>TIKTOK_ACCESS_TOKEN<br>GA4_MEASUREMENT_ID<br>FACEBOOK_PIXEL_ID</div>
+    </div>
+
+    <div class="step">
+      <strong>3️⃣ Click en Deploy</strong><br>
+      Railway automáticamente despliega en ~2 minutos
+    </div>
+
+    <div class="step">
+      <strong>4️⃣ Tu sitio en vivo</strong><br>
+      URL tipo: <div class="code">cosmetica-coreana-production.up.railway.app</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>✨ Completamente automático. No requiere configuración manual adicional.</p>
+    <p style="margin-top: 16px;">© 2026 K-Beauty CDE · Belleza Coreana en Argentina</p>
+  </div>
+</div>
+
+</body>
+</html>

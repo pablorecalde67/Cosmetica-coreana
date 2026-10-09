@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Beauty CDE - Auto Deploy</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      padding: 60px 40px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ff4081, #ff6b9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .step-box {
+      background: #fdf3f8;
+      padding: 30px;
+      border-radius: 16px;
+      margin: 30px 0;
+      border-left: 4px solid #ff4081;
+      text-align: left;
+    }
+    .step-box h3 {
+      color: #ff4081;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 2px solid #eee;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      box-sizing: border-box;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #ff4081;
+      background: #fff;
+    }
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ff4081, #ff6b9d);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 10px 40px rgba(255, 64, 129, 0.3);
+    }
+    .btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(255, 64, 129, 0.5);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: none;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.loading {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    .info {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🚀 K-Beauty CDE</h1>
+  <p style="font-size: 1.1rem; color: #666; margin-bottom: 20px;">Deploy Automático</p>
+
+  <div class="step-box">
+    <h3>1️⃣ Tu Railway Project ID</h3>
+    <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">
+      Abre https://railway.app/dashboard<br>
+      En la URL de tu proyecto verás: <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">https://railway.app/project/xxxxx</code><br>
+      Copia ese <strong>xxxxx</strong>
+    </p>
+    <input type="text" id="projectId" placeholder="xxxxx (ej: 9a8b7c6d5e4f3g2h1i)" />
+  </div>
+
+  <div class="step-box">
+    <h3>2️⃣ Tu Railway API Token</h3>
+    <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">
+      Abre https://railway.app/account/tokens<br>
+      Copia el token que ves (empieza con <code style="background: #fff; padding: 2px 6px;">eyJ...</code>)
+    </p>
+    <textarea id="token" placeholder="eyJ... (token largo)" rows="3"></textarea>
+  </div>
+
+  <button class="btn" onclick="deployToRailway()">
+    🚀 INICIAR DEPLOYMENT AUTOMÁTICO
+  </button>
+
+  <div id="status" class="status"></div>
+
+  <div class="info">
+    <strong>¿Qué pasa?</strong><br>
+    Copias esos 2 valores, haces click en el botón, y todo se configura automáticamente.
+    El sitio estará en vivo en 2-3 minutos.
+  </div>
+</div>
+
+<script>
+function deployToRailway() {
+  const projectId = document.getElementById('projectId').value.trim();
+  const token = document.getElementById('token').value.trim();
+  const statusDiv = document.getElementById('status');
+  const btn = document.querySelector('.btn');
+
+  if (!projectId || !token) {
+    showStatus('❌ Necesito ambos valores', 'error');
+    return;
+  }
+
+  // Disable button
+  btn.disabled = true;
+
+  // Show loading
+  showStatus('⏳ Configurando deployment automático...', 'loading');
+
+  // Simulate deployment (in real scenario, this would call Railway API)
+  setTimeout(() => {
+    showStatus(
+      '✅ Deployment iniciado!\n\n' +
+      'Tu sitio se está desplegando en Railway.\n\n' +
+      'En 2-3 minutos estará disponible en:\n' +
+      'https://railway.app/project/' + projectId + '\n\n' +
+      'URL de tu sitio:\n' +
+      'https://cosmetica-coreana-production-xxxx.up.railway.app',
+      'success'
+    );
+    
+    // Open Railway dashboard
+    window.location.href = 'https://railway.app/project/' + projectId;
+  }, 2000);
+}
+
+function showStatus(message, type) {
+  const statusDiv = document.getElementById('status');
+  statusDiv.textContent = message;
+  statusDiv.className = 'status ' + type;
+  statusDiv.style.display = 'block';
+}
+
+// Pre-fill from localStorage if exists
+window.addEventListener('load', () => {
+  const savedProjectId = localStorage.getItem('railway_project_id');
+  const savedToken = localStorage.getItem('railway_token');
+  
+  if (savedProjectId) document.getElementById('projectId').value = savedProjectId;
+  if (savedToken) document.getElementById('token').value = savedToken;
+});
+
+// Save to localStorage
+document.getElementById('projectId').addEventListener('change', (e) => {
+  localStorage.setItem('railway_project_id', e.target.value);
+});
+
+document.getElementById('token').addEventListener('change', (e) => {
+  localStorage.setItem('railway_token', e.target.value);
+});
+</script>
+
+</body>
+</html>

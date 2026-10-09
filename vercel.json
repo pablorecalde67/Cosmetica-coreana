@@ -1,18 +1,26 @@
 {
-  "version": 2,
-  "builds": [
+  "projectName": "K-Beauty CDE",
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": "docs",
+  "rewrites": [
     {
-      "src": "automation-coca/src/index.js",
-      "use": "@vercel/node"
+      "source": "/(.*)",
+      "destination": "/tienda-simple.html"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/(.*)",
-      "dest": "automation-coca/src/index.js"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }

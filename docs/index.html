@@ -277,21 +277,23 @@
       };
     }
 
-    // Fotos REALES de productos de belleza - Pixabay (permite hotlinking)
+    // Fotos REALES de productos del catálogo GENOVE (extraídas del PDF)
     const realProductImages = [
-      'https://cdn.pixabay.com/photo/2019/04/12/13/13/face-4121601_640.jpg',
-      'https://cdn.pixabay.com/photo/2020/06/11/21/00/facial-cream-5289837_640.jpg',
-      'https://cdn.pixabay.com/photo/2020/05/04/13/57/cosmetics-5129077_640.jpg',
-      'https://cdn.pixabay.com/photo/2019/04/12/09/22/cream-4120673_640.jpg',
-      'https://cdn.pixabay.com/photo/2020/03/03/18/44/cosmetics-4900327_640.jpg',
-      'https://cdn.pixabay.com/photo/2018/03/13/17/11/cosmetic-3224747_640.jpg',
-      'https://cdn.pixabay.com/photo/2020/06/11/20/59/moisturizer-5289819_640.jpg',
-      'https://cdn.pixabay.com/photo/2019/10/22/13/00/skincare-4568176_640.jpg',
-      'https://cdn.pixabay.com/photo/2020/04/15/14/13/serum-5047825_640.jpg',
-      'https://cdn.pixabay.com/photo/2018/03/13/17/22/spa-3224775_640.jpg'
+      basePath + 'products/pdf_images-002.png',
+      basePath + 'products/pdf_images-003.png',
+      basePath + 'products/pdf_images-004.png',
+      basePath + 'products/pdf_images-005.png',
+      basePath + 'products/pdf_images-006.png',
+      basePath + 'products/pdf_images-007.png',
+      basePath + 'products/pdf_images-008.png',
+      basePath + 'products/pdf_images-009.png',
+      basePath + 'products/pdf_images-010.png',
+      basePath + 'products/pdf_images-011.png',
+      basePath + 'products/pdf_images-012.png',
+      basePath + 'products/pdf_images-013.png'
     ];
 
-    // Obtener foto real de producto
+    // Obtener foto real de producto (cicla por las imágenes disponibles)
     function getProductImage(productIndex) {
       return realProductImages[productIndex % realProductImages.length];
     }

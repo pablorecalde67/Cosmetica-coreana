@@ -275,38 +275,40 @@
       };
     }
 
-    // Generar SVG visual de producto
-    function getProductSVG(brand, hue1, hue2) {
-      const color1 = `hsl(${hue1}, 75%, 65%)`;
-      const color2 = `hsl(${hue2}, 75%, 55%)`;
-      const initial = brand.charAt(0).toUpperCase();
+    // Obtener foto real de producto
+    function getProductImage(productName, brand, index) {
+      // Keywords para búsqueda de imágenes de belleza coreana
+      const keywords = [
+        'korean beauty skincare',
+        'beauty serum bottle',
+        'cosmetic product',
+        'skincare jar',
+        'beauty product photography',
+        'K-beauty cosmetics',
+        'facial cream',
+        'essence bottle',
+        'toner bottle',
+        'moisturizer jar'
+      ];
 
-      const svg = `
-        <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-          <defs>
-            <linearGradient id="grad${hue1}" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
-              <stop offset="100%" style="stop-color:${color2};stop-opacity:1" />
-            </linearGradient>
-          </defs>
-          <rect width="200" height="300" fill="url(#grad${hue1})"/>
+      // Seleccionar keyword basado en el índice para variedad
+      const keyword = keywords[index % keywords.length];
 
-          <!-- Botella estilizada -->
-          <path d="M 70 100 Q 60 120 65 180 Q 65 200 100 210 Q 135 200 135 180 Q 140 120 130 100 Z" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.5"/>
-          <ellipse cx="100" cy="95" rx="30" ry="12" fill="rgba(255,255,255,0.25)" stroke="white" stroke-width="1"/>
+      // URLs directas de Unsplash con parámetros optimizados
+      const unsplashUrls = [
+        `https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1556229010-6c3f2c9ca60d?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1556175801-61e53fdf26eb?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1516214104703-3e922f5d0d70?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1517457373614-b7152f800fd1?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1525599945915-c3400ca199e7?w=400&h=300&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1556175801-61e53fdf26eb?w=400&h=300&fit=crop&q=80`
+      ];
 
-          <!-- Etiqueta -->
-          <rect x="75" y="125" width="50" height="40" fill="rgba(255,255,255,0.15)" rx="3"/>
-
-          <!-- Letra inicial grande -->
-          <text x="100" y="210" font-size="32" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">${initial}</text>
-
-          <!-- Detalle shine -->
-          <circle cx="85" cy="115" r="4" fill="white" opacity="0.4"/>
-        </svg>
-      `;
-
-      return `data:image/svg+xml;base64,${btoa(svg)}`;
+      return unsplashUrls[index % unsplashUrls.length];
     }
 
     async function loadProducts() {
@@ -322,14 +324,13 @@
           const colors = getColorsForProduct(product.name);
           const brand = product.brand || 'K';
           const initial = brand.charAt(0).toUpperCase();
-          const imageUrl = getProductSVG(brand, colors.hue1, colors.hue2);
+          const imageUrl = getProductImage(product.name, brand, index);
 
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
-            <div class="product-image" style="background: ${colors.gradient};">
-              <img src="${imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
-              <span style="position: absolute;">${initial}</span>
+            <div class="product-image" style="background: white;">
+              <img src="${imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.background='${colors.gradient}'">
             </div>
             <div class="product-info">
               <div class="product-brand">${brand}</div>

@@ -255,7 +255,10 @@
             <div class="product-info">
               <div class="product-brand">${product.brand}</div>
               <div class="product-name">${product.name.substring(0, 30)}...</div>
-              <div class="product-price">u$s ${product.price.toFixed(2)}</div>
+              <div class="product-price">
+                <div>u$s ${product.priceUSD.toFixed(2)}</div>
+                <div style="font-size: 14px; color: #999;">$ ${(product.priceARS).toLocaleString('es-AR')}</div>
+              </div>
               <button class="btn" onclick="alert('Próximamente: Agregar al carrito')">Ver detalles</button>
             </div>
           `;

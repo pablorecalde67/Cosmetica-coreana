@@ -267,29 +267,46 @@
       const hue2 = (Math.abs(hash * 7919) % 360);
 
       return {
+        hue1: hue1,
+        hue2: hue2,
         color1: `hsl(${hue1}, 75%, 65%)`,
         color2: `hsl(${hue2}, 75%, 55%)`,
         gradient: `linear-gradient(135deg, hsl(${hue1}, 75%, 65%) 0%, hsl(${hue2}, 75%, 55%) 100%)`
       };
     }
 
-    // Obtener imagen de producto
-    function getProductImage(brand, productIndex) {
-      // Array de búsquedas por marca para Unsplash
-      const categoryMap = {
-        'anua': 'korean skincare',
-        'beauty of joseon': 'korean beauty',
-        'cosrx': 'korean cosmetics',
-        'medicube': 'beauty device',
-        'torriden': 'korean face serum',
-        'skin1004': 'skincare product'
-      };
+    // Generar SVG visual de producto
+    function getProductSVG(brand, hue1, hue2) {
+      const color1 = `hsl(${hue1}, 75%, 65%)`;
+      const color2 = `hsl(${hue2}, 75%, 55%)`;
+      const initial = brand.charAt(0).toUpperCase();
 
-      const keyword = categoryMap[brand.toLowerCase()] || 'korean beauty product';
-      const seed = (brand + productIndex).charCodeAt(0) % 100;
+      const svg = `
+        <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+          <defs>
+            <linearGradient id="grad${hue1}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
+              <stop offset="100%" style="stop-color:${color2};stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <rect width="200" height="300" fill="url(#grad${hue1})"/>
 
-      // Usar Unsplash API con búsqueda
-      return `https://source.unsplash.com/400x300/?${keyword.replace(/ /g, ',')}&${seed}`;
+          <!-- Botella estilizada -->
+          <path d="M 70 100 Q 60 120 65 180 Q 65 200 100 210 Q 135 200 135 180 Q 140 120 130 100 Z" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.5"/>
+          <ellipse cx="100" cy="95" rx="30" ry="12" fill="rgba(255,255,255,0.25)" stroke="white" stroke-width="1"/>
+
+          <!-- Etiqueta -->
+          <rect x="75" y="125" width="50" height="40" fill="rgba(255,255,255,0.15)" rx="3"/>
+
+          <!-- Letra inicial grande -->
+          <text x="100" y="210" font-size="32" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">${initial}</text>
+
+          <!-- Detalle shine -->
+          <circle cx="85" cy="115" r="4" fill="white" opacity="0.4"/>
+        </svg>
+      `;
+
+      return `data:image/svg+xml;base64,${btoa(svg)}`;
     }
 
     async function loadProducts() {
@@ -305,14 +322,14 @@
           const colors = getColorsForProduct(product.name);
           const brand = product.brand || 'K';
           const initial = brand.charAt(0).toUpperCase();
-          const imageUrl = getProductImage(brand, index);
+          const imageUrl = getProductSVG(brand, colors.hue1, colors.hue2);
 
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
             <div class="product-image" style="background: ${colors.gradient};">
-              <img src="${imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
-              <span style="position: absolute; display: ${imageUrl ? 'none' : 'block'}">${initial}</span>
+              <img src="${imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+              <span style="position: absolute;">${initial}</span>
             </div>
             <div class="product-info">
               <div class="product-brand">${brand}</div>

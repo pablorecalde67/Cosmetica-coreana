@@ -91,11 +91,13 @@
     .product-image {
       width: 100%;
       height: 200px;
-      background: linear-gradient(135deg, #e8b4a8 0%, #f5e6e8 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 60px;
+      font-size: 48px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .product-info {
@@ -236,6 +238,24 @@
       ? '/Cosmetica-coreana/'
       : '/';
 
+    // Generar color único por producto basado en su nombre
+    function getColorsForProduct(name) {
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) {
+        hash = ((hash << 5) - hash) + name.charCodeAt(i);
+        hash = hash & hash;
+      }
+
+      const hue1 = Math.abs(hash) % 360;
+      const hue2 = (Math.abs(hash * 7919) % 360);
+
+      return {
+        color1: `hsl(${hue1}, 75%, 65%)`,
+        color2: `hsl(${hue2}, 75%, 55%)`,
+        gradient: `linear-gradient(135deg, hsl(${hue1}, 75%, 65%) 0%, hsl(${hue2}, 75%, 55%) 100%)`
+      };
+    }
+
     async function loadProducts() {
       try {
         const response = await fetch(basePath + 'data/products.json');
@@ -246,14 +266,18 @@
         const loading = document.getElementById('loading');
 
         products.slice(0, 20).forEach(product => {
+          const colors = getColorsForProduct(product.name);
+          const brand = product.brand || 'K';
+          const initial = brand.charAt(0).toUpperCase();
+
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
-            <div class="product-image">
-              <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='<span>${product.brand.charAt(0).toUpperCase()}</span>'">
+            <div class="product-image" style="background: ${colors.gradient};">
+              <span>${initial}</span>
             </div>
             <div class="product-info">
-              <div class="product-brand">${product.brand}</div>
+              <div class="product-brand">${brand}</div>
               <div class="product-name">${product.name.substring(0, 30)}...</div>
               <div class="product-price">
                 <div style="font-size: 16px; font-weight: bold;">u$s ${product.priceUSD.toFixed(2)}</div>

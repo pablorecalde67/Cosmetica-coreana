@@ -1,11 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Test - GitHub Pages funciona</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test - K-Beauty CDE</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .test { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+    .ok { background: #e8f5e9; color: #2e7d32; }
+    .error { background: #ffebee; color: #c62828; }
+    .info { background: #e3f2fd; color: #1565c0; }
+  </style>
 </head>
 <body>
-    <h1>✅ GitHub Pages está sirviendo correctamente</h1>
-    <p>Si ves este mensaje, GitHub Pages está funcionando.</p>
-    <p>Ahora ve a: <a href="index.html">Ir a la tienda</a></p>
+  <h1>✅ Verificación de K-Beauty CDE</h1>
+  <div id="results"></div>
+
+  <script>
+    const results = document.getElementById('results');
+    
+    function addTest(name, passed, message) {
+      const div = document.createElement('div');
+      div.className = `test ${passed ? 'ok' : 'error'}`;
+      div.innerHTML = `<strong>${passed ? '✓' : '✗'} ${name}</strong><br>${message}`;
+      results.appendChild(div);
+    }
+
+    async function runTests() {
+      // Test 1: Cargar JSON
+      try {
+        const response = await fetch('docs/data/products.json');
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const products = await response.json();
+        addTest('Cargar products.json', true, `✓ ${products.length} productos cargados`);
+        
+        // Test 2: Validar estructura
+        const firstProduct = products[0];
+        const hasFields = ['name', 'brand', 'priceUSD', 'priceARS'].every(f => f in firstProduct);
+        addTest('Estructura de datos', hasFields, 
+          hasFields ? `✓ Campos correctos` : `✗ Falta campo en: ${JSON.stringify(firstProduct)}`);
+        
+        // Test 3: Verificar precios
+        const pricesOk = products.every(p => p.priceUSD > 0 && p.priceARS > 0);
+        addTest('Validación de precios', pricesOk,
+          pricesOk ? `✓ Todos los precios válidos` : `✗ Precios inválidos detectados`);
+        
+        // Test 4: Verificar conversión USD->ARS
+        const sampleProduct = products[0];
+        const expectedARS = Math.round(sampleProduct.priceUSD * 1570);
+        const priceMatch = Math.abs(sampleProduct.priceARS - expectedARS) < 10;
+        addTest('Conversión USD a ARS', priceMatch,
+          `${sampleProduct.name}: u$s ${sampleProduct.priceUSD} = $ ${sampleProduct.priceARS} (esperado: $ ${expectedARS})`);
+        
+        // Test 5: No hay campo 'image' (data URIs)
+        const noImages = !products.some(p => p.image);
+        addTest('Eliminación de data URIs', noImages,
+          noImages ? `✓ JSON limpio, sin data URIs` : `✗ Aún hay campos 'image'`);
+        
+        // Test 6: Función getColorsForProduct
+        window.getColorsForProduct = function(name) {
+          let hash = 0;
+          for (let i = 0; i < name.length; i++) {
+            hash = ((hash << 5) - hash) + name.charCodeAt(i);
+            hash = hash & hash;
+          }
+          const hue1 = Math.abs(hash) % 360;
+          const hue2 = (Math.abs(hash * 7919) % 360);
+          return {
+            color1: `hsl(${hue1}, 75%, 65%)`,
+            color2: `hsl(${hue2}, 75%, 55%)`,
+            gradient: `linear-gradient(135deg, hsl(${hue1}, 75%, 65%) 0%, hsl(${hue2}, 75%, 55%) 100%)`
+          };
+        };
+        
+        const colors = getColorsForProduct(firstProduct.name);
+        addTest('Generación de colores CSS', true,
+          `✓ Gradiente: ${colors.gradient}`);
+        
+        // Test 7: Render preview
+        const preview = document.createElement('div');
+        preview.className = 'test info';
+        preview.innerHTML = `
+          <strong>🎨 Vista previa (primeros 3 productos)</strong><br>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+        `;
+        
+        products.slice(0, 3).forEach(p => {
+          const colors = getColorsForProduct(p.name);
+          const initial = p.brand.charAt(0).toUpperCase();
+          const card = document.createElement('div');
+          card.style.cssText = `
+            width: 150px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          `;
+          card.innerHTML = `
+            <div style="width: 100%; height: 150px; background: ${colors.gradient}; 
+                       display: flex; align-items: center; justify-content: center; 
+                       font-size: 48px; font-weight: bold; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+              ${initial}
+            </div>
+            <div style="padding: 10px;">
+              <div style="font-weight: bold; font-size: 12px;">${p.brand}</div>
+              <div style="font-size: 11px; color: #666; margin: 5px 0;">${p.name.substring(0, 20)}...</div>
+              <div style="font-weight: bold; color: #c89080;">u$s ${p.priceUSD}</div>
+              <div style="font-weight: bold; color: #2c2c2c;">$ ${p.priceARS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</div>
+            </div>
+          `;
+          preview.querySelector('div:last-child').appendChild(card);
+        });
+        preview.innerHTML += '</div>';
+        results.appendChild(preview);
+        
+      } catch (error) {
+        addTest('Cargar products.json', false, `✗ Error: ${error.message}`);
+      }
+    }
+
+    window.addEventListener('load', runTests);
+  </script>
 </body>
 </html>

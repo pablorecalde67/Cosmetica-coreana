@@ -98,6 +98,23 @@
       font-weight: bold;
       color: white;
       text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .product-image span {
+      position: relative;
+      z-index: 2;
     }
 
     .product-info {
@@ -256,6 +273,25 @@
       };
     }
 
+    // Obtener imagen de producto
+    function getProductImage(brand, productIndex) {
+      // Array de búsquedas por marca para Unsplash
+      const categoryMap = {
+        'anua': 'korean skincare',
+        'beauty of joseon': 'korean beauty',
+        'cosrx': 'korean cosmetics',
+        'medicube': 'beauty device',
+        'torriden': 'korean face serum',
+        'skin1004': 'skincare product'
+      };
+
+      const keyword = categoryMap[brand.toLowerCase()] || 'korean beauty product';
+      const seed = (brand + productIndex).charCodeAt(0) % 100;
+
+      // Usar Unsplash API con búsqueda
+      return `https://source.unsplash.com/400x300/?${keyword.replace(/ /g, ',')}&${seed}`;
+    }
+
     async function loadProducts() {
       try {
         const response = await fetch(basePath + 'data/products.json');
@@ -265,16 +301,18 @@
         const container = document.getElementById('productsContainer');
         const loading = document.getElementById('loading');
 
-        products.slice(0, 20).forEach(product => {
+        products.slice(0, 20).forEach((product, index) => {
           const colors = getColorsForProduct(product.name);
           const brand = product.brand || 'K';
           const initial = brand.charAt(0).toUpperCase();
+          const imageUrl = getProductImage(brand, index);
 
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
             <div class="product-image" style="background: ${colors.gradient};">
-              <span>${initial}</span>
+              <img src="${imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
+              <span style="position: absolute; display: ${imageUrl ? 'none' : 'block'}">${initial}</span>
             </div>
             <div class="product-info">
               <div class="product-brand">${brand}</div>

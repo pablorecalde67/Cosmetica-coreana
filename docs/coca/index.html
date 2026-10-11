@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COCA K-Beauty - Análisis de Piel & Recomendaciones Personalizadas</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- HEADER / NAVEGACIÓN -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">🥥 COCA K-BEAUTY</div>
+      <nav class="nav">
+        <a href="#inicio">Inicio</a>
+        <a href="#articulos">Artículos</a>
+        <a href="#analizar">Analizar Piel</a>
+        <a href="#tienda">Tienda</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO / LANDING -->
+  <section id="inicio" class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Tu Piel Merece K-Beauty Profesional</h1>
+        <p>Análisis de piel con IA + Recomendaciones personalizadas de productos coreanos</p>
+        <button class="btn-primary" id="btnAnalizarPiel">
+          📸 ANALIZA TU PIEL AHORA
+        </button>
+      </div>
+      <div class="hero-image">
+        <div class="mockup-phone">
+          <img src="assets/hero-image.svg" alt="K-Beauty Products">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEED DE ARTÍCULOS + VIDEOS -->
+  <section id="articulos" class="articles-section">
+    <div class="container">
+      <h2>Lo Último en K-Beauty 🌟</h2>
+
+      <!-- Carrusel de artículos -->
+      <div class="articles-carousel" id="articlesCarousel">
+        <div class="article-card loading">
+          <div class="skeleton"></div>
+          <p>Cargando artículos...</p>
+        </div>
+      </div>
+
+      <!-- Carrusel de videos YouTube -->
+      <h3 style="margin-top: 40px;">Videos Recomendados 🎬</h3>
+      <div class="videos-carousel" id="videosCarousel">
+        <div class="video-card loading">
+          <div class="skeleton"></div>
+          <p>Cargando videos...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALIZADOR DE PIEL (Modal/Fullscreen) -->
+  <div id="skinAnalyzerModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-btn" id="closeAnalyzer">&times;</button>
+
+      <h2>Análisis de Piel con IA 🤖</h2>
+      <p class="subtitle">Sube una foto clara de tu rostro para un análisis personalizado</p>
+
+      <div class="analyzer-steps">
+        <!-- Step 1: Captura -->
+        <div class="step" id="step1">
+          <h3>Paso 1: Captura tu Foto</h3>
+          <div class="camera-container">
+            <video id="cameraFeed" autoplay playsinline></video>
+            <canvas id="photoCanvas" style="display:none;"></canvas>
+          </div>
+          <div class="button-group">
+            <button class="btn-secondary" id="btnStartCamera">📷 Abrir Cámara</button>
+            <button class="btn-secondary" id="btnTakePhoto" disabled>📸 Capturar Foto</button>
+            <button class="btn-secondary" id="btnUploadPhoto">📁 Subir Foto</button>
+            <input type="file" id="photoInput" accept="image/*" style="display:none;">
+          </div>
+        </div>
+
+        <!-- Step 2: Análisis -->
+        <div class="step hidden" id="step2">
+          <h3>Paso 2: Analizando...</h3>
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>La IA está analizando tu piel...</p>
+          </div>
+        </div>
+
+        <!-- Step 3: Resultados -->
+        <div class="step hidden" id="step3">
+          <h3>Tus Resultados 📋</h3>
+          <div class="results-container" id="resultsContainer">
+            <!-- Aquí van los resultados del análisis -->
+          </div>
+          <button class="btn-primary" id="btnGetRecommendations">
+            ✨ YO TE DOY UNA MANO COMO MEJORARLA
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMENDACIONES DE PRODUCTOS (Modal) -->
+  <div id="recommendationsModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-btn" id="closeRecommendations">&times;</button>
+
+      <h2>Productos Recomendados para Ti ✨</h2>
+      <p class="subtitle" id="recommendationSubtitle">Basado en tu análisis de piel</p>
+
+      <div class="recommendations-grid" id="recommendationsGrid">
+        <!-- Aquí van los productos recomendados -->
+      </div>
+
+      <div class="social-buttons">
+        <p>¿Quieres ver más en nuestras redes?</p>
+        <a href="#" id="instagramLink" target="_blank" class="btn-social instagram">
+          📱 Ver en Instagram
+        </a>
+        <a href="#" id="facebookLink" target="_blank" class="btn-social facebook">
+          📱 Ver en Facebook
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIENDA (Carrito + Checkout) -->
+  <section id="tienda" class="shop-section">
+    <div class="container">
+      <h2>Tienda K-Beauty CDE 🛍️</h2>
+
+      <div class="shop-layout">
+        <!-- Catálogo de productos -->
+        <div class="products-grid" id="productsGrid">
+          <div class="product-card loading">
+            <div class="skeleton"></div>
+          </div>
+        </div>
+
+        <!-- Carrito (Sticky sidebar en desktop) -->
+        <aside class="cart-sidebar">
+          <h3>Tu Carrito 🛒</h3>
+          <div id="cartItems" class="cart-items">
+            <p class="empty">Tu carrito está vacío</p>
+          </div>
+          <div class="cart-summary">
+            <div class="row">
+              <span>Subtotal (USD):</span>
+              <span id="subtotalUSD">$0.00</span>
+            </div>
+            <div class="row">
+              <span>En Pesos (1600):</span>
+              <span id="subtotalARS">$0.00</span>
+            </div>
+            <div class="row">
+              <span>Comisión (15%):</span>
+              <span id="comisionARS">$0.00</span>
+            </div>
+            <div class="row">
+              <span>Flete (10%):</span>
+              <span id="fleteARS">$0.00</span>
+            </div>
+            <div class="row total">
+              <span>TOTAL:</span>
+              <span id="totalARS">$0.00</span>
+            </div>
+          </div>
+          <button class="btn-primary full-width" id="btnCheckout">
+            💳 Ir a Pagar con MercadoPago
+          </button>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 COCA K-Beauty - Tu Belleza Coreana Favorita</p>
+      <p>Envíos a toda Argentina | Análisis de piel con IA</p>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/skin-analyzer.js"></script>
+  <script src="js/youtube.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

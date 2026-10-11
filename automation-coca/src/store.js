@@ -74,3 +74,51 @@ export function deleteItem(id) {
   save(db);
   return db.items.length < before;
 }
+
+export function storageStats() {
+  const files = fs.readdirSync(MEDIA_DIR);
+  let totalBytes = 0;
+  for (const f of files) {
+    try {
+      totalBytes += fs.statSync(path.join(MEDIA_DIR, f)).size;
+    } catch {
+      // archivo pudo haber sido borrado entre el readdir y el stat
+    }
+  }
+  const byStatus = {};
+  for (const it of db.items) byStatus[it.status] = (byStatus[it.status] || 0) + 1;
+  return { totalFiles: files.length, totalBytes, itemsByStatus: byStatus, totalItems: db.items.length };
+}
+
+// Borra del disco los archivos de los items YA publicados (ya están en
+// Instagram, no hace falta conservar el original) para liberar espacio del
+// volumen. Deja el registro del item (para historial) pero vacio de media.
+export function freePublishedMedia() {
+  let freedBytes = 0;
+  let freedFiles = 0;
+  let touchedItems = 0;
+
+  for (const item of db.items) {
+    if (item.status !== 'published' || !item.media?.length) continue;
+    let touched = false;
+    for (const m of item.media) {
+      const filePath = path.join(MEDIA_DIR, m.file);
+      try {
+        const size = fs.statSync(filePath).size;
+        fs.unlinkSync(filePath);
+        freedBytes += size;
+        freedFiles++;
+        touched = true;
+      } catch {
+        // ya no estaba en disco, no pasa nada
+      }
+    }
+    if (touched) {
+      item.media = [];
+      touchedItems++;
+    }
+  }
+
+  if (touchedItems > 0) save(db);
+  return { freedBytes, freedFiles, touchedItems };
+}

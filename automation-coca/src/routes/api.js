@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import path from 'node:path';
-import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, MEDIA_DIR } from '../store.js';
+import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
 import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured } from '../config.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
@@ -263,6 +263,19 @@ router.get('/sitio', (req, res) => {
 
 router.patch('/sitio', (req, res) => {
   res.json(updateSite(req.body || {}));
+});
+
+// --- Admin: almacenamiento del volumen (media de WhatsApp/mail) ---
+
+router.get('/almacenamiento', (req, res) => {
+  res.json(storageStats());
+});
+
+// Borra del disco los archivos de los items YA publicados (ya están en
+// Instagram) para liberar espacio del volumen cuando se llena. No toca los
+// items pendientes de precio.
+router.post('/almacenamiento/limpiar-publicados', (req, res) => {
+  res.json(freePublishedMedia());
 });
 
 export default router;

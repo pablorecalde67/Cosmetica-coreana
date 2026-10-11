@@ -126,7 +126,12 @@ export async function startEmailIngest() {
       console.log(`[email] Conectado a ${config.emailUser}. Esperando mails con "${config.emailSubjectTag}" en el asunto.`);
       await checkNewMessages();
     } catch (err) {
-      console.error('[email] no se pudo conectar, reintentando en 30s:', err.message, err.code ? `(${err.code})` : '');
+      // imapflow a veces envuelve el motivo real del rechazo en
+      // responseText/response en vez de en err.message ("Command failed" no
+      // dice nada por si solo) - esto saca todo lo que tenga para que el
+      // proximo fallo se pueda diagnosticar sin adivinar.
+      const details = [err.code, err.responseText, err.response].filter(Boolean).join(' | ');
+      console.error('[email] no se pudo conectar, reintentando en 30s:', err.message, details ? `[${details}]` : '');
       setTimeout(connectAndWatch, 30000);
     }
   }

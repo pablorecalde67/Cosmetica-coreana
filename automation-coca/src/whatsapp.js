@@ -29,6 +29,20 @@ const state$ = {
   sock: null,
 };
 
+// Backoff para reintentos de conexión: si reconectamos sin pausa cada vez
+// que se corta, WhatsApp interpreta eso como comportamiento de bot y puede
+// bloquear temporalmente la vinculación del número ("no se puede vincular
+// por el momento"). Esto espera cada vez más entre intento e intento, y se
+// resetea apenas la conexión queda abierta de nuevo.
+let reconnectAttempts = 0;
+const MAX_RECONNECT_DELAY_MS = 5 * 60 * 1000;
+
+function nextReconnectDelay() {
+  reconnectAttempts++;
+  const delay = Math.min(2000 * 2 ** (reconnectAttempts - 1), MAX_RECONNECT_DELAY_MS);
+  return delay;
+}
+
 export function getWhatsappStatus() {
   return { connected: state$.connected, qr: state$.latestQrDataUrl };
 }
@@ -110,6 +124,7 @@ export async function startWhatsapp() {
     if (connection === 'open') {
       state$.connected = true;
       state$.latestQrDataUrl = null;
+      reconnectAttempts = 0;
       console.log('[whatsapp] Conectado.');
     }
 
@@ -117,9 +132,14 @@ export async function startWhatsapp() {
       state$.connected = false;
       const statusCode = lastDisconnect?.error?.output?.statusCode;
       const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-      console.log('[whatsapp] Conexión cerrada.', shouldReconnect ? 'Reintentando...' : 'Sesión cerrada, hay que volver a escanear el QR.');
       if (shouldReconnect) {
-        startWhatsapp().catch((err) => console.error('[whatsapp] error al reconectar:', err));
+        const delay = nextReconnectDelay();
+        console.log(`[whatsapp] Conexión cerrada. Reintentando en ${Math.round(delay / 1000)}s (intento ${reconnectAttempts})...`);
+        setTimeout(() => {
+          startWhatsapp().catch((err) => console.error('[whatsapp] error al reconectar:', err));
+        }, delay);
+      } else {
+        console.log('[whatsapp] Sesión cerrada, hay que volver a escanear el QR.');
       }
     }
   });

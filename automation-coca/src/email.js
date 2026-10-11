@@ -68,61 +68,65 @@ export async function startEmailIngest() {
     return;
   }
 
-  const client = new ImapFlow({
-    host: config.emailImapHost,
-    port: config.emailImapPort,
-    secure: true,
-    auth: { user: config.emailUser, pass: config.emailAppPassword },
-    logger: false,
-    socketTimeout: 60_000,
-  });
-
-  let checking = false;
-  async function checkNewMessages() {
-    if (checking) return;
-    checking = true;
-    try {
-      const lock = await client.getMailboxLock('INBOX');
-      try {
-        const uids = await client.search({ seen: false }, { uid: true });
-        for (const uid of uids) {
-          try {
-            await processMessage(client, uid);
-          } catch (err) {
-            console.error('[email] error procesando un mail:', err.message);
-          }
-          await client.messageFlagsAdd(uid, ['\\Seen'], { uid: true });
-        }
-      } finally {
-        lock.release();
-      }
-    } catch (err) {
-      console.error('[email] error revisando la bandeja:', err.message);
-    } finally {
-      checking = false;
-    }
-  }
-
-  client.on('exists', () => {
-    checkNewMessages();
-  });
-
-  client.on('error', (err) => {
-    console.error('[email] error de conexion IMAP:', err.message);
-  });
-
-  client.on('close', () => {
-    console.log('[email] conexion cerrada, reconectando en 15s...');
-    setTimeout(connectAndWatch, 15000);
-  });
-
+  // ImapFlow es de un solo uso: una vez que una conexion se cierra o falla,
+  // ese mismo objeto no se puede volver a conectar ("Can not re-use ImapFlow
+  // instance"). Por eso cada reintento crea una instancia nueva desde cero,
+  // en vez de reusar el client de afuera de esta funcion.
   async function connectAndWatch() {
+    const client = new ImapFlow({
+      host: config.emailImapHost,
+      port: config.emailImapPort,
+      secure: true,
+      auth: { user: config.emailUser, pass: config.emailAppPassword },
+      logger: false,
+      socketTimeout: 60_000,
+    });
+
+    let checking = false;
+    async function checkNewMessages() {
+      if (checking) return;
+      checking = true;
+      try {
+        const lock = await client.getMailboxLock('INBOX');
+        try {
+          const uids = await client.search({ seen: false }, { uid: true });
+          for (const uid of uids) {
+            try {
+              await processMessage(client, uid);
+            } catch (err) {
+              console.error('[email] error procesando un mail:', err.message);
+            }
+            await client.messageFlagsAdd(uid, ['\\Seen'], { uid: true });
+          }
+        } finally {
+          lock.release();
+        }
+      } catch (err) {
+        console.error('[email] error revisando la bandeja:', err.message);
+      } finally {
+        checking = false;
+      }
+    }
+
+    client.on('exists', () => {
+      checkNewMessages();
+    });
+
+    client.on('error', (err) => {
+      console.error('[email] error de conexion IMAP:', err.message, err.code ? `(${err.code})` : '');
+    });
+
+    client.on('close', () => {
+      console.log('[email] conexion cerrada, reconectando en 15s...');
+      setTimeout(connectAndWatch, 15000);
+    });
+
     try {
       await client.connect();
       console.log(`[email] Conectado a ${config.emailUser}. Esperando mails con "${config.emailSubjectTag}" en el asunto.`);
       await checkNewMessages();
     } catch (err) {
-      console.error('[email] no se pudo conectar, reintentando en 30s:', err.message);
+      console.error('[email] no se pudo conectar, reintentando en 30s:', err.message, err.code ? `(${err.code})` : '');
       setTimeout(connectAndWatch, 30000);
     }
   }

@@ -68,11 +68,35 @@ export function updateItem(id, patch) {
   return item;
 }
 
+function unlinkMedia(media) {
+  for (const m of media || []) {
+    try {
+      fs.unlinkSync(path.join(MEDIA_DIR, m.file));
+    } catch {
+      // ya no estaba en disco, no pasa nada
+    }
+  }
+}
+
 export function deleteItem(id) {
-  const before = db.items.length;
+  const item = getItem(id);
+  if (!item) return false;
+  unlinkMedia(item.media);
   db.items = db.items.filter((it) => it.id !== id);
   save(db);
-  return db.items.length < before;
+  return true;
+}
+
+// Borra en bloque todos los items con el status dado (y sus archivos del
+// disco). Pensado para vaciar backlog viejo de una sola vez en vez de
+// borrar uno por uno, que con cientos de items es carísimo (reescribe el
+// archivo entero en cada borrado individual).
+export function deleteItemsByStatus(status) {
+  const toDelete = db.items.filter((it) => it.status === status);
+  for (const item of toDelete) unlinkMedia(item.media);
+  db.items = db.items.filter((it) => it.status !== status);
+  if (toDelete.length > 0) save(db);
+  return toDelete.length;
 }
 
 export function storageStats() {

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import path from 'node:path';
-import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
+import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, deleteItemsByStatus, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
 import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured } from '../config.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
@@ -276,6 +276,17 @@ router.get('/almacenamiento', (req, res) => {
 // items pendientes de precio.
 router.post('/almacenamiento/limpiar-publicados', (req, res) => {
   res.json(freePublishedMedia());
+});
+
+// Borrado masivo por status (ej. vaciar todo el backlog "pending_price").
+// Uso puntual del administrador, acción irreversible.
+router.post('/queue/borrar-por-status', (req, res) => {
+  const { status } = req.body || {};
+  if (typeof status !== 'string' || !status) {
+    return res.status(400).json({ error: 'Falta "status".' });
+  }
+  const deleted = deleteItemsByStatus(status);
+  res.json({ deleted });
 });
 
 export default router;

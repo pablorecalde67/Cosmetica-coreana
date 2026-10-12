@@ -4,6 +4,9 @@ import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
 import { config, isEmailConfigured } from './config.js';
 import { createItem, MEDIA_DIR } from './store.js';
+import { enhanceImageFile } from './imageEnhance.js';
+import { autoPriceAndPublish } from './autoPublish.js';
+import { notifyOwnerIfConnected } from './whatsapp.js';
 
 const EXT_BY_CONTENT_TYPE = {
   'image/jpeg': 'jpg',
@@ -48,7 +51,9 @@ async function processMessage(client, uid) {
     const info = mediaFromAttachment(att);
     if (!info) continue;
     const filename = `${Date.now()}-mail-${Math.random().toString(36).slice(2, 8)}.${info.ext}`;
-    fs.writeFileSync(path.join(MEDIA_DIR, filename), att.content);
+    const filePath = path.join(MEDIA_DIR, filename);
+    fs.writeFileSync(filePath, att.content);
+    if (info.type === 'image') await enhanceImageFile(filePath);
     media.push({ file: filename, type: info.type });
   }
 
@@ -59,7 +64,9 @@ async function processMessage(client, uid) {
 
   const caption = (parsed.text || parsed.subject || '').trim();
   const item = createItem({ source: 'email', media, caption });
-  console.log(`[email] Nuevo contenido en cola: ${item.id} (${media.length} archivo/s) desde ${parsed.from?.text || 'remitente desconocido'}`);
+  console.log(`[email] Nuevo contenido: ${item.id} (${media.length} archivo/s) desde ${parsed.from?.text || 'remitente desconocido'}, procesando precio y publicación automática...`);
+
+  await autoPriceAndPublish(item, { notifyOwner: notifyOwnerIfConnected });
 }
 
 export async function startEmailIngest() {

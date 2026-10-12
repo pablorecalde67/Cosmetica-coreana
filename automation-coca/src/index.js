@@ -11,6 +11,7 @@ import tiktokRouter from './routes/tiktok.js';
 import { startWhatsapp } from './whatsapp.js';
 import { startEmailIngest } from './email.js';
 import { startPerfumesScheduler } from './perfumesScheduler.js';
+import { registerVisit } from './visits.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -19,6 +20,19 @@ const app = express();
 // express.json() para que entre una foto de cámara sin problema. Igual
 // nunca se guarda en disco (ver src/skinAnalysis.js).
 app.use(express.json({ limit: '10mb' }));
+
+// Cuenta visitas a las páginas públicas (/piel, /perfumes) para poder verlas
+// en el panel de estadísticas. Solo cuenta la carga de la página en sí (con
+// barra al final, que es la que sirve express.static después del redirect),
+// nunca sus archivos (app.js, imágenes) ni nada con datos personales.
+app.use((req, res, next) => {
+  if (req.method === 'GET') {
+    if (req.path === '/piel/') registerVisit('piel');
+    else if (req.path === '/perfumes/') registerVisit('perfumes');
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/media', express.static(MEDIA_DIR));
 

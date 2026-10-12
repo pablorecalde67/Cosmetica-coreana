@@ -10,6 +10,7 @@ import { getSite, updateSite } from '../site.js';
 import { catalogStats } from '../perfumesCatalog.js';
 import { autoPriceAndPublish } from '../autoPublish.js';
 import { notifyOwnerIfConnected } from '../whatsapp.js';
+import { listVisits } from '../visits.js';
 
 const router = Router();
 
@@ -375,6 +376,10 @@ router.get('/estadisticas', (req, res) => {
     ordersByAccount[label] = slot;
   }
 
+  const visits = listVisits();
+  const visitsByPage = {};
+  for (const v of visits) visitsByPage[v.page] = (visitsByPage[v.page] || 0) + 1;
+
   res.json({
     generatedAt: Date.now(),
     publicaciones: {
@@ -391,6 +396,11 @@ router.get('/estadisticas', (req, res) => {
       porCuenta: ordersByAccount,
     },
     catalogoPerfumes: catalogStats(),
+    visitas: {
+      total: visits.length,
+      porPagina: visitsByPage,
+      porDia: groupByDay(visits, (v) => v.createdAt),
+    },
   });
 });
 

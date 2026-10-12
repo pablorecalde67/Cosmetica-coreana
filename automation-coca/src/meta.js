@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config, isMetaConfigured, isPublicUrlConfigured } from './config.js';
+import { config, isPublicUrlConfigured } from './config.js';
 
 const GRAPH_URL = 'https://graph.facebook.com/v20.0';
 
@@ -21,9 +21,11 @@ export function buildBuyLink(item) {
 // clickeable de todas formas: por eso el llamado a la accion es corto y el
 // link de compra real va solo en la biografia (buildBuyLink sigue existiendo
 // para que el panel te lo pueda mostrar/copiar aparte).
-export function buildCaption(item) {
+// `hashtags` es opcional: cada cuenta/marca (K-Beauty, Perfumes) tiene los
+// suyos propios; si no se pasa ninguno, usa los de K-Beauty por compatibilidad.
+export function buildCaption(item, hashtagList) {
   const price = item.price != null ? `\n\n💰 Precio: ${formatPrice(item.price)}` : '';
-  const hashtags = config.cocaHashtags.map((h) => `#${h}`).join(' ');
+  const hashtags = (hashtagList || config.cocaHashtags).map((h) => `#${h}`).join(' ');
   const buyLine = config.whatsappOwnerNumber
     ? '\n\n😍 LO QUIERO COMPRAR YA 👉 escribinos por WhatsApp, link en la bio'
     : '';
@@ -55,10 +57,11 @@ async function sleep(ms) {
 // Calcula el token de la Pagina a partir del token de usuario de larga
 // duracion. Asi no hace falta ir a buscar/renovar el token de la Pagina a
 // mano nunca mas: mientras el token de usuario siga vigente (60 dias), esto
-// siempre consigue uno valido.
-async function getPageAccessToken() {
+// siempre consigue uno valido. Sirve para cualquier Pagina (K-Beauty o
+// Perfumes) que administre este token de usuario.
+async function getPageAccessToken(pageId) {
   try {
-    const { data } = await axios.get(`${GRAPH_URL}/${config.metaPageId}`, {
+    const { data } = await axios.get(`${GRAPH_URL}/${pageId}`, {
       params: { fields: 'access_token', access_token: config.metaUserToken },
     });
     return data.access_token;
@@ -80,7 +83,7 @@ async function waitUntilFinished(creationId, pageAccessToken) {
   }
 }
 
-async function createIgMediaContainer(media, pageAccessToken, { asCarouselItem }) {
+async function createIgMediaContainer(media, pageAccessToken, igUserId, { asCarouselItem }) {
   const url = mediaUrl(media.file);
   const params = { access_token: pageAccessToken };
   if (asCarouselItem) params.is_carousel_item = true;
@@ -92,7 +95,7 @@ async function createIgMediaContainer(media, pageAccessToken, { asCarouselItem }
     params.image_url = url;
   }
 
-  const { data } = await axios.post(`${GRAPH_URL}/${config.metaIgUserId}/media`, null, { params });
+  const { data } = await axios.post(`${GRAPH_URL}/${igUserId}/media`, null, { params });
   // Instagram tarda un rato en procesar el archivo (mas con video, pero
   // tambien con fotos): hay que esperar a que este "FINISHED" antes de
   // poder usarlo, sea para publicarlo solo o como parte de un carrusel.
@@ -100,8 +103,8 @@ async function createIgMediaContainer(media, pageAccessToken, { asCarouselItem }
   return data.id;
 }
 
-async function publishToInstagram(item, pageAccessToken) {
-  const caption = buildCaption(item);
+async function publishToInstagram(item, pageAccessToken, igUserId, hashtagList) {
+  const caption = buildCaption(item, hashtagList);
 
   try {
     let creationId;
@@ -109,9 +112,9 @@ async function publishToInstagram(item, pageAccessToken) {
     if (item.media.length > 1) {
       const childIds = [];
       for (const media of item.media) {
-        childIds.push(await createIgMediaContainer(media, pageAccessToken, { asCarouselItem: true }));
+        childIds.push(await createIgMediaContainer(media, pageAccessToken, igUserId, { asCarouselItem: true }));
       }
-      const { data } = await axios.post(`${GRAPH_URL}/${config.metaIgUserId}/media`, null, {
+      const { data } = await axios.post(`${GRAPH_URL}/${igUserId}/media`, null, {
         params: {
           media_type: 'CAROUSEL',
           children: childIds.join(','),
@@ -122,11 +125,11 @@ async function publishToInstagram(item, pageAccessToken) {
       creationId = data.id;
       await waitUntilFinished(creationId, pageAccessToken);
     } else {
-      creationId = await createIgMediaContainer(item.media[0], pageAccessToken, { asCarouselItem: false });
+      creationId = await createIgMediaContainer(item.media[0], pageAccessToken, igUserId, { asCarouselItem: false });
     }
 
     const { data: published } = await axios.post(
-      `${GRAPH_URL}/${config.metaIgUserId}/media_publish`,
+      `${GRAPH_URL}/${igUserId}/media_publish`,
       null,
       { params: { creation_id: creationId, access_token: pageAccessToken } },
     );
@@ -138,23 +141,28 @@ async function publishToInstagram(item, pageAccessToken) {
 }
 
 /**
- * Publica un item en Instagram. Lanza error si falta configuracion de Meta
- * o si el servicio todavia no tiene una URL publica (necesaria para que
- * Meta pueda descargar el archivo).
+ * Publica un item en Instagram. Por defecto usa la cuenta de K-Beauty; para
+ * publicar en otra marca (ej. Perfumes) pasar `account`: { pageId, igUserId,
+ * hashtags }. Lanza error si falta configuracion de Meta o si el servicio
+ * todavia no tiene una URL publica (necesaria para que Meta pueda descargar
+ * el archivo).
  */
-export async function publishItem(item) {
+export async function publishItem(item, account) {
+  const pageId = account?.pageId || config.metaPageId;
+  const igUserId = account?.igUserId || config.metaIgUserId;
+
   if (!isPublicUrlConfigured()) {
     throw new Error(
       'Falta configurar PUBLIC_BASE_URL: Meta necesita una URL publica para descargar la foto/video.',
     );
   }
-  if (!isMetaConfigured()) {
+  if (!config.metaUserToken || !pageId || !igUserId) {
     throw new Error(
-      'Falta configurar las credenciales de Meta (META_USER_TOKEN, META_PAGE_ID, META_IG_USER_ID).',
+      'Falta configurar las credenciales de Meta para esta cuenta (META_USER_TOKEN, página e IG user id).',
     );
   }
 
-  const pageAccessToken = await getPageAccessToken();
-  const igPostId = await publishToInstagram(item, pageAccessToken);
+  const pageAccessToken = await getPageAccessToken(pageId);
+  const igPostId = await publishToInstagram(item, pageAccessToken, igUserId, account?.hashtags);
   return { igPostId };
 }

@@ -1,6 +1,6 @@
 import { updateItem } from './store.js';
 import { publishItem } from './meta.js';
-import { isMetaConfigured } from './config.js';
+import { config, isMetaConfigured, isPerfumesAccountConfigured } from './config.js';
 
 // Cotización fija y margen fijo, cargados a mano por el dueño del negocio
 // (no vienen de ninguna API de cambio): cada precio en dólares que llega por
@@ -51,10 +51,37 @@ export function formatArs(ars) {
   return new Intl.NumberFormat('es-AR').format(ars);
 }
 
+// Decide a qué marca/cuenta de Instagram va cada contenido. Por defecto todo
+// va a K-Beauty; si el texto del mensaje contiene la palabra "perfume" (o
+// "perfumes"), se publica en la cuenta de Perfumes Árabes en su lugar, y esa
+// palabra se saca del texto final (era solo una marca para el enrutamiento,
+// no algo para mostrar en el posteo).
+function resolveAccount(caption) {
+  const match = (caption || '').match(/\bperfumes?\b/i);
+  if (!match) {
+    return { label: 'K-Beauty', account: undefined, configured: isMetaConfigured() };
+  }
+  const cleanCaption = (caption.slice(0, match.index) + caption.slice(match.index + match[0].length))
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  return {
+    label: 'Perfumes',
+    cleanCaption,
+    account: {
+      pageId: config.metaPerfumesPageId,
+      igUserId: config.metaPerfumesIgUserId,
+      hashtags: config.perfumesHashtags,
+    },
+    configured: isPerfumesAccountConfigured(),
+  };
+}
+
 // Flujo completo sin intervención humana: si el mensaje trae un precio en
 // dólares, se le suma el margen, se convierte a pesos argentinos y se publica
-// directo en Instagram. Si no trae precio reconocible, el item queda en
-// estado "error" (ya no hay panel para cargarlo a mano) y se avisa al dueño.
+// directo en Instagram (en K-Beauty o en Perfumes, según el texto). Si no
+// trae precio reconocible, el item queda en estado "error" (ya no hay panel
+// para cargarlo a mano) y se avisa al dueño.
 export async function autoPriceAndPublish(item, { notifyOwner } = {}) {
   const usd = extractPriceUSD(item.caption);
 
@@ -72,21 +99,24 @@ export async function autoPriceAndPublish(item, { notifyOwner } = {}) {
   }
 
   const ars = usdToFinalArs(usd);
-  let updated = updateItem(item.id, { price: ars, status: 'ready' });
+  const routed = resolveAccount(item.caption);
+  const patch = { price: ars, status: 'ready' };
+  if (routed.cleanCaption) patch.description = routed.cleanCaption;
+  let updated = updateItem(item.id, patch);
 
-  if (!isMetaConfigured()) {
+  if (!routed.configured) {
     updated = updateItem(item.id, {
       status: 'error',
-      error: 'Falta configurar las credenciales de Meta.',
+      error: `Falta configurar las credenciales de Meta para la cuenta de ${routed.label}.`,
     });
     if (notifyOwner) {
-      await notifyOwner(`⚠️ Llegó contenido nuevo (precio AR$ ${formatArs(ars)}) pero Meta no está configurado, no se pudo publicar.`);
+      await notifyOwner(`⚠️ Llegó contenido nuevo (${routed.label}, precio AR$ ${formatArs(ars)}) pero esa cuenta no está configurada, no se pudo publicar.`);
     }
     return updated;
   }
 
   try {
-    const result = await publishItem(updated);
+    const result = await publishItem(updated, routed.account);
     updated = updateItem(updated.id, {
       igPostId: result.igPostId,
       error: null,
@@ -94,12 +124,12 @@ export async function autoPriceAndPublish(item, { notifyOwner } = {}) {
       publishedAt: Date.now(),
     });
     if (notifyOwner) {
-      await notifyOwner(`✅ Publicado automáticamente en Instagram, AR$ ${formatArs(ars)}.`);
+      await notifyOwner(`✅ Publicado automáticamente en Instagram (${routed.label}), AR$ ${formatArs(ars)}.`);
     }
   } catch (err) {
     updated = updateItem(updated.id, { status: 'error', error: err.message });
     if (notifyOwner) {
-      await notifyOwner(`⚠️ Llegó contenido nuevo (precio AR$ ${formatArs(ars)}) pero falló la publicación en Instagram: ${err.message}`);
+      await notifyOwner(`⚠️ Llegó contenido nuevo (${routed.label}, precio AR$ ${formatArs(ars)}) pero falló la publicación en Instagram: ${err.message}`);
     }
   }
 

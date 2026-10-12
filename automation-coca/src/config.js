@@ -28,6 +28,14 @@ export const config = {
 
   cocaHashtags: list(process.env.COCA_HASHTAGS || 'COCA,KBeauty,SkincareTips,GlowUp,BeautyTok,Belleza,Skincare'),
 
+  // Segunda marca/cuenta de Instagram (perfumes árabes), publicada con el
+  // mismo token de usuario de Meta pero otra Página/cuenta de IG. Si el
+  // mensaje que llega por WhatsApp/mail contiene la palabra "perfume" (ver
+  // src/autoPublish.js), se publica acá en vez de en la cuenta de K-Beauty.
+  metaPerfumesPageId: process.env.META_PERFUMES_PAGE_ID || '',
+  metaPerfumesIgUserId: process.env.META_PERFUMES_IG_USER_ID || '',
+  perfumesHashtags: list(process.env.PERFUMES_HASHTAGS || 'COCA,Perfumes,PerfumesArabes,Fragancias,CiudadDelEste'),
+
   // Ingesta por mail: alternativa a WhatsApp que no depende de vincular
   // ningun dispositivo. Se conecta por IMAP a esta casilla y cada mail que
   // llegue con fotos/videos adjuntos y el tag en el asunto pasa a la cola.
@@ -57,6 +65,10 @@ export const config = {
 
 export function isMetaConfigured() {
   return Boolean(config.metaUserToken && config.metaPageId && config.metaIgUserId);
+}
+
+export function isPerfumesAccountConfigured() {
+  return Boolean(config.metaUserToken && config.metaPerfumesPageId && config.metaPerfumesIgUserId);
 }
 
 export function isPublicUrlConfigured() {

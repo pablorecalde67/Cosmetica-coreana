@@ -24,6 +24,7 @@ Reglas:
 - Leé ÚNICAMENTE texto que esté escrito/impreso dentro de la imagen. No inventes nada que no veas.
 - Si hay más de un precio en dólares (ej. "P.U" precio unitario y "P.M" precio mayorista), usá el precio UNITARIO ("P.U"), nunca el mayorista ("P.M").
 - El precio tiene que estar en dólares (señales: "$", "USD", "U$S", "U$D"). Si el único precio visible es en otra moneda, o no hay ningún precio visible en la imagen, "priceUsd" tiene que ser null.
+- IMPORTANTE: esto NUNCA va a ser un comprobante de pago/transferencia bancaria (Mercado Pago, Naranja X, billeteras, bancos), una captura de pantalla de una conversación de chat, un documento personal, ni nada con datos personales (nombre completo, CBU, CUIT/CUIL, DNI). Si ves algo de ese tipo, aunque tenga números con "$", "priceUsd" tiene que ser null y "title"/"descripcion" también null - NO es una foto de producto en venta, es contenido que se coló por error y jamás debe publicarse.
 - Respondé EXCLUSIVAMENTE con un JSON válido, sin texto adicional, con este formato exacto:
 
 {

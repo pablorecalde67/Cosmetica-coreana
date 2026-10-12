@@ -8,6 +8,7 @@ import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import { startWhatsapp } from './whatsapp.js';
 import { startEmailIngest } from './email.js';
+import { startPerfumesScheduler } from './perfumesScheduler.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,3 +40,5 @@ startWhatsapp().catch((err) => {
 startEmailIngest().catch((err) => {
   console.error('[COCA] No se pudo iniciar la ingesta por mail:', err);
 });
+
+startPerfumesScheduler();

@@ -7,6 +7,7 @@ import { isMetaConfigured } from '../config.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
+import { catalogStats } from '../perfumesCatalog.js';
 
 const router = Router();
 
@@ -287,6 +288,12 @@ router.post('/queue/borrar-por-status', (req, res) => {
   }
   const deleted = deleteItemsByStatus(status);
   res.json({ deleted });
+});
+
+// --- Admin: catálogo de perfumes (publicación automática, 1 por día) ---
+
+router.get('/perfumes/catalogo', (req, res) => {
+  res.json(catalogStats());
 });
 
 export default router;

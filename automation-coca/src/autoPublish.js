@@ -53,6 +53,14 @@ export function formatArs(ars) {
   return new Intl.NumberFormat('es-AR').format(ars);
 }
 
+// Para decidir si ya hay una descripción "real" (no solo un precio suelto
+// tipo "$40" o un emoji) contamos letras, no caracteres en general.
+function hasRealText(text) {
+  if (!text) return false;
+  const letters = text.replace(/[^a-zA-ZÀ-ÿ]/g, '');
+  return letters.length >= 8;
+}
+
 // Decide a qué marca/cuenta de Instagram va cada contenido. Por defecto todo
 // va a K-Beauty; si el texto del mensaje contiene la palabra "perfume" (o
 // "perfumes"), se publica en la cuenta de Perfumes Árabes en su lugar, y esa
@@ -144,9 +152,31 @@ export async function autoPriceAndPublish(item, { notifyOwner } = {}) {
   const ars = usdToFinalArs(usd);
   const captionForRouting = item.caption || visionText || '';
   const routed = resolveAccount(captionForRouting);
-  const patch = { price: ars, status: 'ready' };
-  const finalDescription = routed.cleanCaption || captionForRouting;
-  if (finalDescription) patch.description = finalDescription;
+  let finalDescription = routed.cleanCaption || captionForRouting;
+
+  // Si lo que llegó por WhatsApp no alcanza a ser una descripción real (vacío,
+  // o solo el precio suelto tipo "$40"), usamos lo que la IA identificó en la
+  // imagen (marca/tipo de producto + descripción de venta con palabras clave
+  // para viralizar) en vez de publicar sin texto.
+  if (!hasRealText(finalDescription)) {
+    const aiDescription = [imageCheck?.title, imageCheck?.descripcion].filter(Boolean).join('\n\n');
+    if (hasRealText(aiDescription)) finalDescription = aiDescription;
+  }
+
+  if (!hasRealText(finalDescription)) {
+    const updated = updateItem(item.id, {
+      status: 'error',
+      error: 'No se pudo armar una descripción del producto (ni en el mensaje ni identificándolo en la imagen), no se publica sin descripción.',
+    });
+    if (notifyOwner) {
+      await notifyOwner(
+        `⚠️ Llegó contenido nuevo (precio AR$ ${formatArs(ars)}) pero no pude armarle una descripción, no se publicó. Reenviá con un nombre o descripción del producto.`,
+      );
+    }
+    return updated;
+  }
+
+  const patch = { price: ars, status: 'ready', description: finalDescription };
   let updated = updateItem(item.id, patch);
 
   if (!routed.configured) {

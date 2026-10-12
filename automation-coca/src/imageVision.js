@@ -32,14 +32,17 @@ const SYSTEM_PROMPT = `Sos un asistente que controla fotos que llegan por WhatsA
 Reglas:
 - "relevant" es true SOLO si la imagen muestra con claridad un producto de cosmética/skincare coreano o un perfume/fragancia árabe a la venta. En cualquier otro caso (otro rubro: electrónica, parlantes, electrodomésticos, ropa, juguetes, comida, medicamentos, etc.; comprobante de pago/transferencia bancaria de cualquier billetera o banco; captura de pantalla de una conversación de chat; documento personal o con datos personales como nombre completo/CBU/CUIT/CUIL/DNI; foto sin ningún producto como una flor, paisaje o mascota; cartel genérico sin un producto puntual) "relevant" tiene que ser false.
 - Si "relevant" es false, "priceUsd", "title" y "descripcion" tienen que ser null siempre, SIN IMPORTAR que se vea algún número con "$" en la imagen.
-- Si "relevant" es true: leé ÚNICAMENTE texto que esté escrito/impreso dentro de la imagen, no inventes nada que no veas. Si hay más de un precio en dólares (ej. "P.U" precio unitario y "P.M" precio mayorista), usá el UNITARIO ("P.U"), nunca el mayorista. El precio tiene que estar en dólares (señales: "$", "USD", "U$S", "U$D") - si el único precio visible es en otra moneda, o no hay ningún precio visible, "priceUsd" tiene que ser null (pero "relevant" sigue siendo true si el producto corresponde al rubro).
+- Si "relevant" es true, PRECIO: leé ÚNICAMENTE el precio que esté escrito/impreso dentro de la imagen, no inventes ningún número. Si hay más de un precio en dólares (ej. "P.U" precio unitario y "P.M" precio mayorista), usá el UNITARIO ("P.U"), nunca el mayorista. El precio tiene que estar en dólares (señales: "$", "USD", "U$S", "U$D") - si el único precio visible es en otra moneda, o no hay ningún precio visible, "priceUsd" tiene que ser null (pero "relevant" sigue siendo true si el producto corresponde al rubro).
+- Si "relevant" es true, TÍTULO Y DESCRIPCIÓN: a diferencia del precio, acá SÍ podés (y tenés que) usar tu conocimiento del producto - nunca los dejes null si "relevant" es true, aunque la imagen no tenga nada de texto escrito. Identificá el producto por lo que se ve (envase, marca, tipo de producto, diseño) y, si reconocés la marca o el tipo, completá con lo que sabés de productos similares.
+  - "title": nombre corto del producto (marca + tipo si se puede, ej. "Sérum Vitamina C" o "Perfume Lattafa Yara").
+  - "descripcion": 2-3 oraciones en ESPAÑOL, estilo descripción de venta para Instagram, con tono cercano y vendedor, pensada para VIRALIZAR - usá palabras clave de búsqueda/tendencia típicas del rubro (para K-Beauty: términos como "rutina coreana", "hidratación", "glow", "poros", "piel sensible"; para perfumes árabes: "fragancia árabe", "larga duración", "unisex", "aroma oriental", según corresponda al producto). No inventes datos técnicos específicos que no puedas sostener (ingredientes exactos, certificaciones) si no los ves - describí en términos generales del tipo de producto.
 - Respondé EXCLUSIVAMENTE con un JSON válido, sin texto adicional, con este formato exacto:
 
 {
   "relevant": boolean,
   "priceUsd": number | null,
-  "title": string | null (nombre/modelo del producto si se lee, corto),
-  "descripcion": string | null (1-2 oraciones describiendo el producto si hay info visible, si no null)
+  "title": string | null (null solo si relevant es false),
+  "descripcion": string | null (null solo si relevant es false)
 }`;
 
 function extractJson(text) {

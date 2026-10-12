@@ -3,9 +3,16 @@ import { config, isMetaConfigured, isPublicUrlConfigured } from './config.js';
 
 const GRAPH_URL = 'https://graph.facebook.com/v20.0';
 
+// Todos los precios se muestran en pesos argentinos, nunca en dólares
+// (política del negocio): "AR$" deja esto inequívoco en vez de un "$" pelado
+// que se podría leer como dólares.
+function formatPrice(price) {
+  return `AR$ ${new Intl.NumberFormat('es-AR').format(price)}`;
+}
+
 export function buildBuyLink(item) {
   if (!config.whatsappOwnerNumber) return '';
-  const text = `Hola! Quiero comprar: ${item.description}${item.price != null ? ` - $${item.price}` : ''}`;
+  const text = `Hola! Quiero comprar: ${item.description}${item.price != null ? ` - ${formatPrice(item.price)}` : ''}`;
   return `https://wa.me/${config.whatsappOwnerNumber}?text=${encodeURIComponent(text)}`;
 }
 
@@ -15,7 +22,7 @@ export function buildBuyLink(item) {
 // link de compra real va solo en la biografia (buildBuyLink sigue existiendo
 // para que el panel te lo pueda mostrar/copiar aparte).
 export function buildCaption(item) {
-  const price = item.price != null ? `\n\n💰 Precio: $${item.price}` : '';
+  const price = item.price != null ? `\n\n💰 Precio: ${formatPrice(item.price)}` : '';
   const hashtags = config.cocaHashtags.map((h) => `#${h}`).join(' ');
   const buyLine = config.whatsappOwnerNumber
     ? '\n\n😍 LO QUIERO COMPRAR YA 👉 escribinos por WhatsApp, link en la bio'

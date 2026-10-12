@@ -12,6 +12,8 @@ import {
 } from '@whiskeysockets/baileys';
 import { config } from './config.js';
 import { createItem, MEDIA_DIR } from './store.js';
+import { enhanceImageFile } from './imageEnhance.js';
+import { autoPriceAndPublish } from './autoPublish.js';
 
 // Agrupa las fotos/videos que llegan seguidas del mismo chat en una sola
 // tarjeta: cada vez que llega una, se espera este tiempo sin que llegue otra
@@ -99,6 +101,13 @@ async function notifyOwner(sock, text) {
   } catch (err) {
     console.error('[whatsapp] no se pudo notificar al dueño:', err.message);
   }
+}
+
+// Permite avisarle al dueño por WhatsApp desde otros canales de ingesta
+// (ej. mail), reusando la misma conexión de WhatsApp ya abierta.
+export async function notifyOwnerIfConnected(text) {
+  if (!state$.connected || !state$.sock) return;
+  await notifyOwner(state$.sock, text);
 }
 
 export async function startWhatsapp() {
@@ -203,7 +212,9 @@ export async function startWhatsapp() {
         }
         const ext = media.type === 'video' ? 'mp4' : 'jpg';
         const filename = `${Date.now()}-${jidToNumber(groupKey)}-${pendingGroups.get(groupKey)?.media.length || 0}.${ext}`;
-        fs.writeFileSync(path.join(MEDIA_DIR, filename), buffer);
+        const filePath = path.join(MEDIA_DIR, filename);
+        fs.writeFileSync(filePath, buffer);
+        if (media.type === 'image') await enhanceImageFile(filePath);
 
         let group = pendingGroups.get(groupKey);
         if (!group) {
@@ -214,7 +225,7 @@ export async function startWhatsapp() {
         if (!group.caption && media.caption) group.caption = media.caption;
 
         clearTimeout(group.timer);
-        group.timer = setTimeout(() => {
+        group.timer = setTimeout(async () => {
           pendingGroups.delete(groupKey);
 
           const item = createItem({
@@ -223,13 +234,11 @@ export async function startWhatsapp() {
             caption: group.caption,
           });
 
-          console.log(`[whatsapp] Nuevo contenido en cola: ${item.id} (${group.media.length} archivo/s)`);
+          console.log(`[whatsapp] Nuevo contenido: ${item.id} (${group.media.length} archivo/s), procesando precio y publicación automática...`);
 
-          const panelUrl = config.publicBaseUrl || 'http://localhost:' + config.port;
-          notifyOwner(
-            sock,
-            `🆕 Llegó contenido nuevo para COCA (${group.media.length} archivo${group.media.length > 1 ? 's' : ''}).\nFalta ponerle el precio antes de que se publique.\n\n👉 ${panelUrl}`,
-          );
+          await autoPriceAndPublish(item, {
+            notifyOwner: (text) => notifyOwner(sock, text),
+          });
         }, GROUP_WINDOW_MS);
       } catch (err) {
         console.error('[whatsapp] error procesando media:', err.message);

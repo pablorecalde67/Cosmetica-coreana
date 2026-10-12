@@ -197,6 +197,7 @@ export async function autoPriceAndPublish(item, { notifyOwner } = {}) {
       error: null,
       status: 'published',
       publishedAt: Date.now(),
+      account: routed.label,
     });
     if (notifyOwner) {
       await notifyOwner(`✅ Publicado automáticamente en Instagram (${routed.label}), AR$ ${formatArs(ars)}.`);

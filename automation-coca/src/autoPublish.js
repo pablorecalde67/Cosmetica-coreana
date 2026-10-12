@@ -8,14 +8,39 @@ import { isMetaConfigured } from './config.js';
 const USD_TO_ARS = 1600;
 const MARKUP = 1.1;
 
-// Busca un precio en dólares en el texto del mensaje (ej: "$40", "USD 40",
-// "U$S 40,50"). Devuelve null si no encuentra nada reconocible.
+// Busca un precio en dólares en el texto del mensaje. Reconoce varios
+// formatos reales que mandan los proveedores por WhatsApp:
+//   "$40", "USD 40", "U$S 40,50" (símbolo antes del número)
+//   "40$", "2,70 $"              (símbolo después, típico en catálogos)
+//   "P.U: 2,70$"                 (precio unitario explícito - se prioriza
+//                                 sobre "P.M" / precio mayorista, que es
+//                                 para compras en cantidad, no para el
+//                                 cliente final de Instagram)
+// Devuelve null si no encuentra nada reconocible.
 export function extractPriceUSD(text) {
   if (!text) return null;
-  const match = text.match(/(?:USD|U\$S|U\$D|\$)\s*([0-9]+(?:[.,][0-9]{1,2})?)/i);
-  if (!match) return null;
-  const value = Number(match[1].replace(',', '.'));
-  return Number.isFinite(value) && value > 0 ? value : null;
+
+  const num = '([0-9]+(?:[.,][0-9]{1,2})?)';
+
+  const unitLabel = text.match(new RegExp(`P\\.?U\\.?\\s*:?\\s*${num}\\s*\\$`, 'i'));
+  if (unitLabel) {
+    const value = Number(unitLabel[1].replace(',', '.'));
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+
+  const symbolBefore = text.match(new RegExp(`(?:USD|U\\$S|U\\$D|\\$)\\s*${num}`, 'i'));
+  if (symbolBefore) {
+    const value = Number(symbolBefore[1].replace(',', '.'));
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+
+  const symbolAfter = text.match(new RegExp(`${num}\\s*(?:USD|U\\$S|U\\$D|\\$)`, 'i'));
+  if (symbolAfter) {
+    const value = Number(symbolAfter[1].replace(',', '.'));
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+
+  return null;
 }
 
 export function usdToFinalArs(usd) {

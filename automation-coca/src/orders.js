@@ -33,16 +33,18 @@ export function getOrder(id) {
 }
 
 /**
- * Crea un pedido automático generado por el flujo público de /piel.
- * NUNCA incluye la selfie: solo el tipo de piel detectado, los productos
- * elegidos y los datos de envío que cargó la propia clienta.
+ * Crea un pedido automático generado por un flujo público (/piel o la
+ * tienda de perfumes). NUNCA incluye la selfie: solo los productos
+ * elegidos y los datos de envío que cargó la propia clienta. `source`
+ * distingue de qué flujo vino ('piel' por defecto, o 'perfumes').
  */
-export function createOrder({ skinType, concerns, products, name, phone, address, notes }) {
+export function createOrder({ source, skinType, concerns, products, name, phone, address, notes }) {
   const total = products.reduce((sum, p) => sum + (Number(p.price) || 0), 0);
   const order = {
     id: nanoid(10),
-    skinType,
-    concerns,
+    source: source || 'piel',
+    skinType: skinType || null,
+    concerns: concerns || [],
     products, // snapshot: [{ id, name, price }]
     total,
     name,

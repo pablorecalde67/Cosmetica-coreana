@@ -30,6 +30,12 @@ function save(items) {
   fs.writeFileSync(CATALOG_FILE, JSON.stringify(items, null, 2));
 }
 
+// Catálogo completo, para que la tienda pública (/perfumes) lo pueda
+// mostrar y vender aunque todavía no se haya publicado en Instagram.
+export function listCatalog() {
+  return load();
+}
+
 export function catalogStats() {
   const items = load();
   const byStatus = {};

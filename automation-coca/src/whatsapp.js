@@ -188,11 +188,14 @@ export async function startWhatsapp() {
         if (!isAuthorizedBusiness) continue;
         groupKey = authorJid;
       } else {
-        // Por defecto se procesa cualquier chat/canal. Si WHATSAPP_MONITORED_CHATS
-        // tiene algo cargado, sólo se procesan esos (para restringir más adelante).
-        const isMonitored =
-          config.whatsappMonitoredChats.length === 0 ||
-          config.whatsappMonitoredChats.includes(chatJid);
+        // Los CANALES (@newsletter) son justo lo que el dueño sigue a
+        // propósito para esto, así que siempre se procesan. Cualquier otro
+        // chat (personal, grupo) es contenido que no pidió explícitamente:
+        // solo se procesa si está en WHATSAPP_MONITORED_CHATS. Antes se
+        // procesaba cualquier chat por defecto y eso hizo que se colaran
+        // fotos personales (comprobantes de transferencia con CBU/CUIL,
+        // capturas de charlas ajenas al negocio) en la cola de publicación.
+        const isMonitored = isChannel || config.whatsappMonitoredChats.includes(chatJid);
         if (!isMonitored) continue;
       }
 

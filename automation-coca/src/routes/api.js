@@ -8,6 +8,7 @@ import { listProducts, updateProduct, createProduct, bulkImportProducts } from '
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
 import { catalogStats } from '../perfumesCatalog.js';
+import { autoPriceAndPublish } from '../autoPublish.js';
 
 const router = Router();
 
@@ -126,6 +127,17 @@ router.post('/queue/:id/publish', async (req, res) => {
     updateItem(item.id, { status: 'error', error: err.message });
     res.status(502).json({ error: err.message });
   }
+});
+
+// Reintenta el flujo automático (texto -> si no hay, leer precio de la
+// imagen -> publicar) sobre un ítem que ya existe, sea porque quedó en
+// error antes de tener el fallback de lectura de imagen, o porque falló
+// la publicación en Instagram y se quiere reintentar.
+router.post('/queue/:id/reintentar', async (req, res) => {
+  const item = getItem(req.params.id);
+  if (!item) return res.status(404).json({ error: 'No existe.' });
+  const updated = await autoPriceAndPublish(item);
+  res.json(withCaption(updated));
 });
 
 router.post('/queue/:id/mark-published', (req, res) => {

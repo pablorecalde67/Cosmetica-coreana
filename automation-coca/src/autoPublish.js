@@ -1,6 +1,8 @@
-import { updateItem } from './store.js';
+import path from 'node:path';
+import { updateItem, MEDIA_DIR } from './store.js';
 import { publishItem } from './meta.js';
 import { config, isMetaConfigured, isPerfumesAccountConfigured } from './config.js';
+import { readProductImage } from './imageVision.js';
 
 // Cotización fija y margen fijo, cargados a mano por el dueño del negocio
 // (no vienen de ninguna API de cambio): cada precio en dólares que llega por
@@ -83,25 +85,48 @@ function resolveAccount(caption) {
 // trae precio reconocible, el item queda en estado "error" (ya no hay panel
 // para cargarlo a mano) y se avisa al dueño.
 export async function autoPriceAndPublish(item, { notifyOwner } = {}) {
-  const usd = extractPriceUSD(item.caption);
+  let usd = extractPriceUSD(item.caption);
+  let visionText = null;
+
+  // Fallback: muchos proveedores (sobre todo canales mayoristas que se
+  // siguen por WhatsApp) mandan el precio y el nombre escritos ENCIMA de la
+  // foto, sin poner nada en el texto del mensaje. Si el texto no trajo
+  // precio, antes de darnos por vencidos le pedimos a la IA que lea la
+  // imagen y busque el precio ahí.
+  if (usd == null) {
+    const firstImage = item.media?.find((m) => m.type === 'image');
+    if (firstImage) {
+      try {
+        const vision = await readProductImage(path.join(MEDIA_DIR, firstImage.file));
+        if (vision?.priceUsd != null) {
+          usd = vision.priceUsd;
+          visionText = [vision.title, vision.descripcion].filter(Boolean).join('\n\n');
+        }
+      } catch (err) {
+        console.error('[autoPublish] no se pudo leer el precio desde la imagen:', err.message);
+      }
+    }
+  }
 
   if (usd == null) {
     const updated = updateItem(item.id, {
       status: 'error',
-      error: 'No se encontró un precio en dólares en el mensaje (ej: escribir "$40" en el texto).',
+      error: 'No se encontró un precio en dólares ni en el mensaje ni escrito en la imagen (ej: escribir "$40" en el texto, o que la foto lo muestre con claridad).',
     });
     if (notifyOwner) {
       await notifyOwner(
-        `⚠️ Llegó contenido nuevo pero no pude publicarlo: no encontré un precio en el mensaje.\nReenviá el mismo contenido con el precio en dólares en el texto (ej: "$40").`,
+        `⚠️ Llegó contenido nuevo pero no pude publicarlo: no encontré un precio en el mensaje ni en la imagen.\nReenviá el mismo contenido con el precio en dólares en el texto (ej: "$40").`,
       );
     }
     return updated;
   }
 
   const ars = usdToFinalArs(usd);
-  const routed = resolveAccount(item.caption);
+  const captionForRouting = item.caption || visionText || '';
+  const routed = resolveAccount(captionForRouting);
   const patch = { price: ars, status: 'ready' };
-  if (routed.cleanCaption) patch.description = routed.cleanCaption;
+  const finalDescription = routed.cleanCaption || captionForRouting;
+  if (finalDescription) patch.description = finalDescription;
   let updated = updateItem(item.id, patch);
 
   if (!routed.configured) {

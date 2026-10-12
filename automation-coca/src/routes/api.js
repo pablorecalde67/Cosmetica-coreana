@@ -326,4 +326,72 @@ router.get('/perfumes/catalogo', (req, res) => {
   res.json(catalogStats());
 });
 
+// --- Estadísticas: panel de evolución del negocio ---
+
+function dayKey(ms) {
+  return new Date(ms).toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
+function groupByDay(entries, dateFn, valueFn) {
+  const byDay = new Map();
+  for (const entry of entries) {
+    const key = dayKey(dateFn(entry));
+    const prev = byDay.get(key) || { date: key, count: 0, totalArs: 0 };
+    prev.count += 1;
+    prev.totalArs += valueFn ? valueFn(entry) : 0;
+    byDay.set(key, prev);
+  }
+  return [...byDay.values()].sort((a, b) => a.date.localeCompare(b.date));
+}
+
+// Junta en una sola respuesta todo lo que hace falta para ver la evolución
+// del negocio: lo publicado en Instagram (cola de WhatsApp/mail + catálogo
+// de perfumes), los pedidos reales recibidos (/piel y /perfumes), y el
+// avance del catálogo de 1.563 perfumes. Esto es actividad propia del
+// negocio (lo que nosotros controlamos) - para alcance/seguidores/
+// interacciones reales de Instagram, eso lo da Meta Business Suite / las
+// Estadísticas del perfil en la app, no esta API.
+router.get('/estadisticas', (req, res) => {
+  const items = listItems();
+  const published = items.filter((it) => it.status === 'published');
+  const errored = items.filter((it) => it.status === 'error');
+
+  const byAccount = {};
+  for (const it of published) {
+    const label = it.account || 'Sin clasificar';
+    const slot = byAccount[label] || { published: 0, revenueArs: 0 };
+    slot.published += 1;
+    slot.revenueArs += Number(it.price) || 0;
+    byAccount[label] = slot;
+  }
+
+  const orders = listOrders();
+  const ordersByAccount = {};
+  for (const o of orders) {
+    const label = o.source === 'perfumes' ? 'Perfumes' : 'K-Beauty (piel)';
+    const slot = ordersByAccount[label] || { count: 0, totalArs: 0 };
+    slot.count += 1;
+    slot.totalArs += Number(o.total) || 0;
+    ordersByAccount[label] = slot;
+  }
+
+  res.json({
+    generatedAt: Date.now(),
+    publicaciones: {
+      totalPublicado: published.length,
+      totalError: errored.length,
+      revenueEstimadoArs: published.reduce((sum, it) => sum + (Number(it.price) || 0), 0),
+      porDia: groupByDay(published, (it) => it.publishedAt || it.createdAt, (it) => Number(it.price) || 0),
+      porCuenta: byAccount,
+    },
+    pedidos: {
+      total: orders.length,
+      totalArs: orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0),
+      porDia: groupByDay(orders, (o) => o.createdAt, (o) => Number(o.total) || 0),
+      porCuenta: ordersByAccount,
+    },
+    catalogoPerfumes: catalogStats(),
+  });
+});
+
 export default router;

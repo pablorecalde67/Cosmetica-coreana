@@ -2,7 +2,7 @@ import path from 'node:path';
 import { updateItem, MEDIA_DIR } from './store.js';
 import { publishItem } from './meta.js';
 import { config, isMetaConfigured, isPerfumesAccountConfigured } from './config.js';
-import { readProductImage } from './imageVision.js';
+import { checkProductImage } from './imageVision.js';
 
 // Cotización fija y margen fijo, cargados a mano por el dueño del negocio
 // (no vienen de ninguna API de cambio): cada precio en dólares que llega por
@@ -88,24 +88,44 @@ export async function autoPriceAndPublish(item, { notifyOwner } = {}) {
   let usd = extractPriceUSD(item.caption);
   let visionText = null;
 
+  // Este control corre SIEMPRE (haya o no precio en el texto), porque el
+  // WhatsApp del dueño no solo recibe catálogo real: también se cuelan
+  // comprobantes de transferencia (con CBU/CUIL), capturas de chats ajenos,
+  // fotos personales, y catálogos de rubros sin relación con el negocio
+  // (se vio un canal mayorista de electrónica). Si la imagen no es un
+  // producto de K-Beauty o Perfumes Árabes, se descarta ACÁ, antes de mirar
+  // si el texto traía un precio - un precio bien puesto no alcanza para
+  // publicar algo que no corresponde al rubro.
+  let imageCheck = null;
+  const firstImage = item.media?.find((m) => m.type === 'image');
+  if (firstImage) {
+    try {
+      imageCheck = await checkProductImage(path.join(MEDIA_DIR, firstImage.file));
+    } catch (err) {
+      console.error('[autoPublish] no se pudo controlar la imagen:', err.message);
+    }
+  }
+
+  if (imageCheck && imageCheck.relevant === false) {
+    const updated = updateItem(item.id, {
+      status: 'error',
+      error: 'La imagen no corresponde a un producto de K-Beauty ni de Perfumes Árabes (parece contenido personal o de otro rubro que se coló), no se publicó.',
+    });
+    if (notifyOwner) {
+      await notifyOwner(
+        `⚠️ Llegó contenido nuevo pero no lo publiqué: la foto no parece ser un producto de cosmética K-Beauty ni de perfumes árabes (puede ser algo personal o de otro rubro que se coló). Revisalo vos si en realidad querés publicarlo.`,
+      );
+    }
+    return updated;
+  }
+
   // Fallback: muchos proveedores (sobre todo canales mayoristas que se
   // siguen por WhatsApp) mandan el precio y el nombre escritos ENCIMA de la
   // foto, sin poner nada en el texto del mensaje. Si el texto no trajo
-  // precio, antes de darnos por vencidos le pedimos a la IA que lea la
-  // imagen y busque el precio ahí.
-  if (usd == null) {
-    const firstImage = item.media?.find((m) => m.type === 'image');
-    if (firstImage) {
-      try {
-        const vision = await readProductImage(path.join(MEDIA_DIR, firstImage.file));
-        if (vision?.priceUsd != null) {
-          usd = vision.priceUsd;
-          visionText = [vision.title, vision.descripcion].filter(Boolean).join('\n\n');
-        }
-      } catch (err) {
-        console.error('[autoPublish] no se pudo leer el precio desde la imagen:', err.message);
-      }
-    }
+  // precio, usamos el que haya encontrado el control de arriba en la imagen.
+  if (usd == null && imageCheck?.priceUsd != null) {
+    usd = imageCheck.priceUsd;
+    visionText = [imageCheck.title, imageCheck.descripcion].filter(Boolean).join('\n\n');
   }
 
   if (usd == null) {

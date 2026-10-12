@@ -12,22 +12,31 @@ const MEDIA_TYPE_BY_EXT = {
   '.webp': 'image/webp',
 };
 
-// Muchos proveedores (sobre todo canales mayoristas) mandan la foto del
-// producto con el precio y el nombre escritos ENCIMA de la imagen, sin
-// poner nada en el texto del mensaje de WhatsApp. extractPriceUSD() en
-// autoPublish.js solo lee el texto del mensaje, así que esos casos
-// quedaban siempre en error. Esto es el fallback: le pide a Claude que lea
-// lo que está escrito en la propia imagen.
-const SYSTEM_PROMPT = `Sos un asistente que lee fotos de catálogos de productos (cosmética coreana o perfumes árabes) que proveedores mandan por WhatsApp. Muchas veces el precio y el nombre del producto están escritos directamente SOBRE la imagen (cartel, etiqueta, superpuesto), no en el texto del mensaje.
+// Dos trabajos en un solo chequeo de imagen, porque los dos aparecieron
+// juntos en la práctica (canales/grupos mayoristas que mandan de todo):
+//
+// 1) Fallback de precio: muchos proveedores mandan la foto del producto con
+//    el precio y el nombre escritos ENCIMA de la imagen, sin poner nada en
+//    el texto del mensaje de WhatsApp. extractPriceUSD() en autoPublish.js
+//    solo lee el texto del mensaje, así que esos casos quedaban en error.
+// 2) Filtro de rubro/contenido: el WhatsApp del dueño también recibe cosas
+//    que NO son para publicar - comprobantes de transferencia con datos
+//    personales (CBU/CUIL), capturas de chats ajenos, fotos personales, y
+//    catálogos de rubros sin relación (se vio un canal mayorista de
+//    electrónica, parlantes y termos). Esto tiene que bloquearse SIEMPRE,
+//    exista o no un precio ya puesto en el texto del mensaje - por eso
+//    checkProductImage() se llama en todos los casos, no solo cuando falta
+//    el precio.
+const SYSTEM_PROMPT = `Sos un asistente que controla fotos que llegan por WhatsApp a un negocio que vende ÚNICAMENTE dos cosas: cosmética/cuidado de la piel coreano (K-Beauty) y perfumes/fragancias árabes.
 
 Reglas:
-- Leé ÚNICAMENTE texto que esté escrito/impreso dentro de la imagen. No inventes nada que no veas.
-- Si hay más de un precio en dólares (ej. "P.U" precio unitario y "P.M" precio mayorista), usá el precio UNITARIO ("P.U"), nunca el mayorista ("P.M").
-- El precio tiene que estar en dólares (señales: "$", "USD", "U$S", "U$D"). Si el único precio visible es en otra moneda, o no hay ningún precio visible en la imagen, "priceUsd" tiene que ser null.
-- IMPORTANTE: esto NUNCA va a ser un comprobante de pago/transferencia bancaria (Mercado Pago, Naranja X, billeteras, bancos), una captura de pantalla de una conversación de chat, un documento personal, ni nada con datos personales (nombre completo, CBU, CUIT/CUIL, DNI). Si ves algo de ese tipo, aunque tenga números con "$", "priceUsd" tiene que ser null y "title"/"descripcion" también null - NO es una foto de producto en venta, es contenido que se coló por error y jamás debe publicarse.
+- "relevant" es true SOLO si la imagen muestra con claridad un producto de cosmética/skincare coreano o un perfume/fragancia árabe a la venta. En cualquier otro caso (otro rubro: electrónica, parlantes, electrodomésticos, ropa, juguetes, comida, medicamentos, etc.; comprobante de pago/transferencia bancaria de cualquier billetera o banco; captura de pantalla de una conversación de chat; documento personal o con datos personales como nombre completo/CBU/CUIT/CUIL/DNI; foto sin ningún producto como una flor, paisaje o mascota; cartel genérico sin un producto puntual) "relevant" tiene que ser false.
+- Si "relevant" es false, "priceUsd", "title" y "descripcion" tienen que ser null siempre, SIN IMPORTAR que se vea algún número con "$" en la imagen.
+- Si "relevant" es true: leé ÚNICAMENTE texto que esté escrito/impreso dentro de la imagen, no inventes nada que no veas. Si hay más de un precio en dólares (ej. "P.U" precio unitario y "P.M" precio mayorista), usá el UNITARIO ("P.U"), nunca el mayorista. El precio tiene que estar en dólares (señales: "$", "USD", "U$S", "U$D") - si el único precio visible es en otra moneda, o no hay ningún precio visible, "priceUsd" tiene que ser null (pero "relevant" sigue siendo true si el producto corresponde al rubro).
 - Respondé EXCLUSIVAMENTE con un JSON válido, sin texto adicional, con este formato exacto:
 
 {
+  "relevant": boolean,
   "priceUsd": number | null,
   "title": string | null (nombre/modelo del producto si se lee, corto),
   "descripcion": string | null (1-2 oraciones describiendo el producto si hay info visible, si no null)
@@ -43,10 +52,12 @@ export function isVisionConfigured() {
   return Boolean(config.anthropicApiKey);
 }
 
-// Lee precio/título/descripción escritos sobre una foto de producto ya
-// guardada en disco (dentro de MEDIA_DIR). Devuelve null si no hay API key
-// configurada o si la imagen no tiene ningún precio en dólares visible.
-export async function readProductImage(filePath) {
+// Controla una foto ya guardada en disco (dentro de MEDIA_DIR): si
+// corresponde al rubro del negocio (cosmética K-Beauty o perfumes árabes),
+// y de paso lee precio/título/descripción si están escritos sobre la
+// imagen. Devuelve null si no hay API key configurada (en ese caso el
+// único filtro que queda activo es el del texto del mensaje).
+export async function checkProductImage(filePath) {
   if (!isVisionConfigured()) return null;
 
   const ext = path.extname(filePath).toLowerCase();
@@ -66,7 +77,7 @@ export async function readProductImage(filePath) {
           role: 'user',
           content: [
             { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Image } },
-            { type: 'text', text: 'Leé el precio y el nombre del producto escritos en esta imagen y respondé solo con el JSON pedido.' },
+            { type: 'text', text: 'Controlá esta imagen y respondé solo con el JSON pedido.' },
           ],
         },
       ],
@@ -83,10 +94,12 @@ export async function readProductImage(filePath) {
 
   const textBlock = data.content?.find((b) => b.type === 'text')?.text || '';
   const parsed = extractJson(textBlock);
+  const relevant = parsed.relevant !== false;
 
   return {
-    priceUsd: Number.isFinite(parsed.priceUsd) && parsed.priceUsd > 0 ? parsed.priceUsd : null,
-    title: parsed.title || null,
-    descripcion: parsed.descripcion || null,
+    relevant,
+    priceUsd: relevant && Number.isFinite(parsed.priceUsd) && parsed.priceUsd > 0 ? parsed.priceUsd : null,
+    title: relevant ? parsed.title || null : null,
+    descripcion: relevant ? parsed.descripcion || null : null,
   };
 }

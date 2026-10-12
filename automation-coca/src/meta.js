@@ -32,7 +32,12 @@ export function buildCaption(item, hashtagList) {
   return `${item.description}${price}${buyLine}\n\n${hashtags}`.trim();
 }
 
+// `file` suele ser el nombre de un archivo que vive en nuestro MEDIA_DIR
+// (WhatsApp/mail/manual), pero el catálogo de perfumes trae fotos ya
+// alojadas en otros sitios (links completos): en ese caso se usan tal cual,
+// Meta las descarga directo de ahí.
 function mediaUrl(file) {
+  if (/^https?:\/\//i.test(file)) return file;
   return `${config.publicBaseUrl}/media/${file}`;
 }
 

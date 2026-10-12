@@ -6,6 +6,7 @@ import { MEDIA_DIR } from './store.js';
 import apiRouter from './routes/api.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
+import perfumesShopRouter from './routes/perfumesShop.js';
 import { startWhatsapp } from './whatsapp.js';
 import { startEmailIngest } from './email.js';
 import { startPerfumesScheduler } from './perfumesScheduler.js';
@@ -25,6 +26,7 @@ app.use('/media', express.static(MEDIA_DIR));
 app.get('/', (req, res) => res.redirect('/productos.html'));
 
 app.use('/api/piel', pielRouter);
+app.use('/api/perfumes', perfumesShopRouter);
 app.use('/api', apiRouter);
 app.use('/', whatsappSetupRouter);
 

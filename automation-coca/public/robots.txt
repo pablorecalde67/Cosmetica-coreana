@@ -5,5 +5,6 @@ Disallow: /pedidos.html
 Disallow: /fronting.html
 Disallow: /whatsapp-setup
 Allow: /piel
+Allow: /perfumes
 
 Sitemap: https://cosmetica-coreana-production.up.railway.app/sitemap.xml

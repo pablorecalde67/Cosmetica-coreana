@@ -5,5 +5,7 @@ data/db.json
 data/orders.json
 data/products.json
 data/site.json
+data/perfumesCatalog.json
+data/perfumesSchedulerState.json
 data/whatsapp-session/
 .env

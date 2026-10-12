@@ -7,5 +7,6 @@ data/products.json
 data/site.json
 data/perfumesCatalog.json
 data/perfumesSchedulerState.json
+data/tiktokAuth.json
 data/whatsapp-session/
 .env

@@ -61,6 +61,16 @@ export const config = {
   // build (se toma en cada pedido desde la variable de entorno).
   transferAlias: process.env.TRANSFER_ALIAS || 'ALIAS.PENDIENTE.DE.CARGAR',
   transferHolderName: process.env.TRANSFER_HOLDER_NAME || '',
+
+  // --- TikTok (Content Posting API) ---
+  // Se consiguen creando una app en developers.tiktok.com y pidiendo el
+  // scope "video.publish". Mientras la app no esté auditada por TikTok,
+  // lo que se publique con este token solo queda visible para la propia
+  // cuenta (no público) - una vez que TikTok aprueba la app, el mismo
+  // código empieza a publicar público sin cambiar nada.
+  tiktokClientKey: process.env.TIKTOK_CLIENT_KEY || '',
+  tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET || '',
+  tiktokRedirectUri: process.env.TIKTOK_REDIRECT_URI || `${(process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '')}/auth/tiktok/callback`,
 };
 
 export function isMetaConfigured() {

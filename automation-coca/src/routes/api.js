@@ -9,6 +9,7 @@ import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
 import { catalogStats } from '../perfumesCatalog.js';
 import { autoPriceAndPublish } from '../autoPublish.js';
+import { notifyOwnerIfConnected } from '../whatsapp.js';
 
 const router = Router();
 
@@ -279,6 +280,23 @@ router.patch('/sitio', (req, res) => {
 });
 
 // --- Admin: almacenamiento del volumen (media de WhatsApp/mail) ---
+
+// Canal de alertas directas por WhatsApp: pensado para que, cuando se
+// detecte algo que valga la pena avisar enseguida (no uno de los avisos
+// automáticos por ítem que ya existen), se le mande un mensaje de WhatsApp
+// al dueño en el momento, sin esperar a que entre a revisar el panel.
+router.post('/alertar', async (req, res) => {
+  const { texto } = req.body || {};
+  if (!texto || typeof texto !== 'string') {
+    return res.status(400).json({ error: 'Falta "texto".' });
+  }
+  try {
+    await notifyOwnerIfConnected(`🔔 ${texto}`);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(502).json({ error: err.message });
+  }
+});
 
 router.get('/almacenamiento', (req, res) => {
   res.json(storageStats());

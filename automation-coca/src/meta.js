@@ -88,10 +88,17 @@ async function waitUntilFinished(creationId, pageAccessToken) {
   }
 }
 
-async function createIgMediaContainer(media, pageAccessToken, igUserId, { asCarouselItem }) {
+async function createIgMediaContainer(media, pageAccessToken, igUserId, { asCarouselItem, caption }) {
   const url = mediaUrl(media.file);
   const params = { access_token: pageAccessToken };
-  if (asCarouselItem) params.is_carousel_item = true;
+  // El caption va en el contenedor del posteo individual (o del carrusel
+  // completo via el padre), nunca en los items hijos de un carrusel - Meta
+  // lo rechaza si se manda ahi.
+  if (asCarouselItem) {
+    params.is_carousel_item = true;
+  } else if (caption) {
+    params.caption = caption;
+  }
 
   if (media.type === 'video') {
     params.media_type = asCarouselItem ? 'VIDEO' : 'REELS';
@@ -106,6 +113,27 @@ async function createIgMediaContainer(media, pageAccessToken, igUserId, { asCaro
   // poder usarlo, sea para publicarlo solo o como parte de un carrusel.
   await waitUntilFinished(data.id, pageAccessToken);
   return data.id;
+}
+
+// A veces Meta ya marcó el contenedor como "FINISHED" pero media_publish
+// igual responde "Media ID is not available" (código 9007/2207027) por un
+// instante más de demora interna del lado de Meta - no es un error nuestro,
+// con un reintento corto después suele andar.
+async function publishWithRetry(creationId, pageAccessToken, igUserId) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { data } = await axios.post(
+        `${GRAPH_URL}/${igUserId}/media_publish`,
+        null,
+        { params: { creation_id: creationId, access_token: pageAccessToken } },
+      );
+      return data;
+    } catch (err) {
+      const subcode = err.response?.data?.error?.error_subcode;
+      if (subcode !== 2207027 || attempt === 3) throw err;
+      await sleep(5000);
+    }
+  }
 }
 
 async function publishToInstagram(item, pageAccessToken, igUserId, hashtagList) {
@@ -130,15 +158,10 @@ async function publishToInstagram(item, pageAccessToken, igUserId, hashtagList) 
       creationId = data.id;
       await waitUntilFinished(creationId, pageAccessToken);
     } else {
-      creationId = await createIgMediaContainer(item.media[0], pageAccessToken, igUserId, { asCarouselItem: false });
+      creationId = await createIgMediaContainer(item.media[0], pageAccessToken, igUserId, { asCarouselItem: false, caption });
     }
 
-    const { data: published } = await axios.post(
-      `${GRAPH_URL}/${igUserId}/media_publish`,
-      null,
-      { params: { creation_id: creationId, access_token: pageAccessToken } },
-    );
-
+    const published = await publishWithRetry(creationId, pageAccessToken, igUserId);
     return published.id;
   } catch (err) {
     throw describeGraphError(err, 'Instagram');

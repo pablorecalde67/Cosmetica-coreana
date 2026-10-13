@@ -610,6 +610,27 @@ function save(products) {
 
 let products = load();
 
+function hasRealPhoto(image) {
+  return Boolean(image) && !image.includes('placeholder');
+}
+
+// Un producto sin foto real nunca debería quedar "Disponible": en /piel se
+// vería con el ícono de placeholder, nada profesional para mostrarle a un
+// cliente real. Se corrige al arrancar (por si quedaron productos viejos
+// activos sin foto, como pasó con ~11.000 de una importación de prueba) y
+// de nuevo cada vez que se crea o importa un producto nuevo sin foto.
+let desactivados = 0;
+for (const p of products) {
+  if (p.active !== false && !hasRealPhoto(p.image)) {
+    p.active = false;
+    desactivados++;
+  }
+}
+if (desactivados > 0) {
+  save(products);
+  console.log(`[products] ${desactivados} producto/s sin foto real quedaron marcados "no disponible".`);
+}
+
 export function listProducts({ onlyActive = false } = {}) {
   return onlyActive ? products.filter((p) => p.active !== false) : [...products];
 }
@@ -645,7 +666,7 @@ export function createProduct({ name, description = '', image = '/piel/img/place
     n++;
   }
 
-  const product = { id: finalId, name, description, image, price, skinTypes, concerns, active, brand };
+  const product = { id: finalId, name, description, image, price, skinTypes, concerns, active: active && hasRealPhoto(image), brand };
   products.push(product);
   save(products);
   return product;
@@ -670,15 +691,16 @@ export function bulkImportProducts(rawProducts) {
     }
     existingIds.add(finalId);
 
+    const image = raw.image || '/piel/img/placeholder.svg';
     products.push({
       id: finalId,
       name: raw.name,
       description: raw.description || '',
-      image: raw.image || '/piel/img/placeholder.svg',
+      image,
       price: raw.price,
       skinTypes: Array.isArray(raw.skinTypes) ? raw.skinTypes : [],
       concerns: Array.isArray(raw.concerns) ? raw.concerns : [],
-      active: raw.active !== false,
+      active: raw.active !== false && hasRealPhoto(image),
       brand: raw.brand || '',
       store: raw.store || '',
     });

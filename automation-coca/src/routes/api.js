@@ -142,18 +142,24 @@ router.post('/queue/:id/reintentar', async (req, res) => {
   res.json(withCaption(updated));
 });
 
+// Para registrar un item que ya se publicó por fuera del flujo automático
+// (por ejemplo un cartel/historia/reel publicado a mano vía Graph API): no
+// dispara ninguna publicación nueva, solo guarda el estado. Si el item no
+// tiene precio (contenido editorial, no un producto en venta) se guarda en
+// 0 en vez de exigirlo, para no bloquear el registro de carteles/historias.
 router.post('/queue/:id/mark-published', (req, res) => {
   const item = getItem(req.params.id);
   if (!item) return res.status(404).json({ error: 'No existe.' });
-  if (item.price == null) {
-    return res.status(400).json({ error: 'No se puede marcar como publicado sin precio.' });
-  }
 
-  const updated = updateItem(item.id, {
+  const patch = {
     status: 'published',
     publishedAt: Date.now(),
     error: null,
-  });
+  };
+  if (item.price == null) patch.price = 0;
+  if (typeof req.body.igPostId === 'string' && req.body.igPostId) patch.igPostId = req.body.igPostId;
+
+  const updated = updateItem(item.id, patch);
   res.json(withCaption(updated));
 });
 

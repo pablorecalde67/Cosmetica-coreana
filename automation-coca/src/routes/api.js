@@ -8,7 +8,7 @@ import { listProducts, updateProduct, createProduct, bulkImportProducts } from '
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
 import { catalogStats } from '../perfumesCatalog.js';
-import { autoPriceAndPublish } from '../autoPublish.js';
+import { autoPriceAndPublish, hasRealText } from '../autoPublish.js';
 import { notifyOwnerIfConnected } from '../whatsapp.js';
 import { listVisits } from '../visits.js';
 
@@ -103,11 +103,20 @@ router.patch('/queue/:id', async (req, res) => {
   // META_PAGE_ID, META_IG_USER_ID), esto publica solo apenas cargas el precio.
   // Mientras tanto queda en "ready" para que lo publiques vos en Meta Business Suite.
   if (priceJustSet && isMetaConfigured()) {
-    try {
-      const result = await publishItem(updated);
-      updated = applyPublishResult(updated, result);
-    } catch (err) {
-      updated = updateItem(updated.id, { status: 'error', error: err.message });
+    // Nunca publicar sin descripción real del producto, tampoco por esta vía
+    // manual - la misma regla que ya aplica al flujo automático de WhatsApp.
+    if (!hasRealText(updated.description)) {
+      updated = updateItem(updated.id, {
+        status: 'error',
+        error: 'No se puede publicar sin una descripción real del producto. Completá la descripción antes de cargar el precio.',
+      });
+    } else {
+      try {
+        const result = await publishItem(updated);
+        updated = applyPublishResult(updated, result);
+      } catch (err) {
+        updated = updateItem(updated.id, { status: 'error', error: err.message });
+      }
     }
   }
 
@@ -119,6 +128,9 @@ router.post('/queue/:id/publish', async (req, res) => {
   if (!item) return res.status(404).json({ error: 'No existe.' });
   if (item.price == null) {
     return res.status(400).json({ error: 'No se puede publicar sin precio.' });
+  }
+  if (!hasRealText(item.description)) {
+    return res.status(400).json({ error: 'No se puede publicar sin una descripción real del producto.' });
   }
 
   try {

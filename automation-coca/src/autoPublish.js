@@ -54,8 +54,11 @@ export function formatArs(ars) {
 }
 
 // Para decidir si ya hay una descripción "real" (no solo un precio suelto
-// tipo "$40" o un emoji) contamos letras, no caracteres en general.
-function hasRealText(text) {
+// tipo "$40" o un emoji) contamos letras, no caracteres en general. Se
+// exporta porque las rutas de publicación manual (api.js) también la usan:
+// la regla "nunca publicar sin descripción" aplica a cualquier forma de
+// publicar, no solo al flujo automático de WhatsApp.
+export function hasRealText(text) {
   if (!text) return false;
   const letters = text.replace(/[^a-zA-ZÀ-ÿ]/g, '');
   return letters.length >= 8;

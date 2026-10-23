@@ -2,8 +2,8 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'node:path';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, deleteItemsByStatus, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
-import { publishItem, buildCaption, buildBuyLink } from '../meta.js';
-import { isMetaConfigured } from '../config.js';
+import { publishItem, publishRaw, buildCaption, buildBuyLink } from '../meta.js';
+import { isMetaConfigured, config } from '../config.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
@@ -173,6 +173,44 @@ router.post('/queue/:id/mark-published', (req, res) => {
 
   const updated = updateItem(item.id, patch);
   res.json(withCaption(updated));
+});
+
+// Publica contenido editorial (cartel, Historia) directo en Instagram, con
+// su propio caption, sin el armado automático de precio de /queue/:id/publish
+// (pensado para productos reales de la cola de WhatsApp/mail). Usa el media
+// ya subido vía /api/upload (item.media[0]). `mediaType`: "FEED" (default)
+// o "STORIES". `cuenta`: "perfumes" para publicar en esa marca en vez de
+// K-Beauty (default).
+router.post('/instagram/publicar-editorial', async (req, res) => {
+  const { itemId, caption, mediaType, cuenta } = req.body || {};
+  const item = getItem(itemId);
+  if (!item) return res.status(404).json({ error: 'No existe.' });
+  if (!item.media?.length) return res.status(400).json({ error: 'El item no tiene media.' });
+
+  const account = cuenta === 'perfumes'
+    ? { pageId: config.metaPerfumesPageId, igUserId: config.metaPerfumesIgUserId }
+    : undefined;
+
+  try {
+    const result = await publishRaw({
+      file: item.media[0].file,
+      type: item.media[0].type,
+      caption: caption || item.description || '',
+      mediaType: mediaType === 'STORIES' ? 'STORIES' : 'FEED',
+      account,
+    });
+    const updated = updateItem(item.id, {
+      status: 'published',
+      publishedAt: Date.now(),
+      igPostId: result.igPostId,
+      error: null,
+      price: item.price ?? 0,
+    });
+    res.json(updated);
+  } catch (err) {
+    updateItem(item.id, { status: 'error', error: err.message });
+    res.status(502).json({ error: err.message });
+  }
 });
 
 router.delete('/queue/:id', (req, res) => {

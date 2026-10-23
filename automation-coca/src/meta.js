@@ -194,3 +194,50 @@ export async function publishItem(item, account) {
   const igPostId = await publishToInstagram(item, pageAccessToken, igUserId, account?.hashtags);
   return { igPostId };
 }
+
+/**
+ * Publica contenido editorial (cartel, Historia) directo en Instagram, sin
+ * pasar por el armado automático de caption de publishItem (que siempre
+ * agrega una línea de precio - no tiene sentido para un cartel/Historia que
+ * no vende un producto puntual). El caption se usa tal cual se pasa.
+ * `mediaType`: 'FEED' (default) o 'STORIES'.
+ */
+export async function publishRaw({ file, type, caption, mediaType, account }) {
+  const pageId = account?.pageId || config.metaPageId;
+  const igUserId = account?.igUserId || config.metaIgUserId;
+
+  if (!isPublicUrlConfigured()) {
+    throw new Error(
+      'Falta configurar PUBLIC_BASE_URL: Meta necesita una URL publica para descargar la foto/video.',
+    );
+  }
+  if (!config.metaUserToken || !pageId || !igUserId) {
+    throw new Error(
+      'Falta configurar las credenciales de Meta para esta cuenta (META_USER_TOKEN, página e IG user id).',
+    );
+  }
+
+  const pageAccessToken = await getPageAccessToken(pageId);
+  const url = mediaUrl(file);
+  const params = { access_token: pageAccessToken };
+  if (caption) params.caption = caption;
+
+  if (mediaType === 'STORIES') {
+    params.media_type = 'STORIES';
+    params[type === 'video' ? 'video_url' : 'image_url'] = url;
+  } else if (type === 'video') {
+    params.media_type = 'REELS';
+    params.video_url = url;
+  } else {
+    params.image_url = url;
+  }
+
+  try {
+    const { data } = await axios.post(`${GRAPH_URL}/${igUserId}/media`, null, { params });
+    await waitUntilFinished(data.id, pageAccessToken);
+    const published = await publishWithRetry(data.id, pageAccessToken, igUserId);
+    return { igPostId: published.id };
+  } catch (err) {
+    throw describeGraphError(err, 'Instagram');
+  }
+}

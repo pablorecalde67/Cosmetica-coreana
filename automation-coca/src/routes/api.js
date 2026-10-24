@@ -234,7 +234,6 @@ router.get('/instagram/webhook-token-debug', (req, res) => {
     longitud: token.length,
     empieza: token.slice(0, 6) || null,
     termina: token.slice(-6) || null,
-    deployMarker: 'fuerza-redeploy-1',
   });
 });
 

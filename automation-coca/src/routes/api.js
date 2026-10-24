@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import path from 'node:path';
+import axios from 'axios';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, deleteItemsByStatus, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
 import { publishItem, publishRaw, buildCaption, buildBuyLink } from '../meta.js';
 import { isMetaConfigured, config } from '../config.js';
@@ -211,6 +212,24 @@ router.post('/instagram/publicar-editorial', async (req, res) => {
   } catch (err) {
     updateItem(item.id, { status: 'error', error: err.message });
     res.status(502).json({ error: err.message });
+  }
+});
+
+// Diagnóstico: qué permisos tiene realmente el token de Meta guardado, para
+// saber antes de construir algo (ej. leer DMs de Instagram) si ya alcanza o
+// si hace falta pedir un permiso nuevo en el panel de la app de Meta.
+router.get('/meta/permisos', async (req, res) => {
+  if (!config.metaUserToken) return res.status(400).json({ error: 'META_USER_TOKEN no configurado.' });
+  try {
+    const { data } = await axios.get('https://graph.facebook.com/v20.0/debug_token', {
+      params: {
+        input_token: config.metaUserToken,
+        access_token: config.metaUserToken,
+      },
+    });
+    res.json(data.data);
+  } catch (err) {
+    res.status(502).json({ error: err.response?.data?.error?.message || err.message });
   }
 });
 

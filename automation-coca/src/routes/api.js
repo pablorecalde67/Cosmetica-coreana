@@ -224,6 +224,19 @@ router.post('/instagram/publicar-editorial', async (req, res) => {
   }
 });
 
+// Diagnóstico temporal: confirma si el servidor ya tiene cargado el token
+// de verificación del webhook de Instagram (sin exponerlo completo), para
+// poder descartar un problema de la variable en Railway sin adivinar.
+router.get('/instagram/webhook-token-debug', (req, res) => {
+  const token = config.instagramWebhookVerifyToken;
+  res.json({
+    configurado: Boolean(token),
+    longitud: token.length,
+    empieza: token.slice(0, 6) || null,
+    termina: token.slice(-6) || null,
+  });
+});
+
 // Diagnóstico: qué permisos tiene realmente el token de Meta guardado, para
 // saber antes de construir algo (ej. leer DMs de Instagram) si ya alcanza o
 // si hace falta pedir un permiso nuevo en el panel de la app de Meta.

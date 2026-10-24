@@ -11,9 +11,10 @@ import {
   DisconnectReason,
 } from '@whiskeysockets/baileys';
 import { config } from './config.js';
-import { createItem, MEDIA_DIR } from './store.js';
+import { createItem, updateItem, MEDIA_DIR } from './store.js';
 import { enhanceImageFile } from './imageEnhance.js';
-import { autoPriceAndPublish } from './autoPublish.js';
+import { autoPriceAndPublish, hasRealText } from './autoPublish.js';
+import { findCatalogMatch } from './catalogMatch.js';
 import { getSetting } from './settings.js';
 
 // Agrupa las fotos/videos que llegan seguidas del mismo chat en una sola
@@ -81,6 +82,14 @@ function extractMedia(message) {
   return null;
 }
 
+// Mensajes de solo texto (sin foto/video), ej. cuando el proveedor escribe
+// el nombre/precio en un mensaje y manda la foto en otro aparte.
+function extractText(message) {
+  const content = unwrapMessage(message);
+  if (!content) return null;
+  return content.conversation || content.extendedTextMessage?.text || null;
+}
+
 // Las fotos/videos de un CANAL no usan la misma clave de cifrado por mensaje
 // que los chats normales (mediaKey viene vacia), asi que el descargador
 // cifrado de Baileys falla con "Cannot derive from empty media key". En ese
@@ -130,10 +139,13 @@ export async function resolveChannelInvite(inviteCodeOrLink) {
 export async function sendToChannel(channelJid, media, caption) {
   if (!channelJid || !state$.sock || !state$.connected) return;
   try {
-    const filePath = path.join(MEDIA_DIR, media.file);
-    const content = media.type === 'video'
-      ? { video: fs.readFileSync(filePath), caption }
-      : { image: fs.readFileSync(filePath), caption };
+    // `media.file` puede ser un nombre local (MEDIA_DIR) o, cuando viene de
+    // un match del catálogo propio (ver catalogMatch.js), una URL completa.
+    const isUrl = /^https?:\/\//i.test(media.file);
+    const buffer = isUrl
+      ? Buffer.from((await axios.get(media.file, { responseType: 'arraybuffer' })).data)
+      : fs.readFileSync(path.join(MEDIA_DIR, media.file));
+    const content = media.type === 'video' ? { video: buffer, caption } : { image: buffer, caption };
     await state$.sock.sendMessage(channelJid, content);
   } catch (err) {
     console.error('[whatsapp] no se pudo publicar en el canal:', err.message);
@@ -230,7 +242,30 @@ export async function startWhatsapp() {
       }
 
       const media = extractMedia(msg.message);
-      if (!media) continue;
+
+      if (!media) {
+        // Sin foto/video: puede ser que el proveedor escriba el nombre/precio
+        // en un mensaje aparte y mande la foto después (en ese caso, esto
+        // solo abre/extiende la ventana de agrupación para que la foto que
+        // venga a continuación la capture). Si la foto nunca llega, al
+        // vencer la ventana se intenta resolver con una foto del catálogo
+        // propio en vez de perder el texto (ver processGroup).
+        const text = extractText(msg.message);
+        if (!text || !text.trim()) continue;
+
+        console.log(`[whatsapp] Texto (sin foto todavía) detectado en: ${isStatus ? 'Estado de ' + groupKey : chatJid}`);
+
+        let group = pendingGroups.get(groupKey);
+        if (!group) {
+          group = { media: [], caption: '', timer: null };
+          pendingGroups.set(groupKey, group);
+        }
+        group.caption = group.caption ? `${group.caption}\n${text}` : text;
+
+        clearTimeout(group.timer);
+        group.timer = setTimeout(() => processGroup(groupKey, group), GROUP_WINDOW_MS);
+        continue;
+      }
 
       console.log(`[whatsapp] Contenido detectado (${media.type}) en: ${isStatus ? 'Estado de ' + groupKey : chatJid}`);
 
@@ -258,31 +293,62 @@ export async function startWhatsapp() {
         if (!group.caption && media.caption) group.caption = media.caption;
 
         clearTimeout(group.timer);
-        group.timer = setTimeout(async () => {
-          pendingGroups.delete(groupKey);
-
-          const item = createItem({
-            source: 'whatsapp',
-            media: group.media,
-            caption: group.caption,
-          });
-
-          console.log(`[whatsapp] Nuevo contenido: ${item.id} (${group.media.length} archivo/s), procesando precio y publicación automática...`);
-
-          const published = await autoPriceAndPublish(item, {
-            notifyOwner: (text) => notifyOwner(sock, text),
-          });
-
-          // Reenvío al Canal de WhatsApp de COCA (si ya está configurado):
-          // todo lo que se publica automáticamente en Instagram se cruza
-          // también ahí, para crecer la audiencia propia del negocio.
-          const channelJid = getSetting('whatsappChannelJid');
-          if (channelJid && published.status === 'published') {
-            sendToChannel(channelJid, published.media[0], published.description || '');
-          }
-        }, GROUP_WINDOW_MS);
+        group.timer = setTimeout(() => processGroup(groupKey, group), GROUP_WINDOW_MS);
       } catch (err) {
         console.error('[whatsapp] error procesando media:', err.message);
+      }
+    }
+
+    // Cierra un grupo acumulado (foto/s + texto, o solo texto) y lo publica.
+    // Si no llegó ninguna foto, busca una que corresponda en el catálogo
+    // propio (K-Beauty/Perfumes) en vez de dejar el texto sin publicar.
+    async function processGroup(groupKey, group) {
+      pendingGroups.delete(groupKey);
+      const notify = (text) => notifyOwner(sock, text);
+
+      if (group.media.length === 0) {
+        const text = group.caption;
+        const match = findCatalogMatch(text);
+
+        if (!match) {
+          const item = createItem({ source: 'whatsapp', media: [], caption: text });
+          updateItem(item.id, {
+            status: 'error',
+            error: 'Llegó texto sin foto y no encontré ningún producto parecido en el catálogo propio.',
+          });
+          await notify(
+            `⚠️ Llegó este texto por WhatsApp sin foto y no encontré un producto parecido en el catálogo para publicarlo solo:\n\n"${text}"\n\nMandá la foto del producto para poder publicarlo.`,
+          );
+          return;
+        }
+
+        console.log(`[whatsapp] Texto sin foto: encontré "${match.name}" en el catálogo (${match.type}), publico con esa foto.`);
+        const caption = hasRealText(text) ? text : `${text ? text + '\n\n' : ''}${match.description || match.name}`.trim();
+        const item = createItem({
+          source: 'whatsapp',
+          media: [{ file: match.image, type: 'image' }],
+          caption,
+        });
+
+        const published = await autoPriceAndPublish(item, { notifyOwner: notify });
+        const channelJid = getSetting('whatsappChannelJid');
+        if (channelJid && published.status === 'published') {
+          sendToChannel(channelJid, published.media[0], published.description || '');
+        }
+        return;
+      }
+
+      const item = createItem({ source: 'whatsapp', media: group.media, caption: group.caption });
+      console.log(`[whatsapp] Nuevo contenido: ${item.id} (${group.media.length} archivo/s), procesando precio y publicación automática...`);
+
+      const published = await autoPriceAndPublish(item, { notifyOwner: notify });
+
+      // Reenvío al Canal de WhatsApp de COCA (si ya está configurado): todo
+      // lo que se publica automáticamente en Instagram se cruza también
+      // ahí, para crecer la audiencia propia del negocio.
+      const channelJid = getSetting('whatsappChannelJid');
+      if (channelJid && published.status === 'published') {
+        sendToChannel(channelJid, published.media[0], published.description || '');
       }
     }
   });

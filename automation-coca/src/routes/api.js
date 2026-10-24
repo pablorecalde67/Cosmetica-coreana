@@ -183,6 +183,7 @@ router.post('/queue/:id/mark-published', (req, res) => {
 // K-Beauty (default).
 router.post('/instagram/publicar-editorial', async (req, res) => {
   const { itemId, caption, mediaType, cuenta } = req.body || {};
+  if (!itemId) return res.status(400).json({ error: 'Falta "itemId".' });
   const item = getItem(itemId);
   if (!item) return res.status(404).json({ error: 'No existe.' });
   if (!item.media?.length) return res.status(400).json({ error: 'El item no tiene media.' });

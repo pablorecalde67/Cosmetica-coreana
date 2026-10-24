@@ -3,8 +3,10 @@ import multer from 'multer';
 import path from 'node:path';
 import axios from 'axios';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, deleteItemsByStatus, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
-import { publishItem, publishRaw, buildCaption, buildBuyLink } from '../meta.js';
+import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken } from '../meta.js';
 import { isMetaConfigured, config } from '../config.js';
+import { getSetting, setSetting } from '../settings.js';
+import { resolveChannelInvite, sendToChannel } from '../whatsapp.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
@@ -209,6 +211,13 @@ router.post('/instagram/publicar-editorial', async (req, res) => {
       price: item.price ?? 0,
     });
     res.json(updated);
+
+    // Reenvío al Canal de WhatsApp de COCA (si ya está configurado): no debe
+    // hacer fallar ni demorar la respuesta de la publicación en Instagram.
+    const channelJid = getSetting('whatsappChannelJid');
+    if (channelJid) {
+      sendToChannel(channelJid, item.media[0], caption || item.description || '');
+    }
   } catch (err) {
     updateItem(item.id, { status: 'error', error: err.message });
     res.status(502).json({ error: err.message });
@@ -231,6 +240,47 @@ router.get('/meta/permisos', async (req, res) => {
   } catch (err) {
     res.status(502).json({ error: err.response?.data?.error?.message || err.message });
   }
+});
+
+// Suscribe la Página de Facebook al campo "messages" del webhook de
+// Instagram, para que Meta empiece a mandar los DMs que llegan. Hay que
+// correr esto una sola vez, después de haber configurado la URL de
+// callback y el token de verificación en el panel de la app de Meta (eso sí
+// es manual, requiere el App Secret que no vive en este servidor).
+router.post('/instagram/suscribir-webhook', async (req, res) => {
+  if (!config.metaUserToken || !config.metaPageId) {
+    return res.status(400).json({ error: 'Falta META_USER_TOKEN o la Página configurada.' });
+  }
+  try {
+    const pageAccessToken = await getPageAccessToken(config.metaPageId);
+    const { data } = await axios.post(
+      `https://graph.facebook.com/v20.0/${config.metaPageId}/subscribed_apps`,
+      null,
+      { params: { subscribed_fields: 'messages', access_token: pageAccessToken } },
+    );
+    res.json(data);
+  } catch (err) {
+    res.status(502).json({ error: err.response?.data?.error?.message || err.message });
+  }
+});
+
+// Guarda el JID del Canal de WhatsApp de COCA a partir de su link de
+// invitación (https://whatsapp.com/channel/XXXX) o solo el código XXXX, para
+// que las publicaciones automáticas se reenvíen ahí.
+router.post('/whatsapp/canal/resolver', async (req, res) => {
+  const { invite } = req.body || {};
+  if (!invite) return res.status(400).json({ error: 'Falta "invite" (link o código del canal).' });
+  try {
+    const metadata = await resolveChannelInvite(invite);
+    setSetting('whatsappChannelJid', metadata.id);
+    res.json({ jid: metadata.id, nombre: metadata.name });
+  } catch (err) {
+    res.status(502).json({ error: err.message });
+  }
+});
+
+router.get('/whatsapp/canal', (req, res) => {
+  res.json({ jid: getSetting('whatsappChannelJid') || null });
 });
 
 router.delete('/queue/:id', (req, res) => {

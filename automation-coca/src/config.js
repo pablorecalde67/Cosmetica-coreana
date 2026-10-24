@@ -26,6 +26,12 @@ export const config = {
   metaPageId: process.env.META_PAGE_ID || '',
   metaIgUserId: process.env.META_IG_USER_ID || '',
 
+  // Token arbitrario (lo define el dueño) que Meta manda de vuelta al
+  // verificar el webhook de mensajes directos de Instagram. Si no coincide,
+  // se rechaza la suscripción - evita que cualquiera registre un webhook
+  // falso apuntando a otro lado.
+  instagramWebhookVerifyToken: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || '',
+
   cocaHashtags: list(process.env.COCA_HASHTAGS || 'COCA,KBeauty,SkincareTips,GlowUp,BeautyTok,Belleza,Skincare'),
 
   // Segunda marca/cuenta de Instagram (perfumes árabes), publicada con el

@@ -64,7 +64,7 @@ async function sleep(ms) {
 // mano nunca mas: mientras el token de usuario siga vigente (60 dias), esto
 // siempre consigue uno valido. Sirve para cualquier Pagina (K-Beauty o
 // Perfumes) que administre este token de usuario.
-async function getPageAccessToken(pageId) {
+export async function getPageAccessToken(pageId) {
   try {
     const { data } = await axios.get(`${GRAPH_URL}/${pageId}`, {
       params: { fields: 'access_token', access_token: config.metaUserToken },

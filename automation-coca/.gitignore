@@ -10,4 +10,5 @@ data/perfumesSchedulerState.json
 data/tiktokAuth.json
 data/visits.json
 data/whatsapp-session/
+data/settings.json
 .env

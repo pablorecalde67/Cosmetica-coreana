@@ -8,6 +8,7 @@ import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import perfumesShopRouter from './routes/perfumesShop.js';
 import tiktokRouter from './routes/tiktok.js';
+import instagramWebhookRouter from './routes/instagramWebhook.js';
 import { startWhatsapp } from './whatsapp.js';
 import { startEmailIngest } from './email.js';
 import { startPerfumesScheduler } from './perfumesScheduler.js';
@@ -45,6 +46,7 @@ app.use('/api/perfumes', perfumesShopRouter);
 app.use('/api', apiRouter);
 app.use('/', whatsappSetupRouter);
 app.use('/', tiktokRouter);
+app.use('/', instagramWebhookRouter);
 
 app.listen(config.port, () => {
   console.log(`[COCA] Panel corriendo en http://localhost:${config.port}`);

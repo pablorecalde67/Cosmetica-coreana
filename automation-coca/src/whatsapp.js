@@ -14,6 +14,7 @@ import { config } from './config.js';
 import { createItem, MEDIA_DIR } from './store.js';
 import { enhanceImageFile } from './imageEnhance.js';
 import { autoPriceAndPublish } from './autoPublish.js';
+import { getSetting } from './settings.js';
 
 // Agrupa las fotos/videos que llegan seguidas del mismo chat en una sola
 // tarjeta: cada vez que llega una, se espera este tiempo sin que llegue otra
@@ -108,6 +109,35 @@ async function notifyOwner(sock, text) {
 export async function notifyOwnerIfConnected(text) {
   if (!state$.connected || !state$.sock) return;
   await notifyOwner(state$.sock, text);
+}
+
+// A partir de un link de invitación (https://whatsapp.com/channel/XXXX) o
+// solo el código XXXX, consigue los datos del Canal (incluido su JID real,
+// que termina en @newsletter) - así el dueño solo tiene que pasar el link
+// una vez, sin ir a buscar el JID a mano.
+export async function resolveChannelInvite(inviteCodeOrLink) {
+  if (!state$.sock) throw new Error('WhatsApp no está conectado.');
+  const code = inviteCodeOrLink.includes('/')
+    ? inviteCodeOrLink.split('/').filter(Boolean).pop()
+    : inviteCodeOrLink;
+  return state$.sock.newsletterMetadata('invite', code);
+}
+
+// Manda una foto/video (ya guardado en MEDIA_DIR) al Canal de WhatsApp de
+// COCA, para que lo publicado en Instagram se reenvíe también ahí. No hace
+// nada si todavía no hay un canal configurado o WhatsApp no está conectado -
+// nunca debe hacer fallar la publicación en Instagram por esto.
+export async function sendToChannel(channelJid, media, caption) {
+  if (!channelJid || !state$.sock || !state$.connected) return;
+  try {
+    const filePath = path.join(MEDIA_DIR, media.file);
+    const content = media.type === 'video'
+      ? { video: fs.readFileSync(filePath), caption }
+      : { image: fs.readFileSync(filePath), caption };
+    await state$.sock.sendMessage(channelJid, content);
+  } catch (err) {
+    console.error('[whatsapp] no se pudo publicar en el canal:', err.message);
+  }
 }
 
 export async function startWhatsapp() {
@@ -239,9 +269,17 @@ export async function startWhatsapp() {
 
           console.log(`[whatsapp] Nuevo contenido: ${item.id} (${group.media.length} archivo/s), procesando precio y publicación automática...`);
 
-          await autoPriceAndPublish(item, {
+          const published = await autoPriceAndPublish(item, {
             notifyOwner: (text) => notifyOwner(sock, text),
           });
+
+          // Reenvío al Canal de WhatsApp de COCA (si ya está configurado):
+          // todo lo que se publica automáticamente en Instagram se cruza
+          // también ahí, para crecer la audiencia propia del negocio.
+          const channelJid = getSetting('whatsappChannelJid');
+          if (channelJid && published.status === 'published') {
+            sendToChannel(channelJid, published.media[0], published.description || '');
+          }
         }, GROUP_WINDOW_MS);
       } catch (err) {
         console.error('[whatsapp] error procesando media:', err.message);

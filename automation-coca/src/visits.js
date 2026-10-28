@@ -23,12 +23,16 @@ function save(db) {
 
 let db = load();
 
-// Solo se guarda la página y el momento - nada de IP, user-agent ni ningún
-// dato que identifique a la visita (no hace falta para ver la evolución, y
-// es justo el tipo de dato personal que no debería quedar guardado sin
-// necesidad real).
-export function registerVisit(page) {
-  db.visits.push({ page, createdAt: Date.now() });
+// Solo se guarda la página, de qué canal vino (si el link traía
+// ?utm_source=..., para saber qué funciona mejor) y el momento - nada de IP,
+// user-agent ni ningún dato que identifique a la visita (no hace falta para
+// ver la evolución, y es justo el tipo de dato personal que no debería
+// quedar guardado sin necesidad real).
+const KNOWN_SOURCES = new Set(['instagram', 'whatsapp_channel', 'telegram', 'whatsapp_status', 'tiktok']);
+
+export function registerVisit(page, rawSource) {
+  const source = KNOWN_SOURCES.has(rawSource) ? rawSource : 'directo';
+  db.visits.push({ page, source, createdAt: Date.now() });
   save(db);
 }
 

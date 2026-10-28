@@ -586,7 +586,12 @@ router.get('/estadisticas', (req, res) => {
 
   const visits = listVisits();
   const visitsByPage = {};
-  for (const v of visits) visitsByPage[v.page] = (visitsByPage[v.page] || 0) + 1;
+  const visitsBySource = {};
+  for (const v of visits) {
+    visitsByPage[v.page] = (visitsByPage[v.page] || 0) + 1;
+    const src = v.source || 'directo';
+    visitsBySource[src] = (visitsBySource[src] || 0) + 1;
+  }
 
   res.json({
     generatedAt: Date.now(),
@@ -607,6 +612,7 @@ router.get('/estadisticas', (req, res) => {
     visitas: {
       total: visits.length,
       porPagina: visitsByPage,
+      porCanal: visitsBySource,
       porDia: groupByDay(visits, (v) => v.createdAt),
     },
   });

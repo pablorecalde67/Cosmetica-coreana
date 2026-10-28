@@ -7,6 +7,7 @@ import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken
 import { isMetaConfigured, config } from '../config.js';
 import { getSetting, setSetting } from '../settings.js';
 import { resolveChannelInvite, sendToChannel } from '../whatsapp.js';
+import { sendToTelegramChannel } from '../telegram.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
@@ -218,6 +219,7 @@ router.post('/instagram/publicar-editorial', async (req, res) => {
     if (channelJid) {
       sendToChannel(channelJid, item.media[0], caption || item.description || '');
     }
+    sendToTelegramChannel(item.media[0], caption || item.description || '');
   } catch (err) {
     updateItem(item.id, { status: 'error', error: err.message });
     res.status(502).json({ error: err.message });
@@ -294,6 +296,31 @@ router.post('/whatsapp/canal/resolver', async (req, res) => {
 
 router.get('/whatsapp/canal', (req, res) => {
   res.json({ jid: getSetting('whatsappChannelJid') || null });
+});
+
+// Guarda el bot y el canal de Telegram de COCA para que las publicaciones
+// automáticas (cartel/Historia/Reel) se reenvíen ahí también.
+router.post('/telegram/canal/configurar', async (req, res) => {
+  const { botToken, channelId } = req.body || {};
+  if (!botToken || !channelId) {
+    return res.status(400).json({ error: 'Faltan "botToken" y/o "channelId".' });
+  }
+  try {
+    const { data } = await axios.get(`https://api.telegram.org/bot${botToken}/getMe`);
+    if (!data.ok) throw new Error('Token de bot inválido.');
+    setSetting('telegramBotToken', botToken);
+    setSetting('telegramChannelId', channelId);
+    res.json({ bot: data.result.username, channelId });
+  } catch (err) {
+    res.status(502).json({ error: err.response?.data?.description || err.message });
+  }
+});
+
+router.get('/telegram/canal', (req, res) => {
+  res.json({
+    configurado: Boolean(getSetting('telegramBotToken') && getSetting('telegramChannelId')),
+    channelId: getSetting('telegramChannelId') || null,
+  });
 });
 
 router.delete('/queue/:id', (req, res) => {

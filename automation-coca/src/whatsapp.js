@@ -229,6 +229,14 @@ export async function startWhatsapp() {
   // lista de difusión masiva (ver sendToAllContacts).
   sock.ev.on('contacts.set', ({ contacts: list }) => upsertContacts(list));
   sock.ev.on('contacts.upsert', (list) => upsertContacts(list));
+  // En Baileys 6.x la sincronización inicial grande (al reconectar con una
+  // sesión ya vinculada) llega mayormente por acá, no por contacts.set.
+  sock.ev.on('messaging-history.set', ({ contacts: list }) => {
+    if (list?.length) {
+      const added = upsertContacts(list);
+      console.log(`[whatsapp] sincronización de historial: +${added} contactos nuevos (total ahora: ${listContacts().length}).`);
+    }
+  });
 
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;

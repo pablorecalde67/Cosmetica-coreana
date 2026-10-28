@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Vapers Originales | COCA Ciudad del Este</title>
+<meta name="description" content="Comprá vapers en Ciudad del Este. Catálogo con precio y envío, confirmás tu pedido en segundos.">
+<link rel="canonical" href="https://cosmetica-coreana-production.up.railway.app/vapers">
+<link rel="stylesheet" href="/piel/styles.css">
+<style>
+  /* Paleta propia para no mezclarse visualmente con K-Beauty ni Perfumes */
+  :root { --pink: #2b6cb0; --pink-dark: #1a4971; }
+  .catalog-search { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #cfe0ef; font-size: 1rem; margin-bottom: 14px; font-family: inherit; }
+  .catalog-hint { opacity: .7; font-size: .85rem; margin: 0 0 14px; }
+  .catalog-empty { opacity: .7; text-align: center; padding: 24px 0; }
+</style>
+</head>
+<body>
+
+<!-- ============ CATALOGO / SELECCION ============ -->
+<section id="screen-catalog" class="screen active">
+  <div class="wrap">
+    <p class="eyebrow">COCA · Vapers</p>
+    <h1>Elegí tu vaper</h1>
+    <p class="lead small">Catálogo con envío a todo Ciudad del Este. Buscá por nombre y seleccioná lo que querés.</p>
+
+    <input type="search" id="catalog-search" class="catalog-search" placeholder="Buscar vaper por nombre...">
+    <p class="catalog-hint" id="catalog-hint"></p>
+
+    <div id="catalog-list" class="select-list"></div>
+    <p class="total-row">Total: <strong id="select-total">$0</strong></p>
+    <button id="btn-want" class="btn btn-primary" disabled>Quiero comprar</button>
+  </div>
+</section>
+
+<!-- ============ SHIPPING FORM ============ -->
+<section id="screen-form" class="screen">
+  <div class="wrap">
+    <button class="btn-back" data-back="screen-catalog">← Volver</button>
+    <h2>Último paso</h2>
+
+    <form id="form-pedido">
+      <label>Nombre y apellido
+        <input type="text" id="f-name" required>
+      </label>
+      <label>WhatsApp / teléfono
+        <input type="tel" id="f-phone" required>
+      </label>
+      <label>Dirección de envío
+        <textarea id="f-address" required placeholder="Calle, número, ciudad, provincia, código postal"></textarea>
+      </label>
+      <label>Notas (opcional)
+        <textarea id="f-notes" placeholder="Referencias de entrega, horarios, etc."></textarea>
+      </label>
+
+      <p id="form-error" class="error-text" hidden></p>
+      <button type="submit" id="btn-confirm" class="btn btn-primary">Confirmar pedido</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ CONFIRMATION ============ -->
+<section id="screen-confirm" class="screen">
+  <div class="wrap center">
+    <h2>¡Pedido registrado! 🎉</h2>
+    <p>Total a transferir: <strong id="conf-total"></strong></p>
+
+    <div class="alias-box">
+      <p class="alias-label">Alias para transferencia</p>
+      <p class="alias-value" id="conf-alias"></p>
+      <p id="conf-holder" class="alias-holder"></p>
+    </div>
+
+    <p class="lead small">Guardá el comprobante y enviálo por WhatsApp para que confirmemos tu envío. Te va a llegar a la dirección que cargaste.</p>
+    <a id="conf-whatsapp" class="btn btn-primary" target="_blank" rel="noopener">Enviar comprobante por WhatsApp</a>
+    <button id="btn-home" class="btn btn-secondary">Volver al catálogo</button>
+  </div>
+</section>
+
+<script src="/vapers/app.js"></script>
+</body>
+</html>

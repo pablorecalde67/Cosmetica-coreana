@@ -608,7 +608,7 @@ router.get('/estadisticas', (req, res) => {
   const orders = listOrders();
   const ordersByAccount = {};
   for (const o of orders) {
-    const label = o.source === 'perfumes' ? 'Perfumes' : 'K-Beauty (piel)';
+    const label = o.source === 'perfumes' ? 'Perfumes' : o.source === 'vapers' ? 'Vapers' : 'K-Beauty (piel)';
     const slot = ordersByAccount[label] || { count: 0, totalArs: 0 };
     slot.count += 1;
     slot.totalArs += Number(o.total) || 0;

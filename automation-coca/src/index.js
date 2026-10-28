@@ -7,6 +7,7 @@ import apiRouter from './routes/api.js';
 import whatsappSetupRouter from './routes/whatsappSetup.js';
 import pielRouter from './routes/piel.js';
 import perfumesShopRouter from './routes/perfumesShop.js';
+import vapersShopRouter from './routes/vapersShop.js';
 import tiktokRouter from './routes/tiktok.js';
 import instagramWebhookRouter from './routes/instagramWebhook.js';
 import { startWhatsapp } from './whatsapp.js';
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
   if (req.method === 'GET') {
     if (req.path === '/piel/') registerVisit('piel', req.query.utm_source);
     else if (req.path === '/perfumes/') registerVisit('perfumes', req.query.utm_source);
+    else if (req.path === '/vapers/') registerVisit('vapers', req.query.utm_source);
   }
   next();
 });
@@ -43,6 +45,7 @@ app.get('/', (req, res) => res.redirect('/productos.html'));
 
 app.use('/api/piel', pielRouter);
 app.use('/api/perfumes', perfumesShopRouter);
+app.use('/api/vapers', vapersShopRouter);
 app.use('/api', apiRouter);
 app.use('/', whatsappSetupRouter);
 app.use('/', tiktokRouter);

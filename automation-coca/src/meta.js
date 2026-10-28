@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { config, isPublicUrlConfigured } from './config.js';
+import { setSetting } from './settings.js';
 
 const GRAPH_URL = 'https://graph.facebook.com/v20.0';
 
@@ -57,6 +58,31 @@ function describeGraphError(err, platform) {
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Cambia el token de usuario actual por uno nuevo de 60 días (Meta deja
+// "re-cambiar" un token de usuario todavía vigente por otro de 60 días
+// completos, las veces que haga falta) - así, llamando esto cada semana
+// desde una rutina, el token nunca llega a vencer y no hace falta volver a
+// generarlo a mano en el Explorer.
+export async function refreshMetaUserToken() {
+  if (!config.metaAppSecret) {
+    throw new Error('Falta metaAppSecret (Configuración > Básica de la app en Meta) para poder renovar el token solo.');
+  }
+  try {
+    const { data } = await axios.get(`${GRAPH_URL}/oauth/access_token`, {
+      params: {
+        grant_type: 'fb_exchange_token',
+        client_id: config.metaAppId,
+        client_secret: config.metaAppSecret,
+        fb_exchange_token: config.metaUserToken,
+      },
+    });
+    setSetting('metaUserToken', data.access_token);
+    return { expiresInDays: Math.round((data.expires_in || 0) / 86400) };
+  } catch (err) {
+    throw describeGraphError(err, 'Meta (renovar token)');
+  }
 }
 
 // Calcula el token de la Pagina a partir del token de usuario de larga

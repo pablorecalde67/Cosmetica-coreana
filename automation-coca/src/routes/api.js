@@ -6,7 +6,8 @@ import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, delet
 import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken, refreshMetaUserToken, publishToFacebookPage } from '../meta.js';
 import { isMetaConfigured, config } from '../config.js';
 import { getSetting, setSetting } from '../settings.js';
-import { resolveChannelInvite, sendToChannel, sendToLeads } from '../whatsapp.js';
+import { resolveChannelInvite, sendToChannel, sendToLeads, sendToAllContacts } from '../whatsapp.js';
+import { contactsCount } from '../contacts.js';
 import { sendToTelegramChannel } from '../telegram.js';
 import { listLeads } from '../leads.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
@@ -381,6 +382,39 @@ router.post('/canales/difundir', async (req, res) => {
   if (channelJid) sendToChannel(channelJid, item.media[0], caption || '');
   sendToTelegramChannel(item.media[0], caption || '');
   res.json({ ok: true, whatsapp: Boolean(channelJid), telegram: true });
+});
+
+router.get('/whatsapp/contactos', (req, res) => {
+  res.json({ total: contactsCount() });
+});
+
+// Manda un item a TODA la agenda de contactos personales del WhatsApp
+// vinculado (no solo a leads). Pedido explícito del dueño pese al riesgo de
+// baneo del número ya avisado - corre en segundo plano (puede tardar horas
+// con cientos de contactos) y avisa al dueño por WhatsApp cuando termina.
+router.post('/whatsapp/difundir-a-todos', async (req, res) => {
+  const { itemId, caption } = req.body || {};
+  if (!itemId) return res.status(400).json({ error: 'Falta "itemId".' });
+  const item = getItem(itemId);
+  if (!item) return res.status(404).json({ error: 'No existe.' });
+  if (!item.media?.length) return res.status(400).json({ error: 'El item no tiene media.' });
+
+  const total = contactsCount();
+  if (total === 0) {
+    return res.json({ ok: false, error: 'Todavía no hay contactos sincronizados.' });
+  }
+
+  res.json({ ok: true, iniciado: true, total });
+
+  sendToAllContacts(item.media[0], caption || '')
+    .then((result) => {
+      notifyOwnerIfConnected(
+        `✅ Difusión a toda la agenda terminada: ${result.sent} enviados, ${result.failed} fallidos, de ${result.total} contactos.`,
+      );
+    })
+    .catch((err) => {
+      notifyOwnerIfConnected(`⚠️ La difusión a toda la agenda se cortó con un error: ${err.message}`);
+    });
 });
 
 // Gente que YA inició contacto con COCA por su cuenta (escribió por

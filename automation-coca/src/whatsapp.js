@@ -17,6 +17,7 @@ import { autoPriceAndPublish, hasRealText } from './autoPublish.js';
 import { findCatalogMatch } from './catalogMatch.js';
 import { getSetting } from './settings.js';
 import { addLead } from './leads.js';
+import { upsertContacts, listContacts } from './contacts.js';
 
 // Agrupa las fotos/videos que llegan seguidas del mismo chat en una sola
 // tarjeta: cada vez que llega una, se espera este tiempo sin que llegue otra
@@ -184,6 +185,33 @@ export async function sendToLeads(jids, media, caption, { delayMs = 4000 } = {})
   return { sent, failed };
 }
 
+// Manda contenido propio a TODA la agenda de contactos personales vinculada
+// al número de WhatsApp (no solo a quien ya escribió, como sendToLeads).
+// Pedido explícito del dueño, con el riesgo de baneo del número ya avisado y
+// aceptado - por eso la pausa entre envío y envío es más larga que en
+// sendToLeads, para parecer lo menos "masivo/bot" posible.
+export async function sendToAllContacts(media, caption, { delayMs = 7000 } = {}) {
+  if (!state$.sock || !state$.connected) return { sent: 0, failed: 0, total: 0, skipped: 'no_conectado' };
+  const buffer = await loadMediaBuffer(media);
+  const content = media.type === 'video' ? { video: buffer, caption } : { image: buffer, caption };
+  const jids = listContacts().map((c) => c.jid);
+  let sent = 0;
+  let failed = 0;
+  for (const jid of jids) {
+    try {
+      await state$.sock.sendMessage(jid, content);
+      sent += 1;
+    } catch (err) {
+      failed += 1;
+      console.error(`[whatsapp] no se pudo mandar (difusión total) a ${jid}:`, err.message);
+    }
+    // pequeño jitter además de la pausa fija, para no mandar siempre a un
+    // ritmo perfectamente constante (otra señal de bot para WhatsApp).
+    await sleep(delayMs + Math.floor(Math.random() * 2000));
+  }
+  return { sent, failed, total: jids.length };
+}
+
 export async function startWhatsapp() {
   const { state, saveCreds } = await useMultiFileAuthState(SESSION_DIR);
 
@@ -195,6 +223,12 @@ export async function startWhatsapp() {
   state$.sock = sock;
 
   sock.ev.on('creds.update', saveCreds);
+
+  // Sincronización inicial (al conectar) y actualizaciones incrementales de
+  // la agenda de contactos del teléfono vinculado - se usan para armar la
+  // lista de difusión masiva (ver sendToAllContacts).
+  sock.ev.on('contacts.set', ({ contacts: list }) => upsertContacts(list));
+  sock.ev.on('contacts.upsert', (list) => upsertContacts(list));
 
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;

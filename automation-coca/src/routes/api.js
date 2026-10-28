@@ -279,12 +279,13 @@ router.get('/meta/permisos', async (req, res) => {
 // sin pasar por Railway - útil tanto para la carga inicial como para
 // cualquier caso en que haya que pisarlos a mano.
 router.post('/meta/token', (req, res) => {
-  const { userToken, appSecret } = req.body || {};
-  if (!userToken && !appSecret) {
-    return res.status(400).json({ error: 'Falta "userToken" y/o "appSecret".' });
+  const { userToken, appSecret, webhookVerifyToken } = req.body || {};
+  if (!userToken && !appSecret && !webhookVerifyToken) {
+    return res.status(400).json({ error: 'Falta "userToken", "appSecret" y/o "webhookVerifyToken".' });
   }
   if (userToken) setSetting('metaUserToken', userToken);
   if (appSecret) setSetting('metaAppSecret', appSecret);
+  if (webhookVerifyToken) setSetting('instagramWebhookVerifyToken', webhookVerifyToken);
   res.json({ ok: true });
 });
 

@@ -39,8 +39,12 @@ export const config = {
   // Token arbitrario (lo define el dueño) que Meta manda de vuelta al
   // verificar el webhook de mensajes directos de Instagram. Si no coincide,
   // se rechaza la suscripción - evita que cualquiera registre un webhook
-  // falso apuntando a otro lado.
-  instagramWebhookVerifyToken: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || '',
+  // falso apuntando a otro lado. Se lee primero de settings.js (se puede
+  // cargar vía API sin tocar Railway) y si no hay nada ahí, de la variable
+  // de entorno.
+  get instagramWebhookVerifyToken() {
+    return getSetting('instagramWebhookVerifyToken') || process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || '';
+  },
 
   cocaHashtags: list(process.env.COCA_HASHTAGS || 'COCA,KBeauty,SkincareTips,GlowUp,BeautyTok,Belleza,Skincare'),
 

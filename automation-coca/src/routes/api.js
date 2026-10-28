@@ -216,11 +216,15 @@ router.post('/instagram/publicar-editorial', async (req, res) => {
 
     // Reenvío al Canal de WhatsApp de COCA (si ya está configurado): no debe
     // hacer fallar ni demorar la respuesta de la publicación en Instagram.
+    // Cada canal lleva su propio link con ?utm_source para poder ver en
+    // /api/estadisticas qué canal trae más visitas reales a /piel.
+    const baseCaption = caption || item.description || '';
+    const pielLink = (src) => `${config.publicBaseUrl}/piel/?utm_source=${src}`;
     const channelJid = getSetting('whatsappChannelJid');
     if (channelJid) {
-      sendToChannel(channelJid, item.media[0], caption || item.description || '');
+      sendToChannel(channelJid, item.media[0], `${baseCaption}\n\n${pielLink('whatsapp_channel')}`);
     }
-    sendToTelegramChannel(item.media[0], caption || item.description || '');
+    sendToTelegramChannel(item.media[0], `${baseCaption}\n\n${pielLink('telegram')}`);
   } catch (err) {
     updateItem(item.id, { status: 'error', error: err.message });
     res.status(502).json({ error: err.message });

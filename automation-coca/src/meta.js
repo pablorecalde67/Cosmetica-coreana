@@ -267,3 +267,36 @@ export async function publishRaw({ file, type, caption, mediaType, account }) {
     throw describeGraphError(err, 'Instagram');
   }
 }
+
+// Publica foto o video en el FEED de la Página de Facebook (no la cuenta de
+// Instagram) - requiere el permiso pages_manage_posts en el token de
+// usuario, además de los que ya usa publishRaw. Nunca debe hacer fallar ni
+// demorar la publicación en Instagram: se llama aparte, después de esa, con
+// su propio try/catch del lado de quien la invoca.
+export async function publishToFacebookPage({ file, type, caption, pageId }) {
+  const targetPageId = pageId || config.metaPageId;
+  if (!isPublicUrlConfigured()) {
+    throw new Error('Falta configurar PUBLIC_BASE_URL: Meta necesita una URL publica para descargar la foto/video.');
+  }
+  if (!config.metaUserToken || !targetPageId) {
+    throw new Error('Falta configurar las credenciales de Meta para esta Página.');
+  }
+
+  const pageAccessToken = await getPageAccessToken(targetPageId);
+  const url = mediaUrl(file);
+
+  try {
+    if (type === 'video') {
+      const { data } = await axios.post(`${GRAPH_URL}/${targetPageId}/videos`, null, {
+        params: { file_url: url, description: caption || '', access_token: pageAccessToken },
+      });
+      return { fbPostId: data.id };
+    }
+    const { data } = await axios.post(`${GRAPH_URL}/${targetPageId}/photos`, null, {
+      params: { url, caption: caption || '', access_token: pageAccessToken },
+    });
+    return { fbPostId: data.post_id || data.id };
+  } catch (err) {
+    throw describeGraphError(err, 'Facebook');
+  }
+}

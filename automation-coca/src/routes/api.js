@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'node:path';
 import axios from 'axios';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, deleteItemsByStatus, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
-import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken, refreshMetaUserToken } from '../meta.js';
+import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken, refreshMetaUserToken, publishToFacebookPage } from '../meta.js';
 import { isMetaConfigured, config } from '../config.js';
 import { getSetting, setSetting } from '../settings.js';
 import { resolveChannelInvite, sendToChannel, sendToLeads } from '../whatsapp.js';
@@ -226,6 +226,18 @@ router.post('/instagram/publicar-editorial', async (req, res) => {
       sendToChannel(channelJid, item.media[0], `${baseCaption}\n\n${pielLink('whatsapp_channel')}`);
     }
     sendToTelegramChannel(item.media[0], `${baseCaption}\n\n${pielLink('telegram')}`);
+
+    // Reenvío a la Página de Facebook, solo para FEED (no hay equivalente
+    // directo de una Historia de Instagram ahí) - tampoco debe hacer fallar
+    // ni demorar la respuesta de la publicación en Instagram.
+    if (mediaType !== 'STORIES') {
+      publishToFacebookPage({
+        file: item.media[0].file,
+        type: item.media[0].type,
+        caption: `${baseCaption}\n\n${pielLink('facebook')}`,
+        pageId: account?.pageId,
+      }).catch((err) => console.error('[facebook] no se pudo publicar en la Página:', err.message));
+    }
   } catch (err) {
     updateItem(item.id, { status: 'error', error: err.message });
     res.status(502).json({ error: err.message });

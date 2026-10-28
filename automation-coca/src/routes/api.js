@@ -349,6 +349,22 @@ router.get('/telegram/canal', (req, res) => {
   });
 });
 
+// Manda un item directo al Canal de WhatsApp y al de Telegram, SIN pasar
+// por Instagram - pensado para anuncios propios de esos canales (ej. "seguinos
+// en Instagram") que no tiene sentido publicar también en el feed de IG.
+router.post('/canales/difundir', async (req, res) => {
+  const { itemId, caption } = req.body || {};
+  if (!itemId) return res.status(400).json({ error: 'Falta "itemId".' });
+  const item = getItem(itemId);
+  if (!item) return res.status(404).json({ error: 'No existe.' });
+  if (!item.media?.length) return res.status(400).json({ error: 'El item no tiene media.' });
+
+  const channelJid = getSetting('whatsappChannelJid');
+  if (channelJid) sendToChannel(channelJid, item.media[0], caption || '');
+  sendToTelegramChannel(item.media[0], caption || '');
+  res.json({ ok: true, whatsapp: Boolean(channelJid), telegram: true });
+});
+
 router.delete('/queue/:id', (req, res) => {
   const ok = deleteItem(req.params.id);
   if (!ok) return res.status(404).json({ error: 'No existe.' });

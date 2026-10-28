@@ -16,6 +16,7 @@ import { enhanceImageFile } from './imageEnhance.js';
 import { autoPriceAndPublish, hasRealText } from './autoPublish.js';
 import { findCatalogMatch } from './catalogMatch.js';
 import { getSetting } from './settings.js';
+import { addLead } from './leads.js';
 
 // Agrupa las fotos/videos que llegan seguidas del mismo chat en una sola
 // tarjeta: cada vez que llega una, se espera este tiempo sin que llegue otra
@@ -132,6 +133,15 @@ export async function resolveChannelInvite(inviteCodeOrLink) {
   return state$.sock.newsletterMetadata('invite', code);
 }
 
+async function loadMediaBuffer(media) {
+  // `media.file` puede ser un nombre local (MEDIA_DIR) o, cuando viene de
+  // un match del catálogo propio (ver catalogMatch.js), una URL completa.
+  const isUrl = /^https?:\/\//i.test(media.file);
+  return isUrl
+    ? Buffer.from((await axios.get(media.file, { responseType: 'arraybuffer' })).data)
+    : fs.readFileSync(path.join(MEDIA_DIR, media.file));
+}
+
 // Manda una foto/video (ya guardado en MEDIA_DIR) al Canal de WhatsApp de
 // COCA, para que lo publicado en Instagram se reenvíe también ahí. No hace
 // nada si todavía no hay un canal configurado o WhatsApp no está conectado -
@@ -139,17 +149,39 @@ export async function resolveChannelInvite(inviteCodeOrLink) {
 export async function sendToChannel(channelJid, media, caption) {
   if (!channelJid || !state$.sock || !state$.connected) return;
   try {
-    // `media.file` puede ser un nombre local (MEDIA_DIR) o, cuando viene de
-    // un match del catálogo propio (ver catalogMatch.js), una URL completa.
-    const isUrl = /^https?:\/\//i.test(media.file);
-    const buffer = isUrl
-      ? Buffer.from((await axios.get(media.file, { responseType: 'arraybuffer' })).data)
-      : fs.readFileSync(path.join(MEDIA_DIR, media.file));
+    const buffer = await loadMediaBuffer(media);
     const content = media.type === 'video' ? { video: buffer, caption } : { image: buffer, caption };
     await state$.sock.sendMessage(channelJid, content);
   } catch (err) {
     console.error('[whatsapp] no se pudo publicar en el canal:', err.message);
   }
+}
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Manda contenido propio, UNO POR UNO con una pausa entre cada envío (para
+// no parecer un mensaje masivo automático, que es lo que hace que WhatsApp
+// banee un número), solo a gente que ya inició contacto con COCA por su
+// cuenta (ver leads.js) - nunca a contactos que no pidieron nada.
+export async function sendToLeads(jids, media, caption, { delayMs = 4000 } = {}) {
+  if (!state$.sock || !state$.connected) return { sent: 0, failed: jids.length, skipped: 'no_conectado' };
+  const buffer = await loadMediaBuffer(media);
+  const content = media.type === 'video' ? { video: buffer, caption } : { image: buffer, caption };
+  let sent = 0;
+  let failed = 0;
+  for (const jid of jids) {
+    try {
+      await state$.sock.sendMessage(jid, content);
+      sent += 1;
+    } catch (err) {
+      failed += 1;
+      console.error(`[whatsapp] no se pudo mandar a ${jid}:`, err.message);
+    }
+    await sleep(delayMs);
+  }
+  return { sent, failed };
 }
 
 export async function startWhatsapp() {
@@ -238,6 +270,14 @@ export async function startWhatsapp() {
         // fotos personales (comprobantes de transferencia con CBU/CUIL,
         // capturas de charlas ajenas al negocio) en la cola de publicación.
         const isMonitored = isChannel || config.whatsappMonitoredChats.includes(chatJid);
+        // Un chat privado (1 a 1, no grupo) que nos escribe y NO es un
+        // proveedor monitoreado es, por descarte, un cliente real que
+        // inició contacto por su cuenta - lo guardamos como lead propio
+        // (nombre + jid) antes de seguir con el filtro de arriba, que lo
+        // descarta para la cola de publicación (eso sigue igual).
+        if (!isMonitored && !isChannel && chatJid?.endsWith('@s.whatsapp.net')) {
+          addLead(chatJid, { name: msg.pushName, source: 'whatsapp_inbound' });
+        }
         if (!isMonitored) continue;
       }
 

@@ -6,8 +6,9 @@ import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, delet
 import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken, refreshMetaUserToken } from '../meta.js';
 import { isMetaConfigured, config } from '../config.js';
 import { getSetting, setSetting } from '../settings.js';
-import { resolveChannelInvite, sendToChannel } from '../whatsapp.js';
+import { resolveChannelInvite, sendToChannel, sendToLeads } from '../whatsapp.js';
 import { sendToTelegramChannel } from '../telegram.js';
+import { listLeads } from '../leads.js';
 import { listProducts, updateProduct, createProduct, bulkImportProducts } from '../products.js';
 import { listOrders, updateOrder } from '../orders.js';
 import { getSite, updateSite } from '../site.js';
@@ -367,6 +368,32 @@ router.post('/canales/difundir', async (req, res) => {
   if (channelJid) sendToChannel(channelJid, item.media[0], caption || '');
   sendToTelegramChannel(item.media[0], caption || '');
   res.json({ ok: true, whatsapp: Boolean(channelJid), telegram: true });
+});
+
+// Gente que YA inició contacto con COCA por su cuenta (escribió por
+// WhatsApp o completó un pedido) - nunca gente que solo vio una
+// publicación o visitó la web.
+router.get('/leads', (req, res) => {
+  res.json(listLeads());
+});
+
+// Manda un item (imagen/video ya subido) uno por uno, con pausa entre
+// cada envío, SOLO a los leads guardados. Tarda (varios segundos por
+// persona a propósito) - no esperar la respuesta para seguir trabajando.
+router.post('/leads/difundir', async (req, res) => {
+  const { itemId, caption } = req.body || {};
+  if (!itemId) return res.status(400).json({ error: 'Falta "itemId".' });
+  const item = getItem(itemId);
+  if (!item) return res.status(404).json({ error: 'No existe.' });
+  if (!item.media?.length) return res.status(400).json({ error: 'El item no tiene media.' });
+
+  const jids = listLeads().map((l) => l.jid);
+  if (jids.length === 0) return res.json({ sent: 0, failed: 0, total: 0, mensaje: 'Todavía no hay leads guardados.' });
+
+  res.json({ enviando: true, total: jids.length });
+  sendToLeads(jids, item.media[0], caption || '').then((result) => {
+    console.log(`[leads] difusión terminada: ${JSON.stringify(result)}`);
+  });
 });
 
 router.delete('/queue/:id', (req, res) => {

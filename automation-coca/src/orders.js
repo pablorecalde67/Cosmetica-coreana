@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { nanoid } from 'nanoid';
+import { addLead } from './leads.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -57,6 +58,10 @@ export function createOrder({ source, skinType, concerns, products, name, phone,
   };
   db.orders.push(order);
   save(db);
+  // Quien pide, nos dio el celular a propósito para coordinar ESE pedido -
+  // es la fuente más clara posible de un lead con consentimiento real.
+  const digits = (phone || '').replace(/\D/g, '');
+  if (digits) addLead(`${digits}@s.whatsapp.net`, { name, source: `pedido_${order.source}` });
   return order;
 }
 

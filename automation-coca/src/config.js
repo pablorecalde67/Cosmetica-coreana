@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { getSetting } from './settings.js';
 
 function list(value) {
   return (value || '')
@@ -9,6 +10,13 @@ function list(value) {
 
 export const config = {
   port: Number(process.env.PORT || 3000),
+  // Token de USUARIO de larga duracion (60 dias). Se lee primero de
+  // settings.js (lo que guarda el renovador automático) y si no hay nada
+  // ahí, de la variable de entorno - así una renovación automática no
+  // depende de poder tocar las variables de Railway en caliente.
+  get metaUserToken() {
+    return getSetting('metaUserToken') || process.env.META_USER_TOKEN || '';
+  },
   publicBaseUrl: (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, ''),
 
   whatsappOwnerNumber: process.env.WHATSAPP_OWNER_NUMBER || '',
@@ -18,13 +26,15 @@ export const config = {
   // (personal) nunca se toca, aunque este vacio no se procesa ninguno.
   whatsappStatusSources: list(process.env.WHATSAPP_STATUS_SOURCES),
 
-  // Token de USUARIO de larga duracion (60 dias). El servicio calcula solo,
-  // en cada publicacion, el token de la Pagina a partir de este - asi no
-  // hace falta ir a buscar manualmente el token de la Pagina cada vez que
-  // Meta lo esconde o lo vence.
-  metaUserToken: process.env.META_USER_TOKEN || '',
   metaPageId: process.env.META_PAGE_ID || '',
   metaIgUserId: process.env.META_IG_USER_ID || '',
+  // El secreto de la app (Configuración > Básica en el panel de Meta) se usa
+  // para renovar el token de usuario solo, antes de que venza - sin esto,
+  // habría que volver a generarlo a mano en el Explorer cada 60 días.
+  get metaAppSecret() {
+    return getSetting('metaAppSecret') || process.env.META_APP_SECRET || '';
+  },
+  metaAppId: process.env.META_APP_ID || '29493748220227157',
 
   // Token arbitrario (lo define el dueño) que Meta manda de vuelta al
   // verificar el webhook de mensajes directos de Instagram. Si no coincide,

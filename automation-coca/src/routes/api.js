@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'node:path';
 import axios from 'axios';
 import { createItem, addMedia, listItems, getItem, updateItem, deleteItem, deleteItemsByStatus, MEDIA_DIR, storageStats, freePublishedMedia } from '../store.js';
-import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken } from '../meta.js';
+import { publishItem, publishRaw, buildCaption, buildBuyLink, getPageAccessToken, refreshMetaUserToken } from '../meta.js';
 import { isMetaConfigured, config } from '../config.js';
 import { getSetting, setSetting } from '../settings.js';
 import { resolveChannelInvite, sendToChannel } from '../whatsapp.js';
@@ -210,6 +210,7 @@ router.post('/instagram/publicar-editorial', async (req, res) => {
       igPostId: result.igPostId,
       error: null,
       price: item.price ?? 0,
+      caption: caption || item.description || '',
     });
     res.json(updated);
 
@@ -254,6 +255,31 @@ router.get('/meta/permisos', async (req, res) => {
     res.json(data.data);
   } catch (err) {
     res.status(502).json({ error: err.response?.data?.error?.message || err.message });
+  }
+});
+
+// Guarda (o reemplaza) el token de usuario de Meta y/o el secreto de la app
+// sin pasar por Railway - útil tanto para la carga inicial como para
+// cualquier caso en que haya que pisarlos a mano.
+router.post('/meta/token', (req, res) => {
+  const { userToken, appSecret } = req.body || {};
+  if (!userToken && !appSecret) {
+    return res.status(400).json({ error: 'Falta "userToken" y/o "appSecret".' });
+  }
+  if (userToken) setSetting('metaUserToken', userToken);
+  if (appSecret) setSetting('metaAppSecret', appSecret);
+  res.json({ ok: true });
+});
+
+// Renueva el token de usuario actual por uno nuevo de 60 días (requiere
+// tener cargado el secreto de la app). Pensado para llamarse solo, desde
+// una rutina semanal, así el token nunca llega a vencer.
+router.post('/meta/renovar-token', async (req, res) => {
+  try {
+    const result = await refreshMetaUserToken();
+    res.json({ ok: true, ...result });
+  } catch (err) {
+    res.status(502).json({ error: err.message });
   }
 });
 

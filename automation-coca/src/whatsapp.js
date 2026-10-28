@@ -219,6 +219,10 @@ export async function startWhatsapp() {
     auth: state,
     logger: pino({ level: 'silent' }),
     printQRInTerminal: false,
+    // Por default Baileys ignora la sincronización de historial (incluye la
+    // agenda de contactos) salvo que se pida explícitamente - sin esto,
+    // contacts.set/messaging-history.set nunca llegan a dispararse.
+    syncFullHistory: true,
   });
   state$.sock = sock;
 

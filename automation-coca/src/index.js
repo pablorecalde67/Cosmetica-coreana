@@ -28,8 +28,8 @@ app.use(express.json({ limit: '10mb' }));
 // nunca sus archivos (app.js, imágenes) ni nada con datos personales.
 app.use((req, res, next) => {
   if (req.method === 'GET') {
-    if (req.path === '/piel/') registerVisit('piel');
-    else if (req.path === '/perfumes/') registerVisit('perfumes');
+    if (req.path === '/piel/') registerVisit('piel', req.query.utm_source);
+    else if (req.path === '/perfumes/') registerVisit('perfumes', req.query.utm_source);
   }
   next();
 });

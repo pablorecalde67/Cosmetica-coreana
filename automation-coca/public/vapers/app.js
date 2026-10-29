@@ -26,13 +26,32 @@ async function loadCatalog(q) {
   const list = $('catalog-list');
   hint.textContent = 'Buscando...';
   try {
-    const res = await fetch(`/api/vapers/productos?q=${encodeURIComponent(q || '')}&limit=60`);
+    const res = await fetch(`/api/vapers/productos?q=${encodeURIComponent(q || '')}`);
     const data = await res.json();
     renderCatalog(data);
   } catch {
     hint.textContent = 'No se pudo cargar el catálogo, probá de nuevo.';
     list.innerHTML = '';
   }
+}
+
+function renderItem(p) {
+  const row = document.createElement('label');
+  row.className = 'select-item';
+  const checked = state.selected.has(p.id);
+  row.innerHTML = `
+    <input type="checkbox" data-id="${p.id}" ${checked ? 'checked' : ''}>
+    <div class="thumb"><img src="${p.image}" alt="" loading="lazy" onerror="this.src='/piel/img/placeholder.svg'"></div>
+    <div class="info">
+      <div class="name">${p.name}</div>
+      <div class="price">${money(p.price)}</div>
+    </div>`;
+  row.querySelector('input').addEventListener('change', (e) => {
+    if (e.target.checked) state.selected.set(p.id, { id: p.id, name: p.name, price: p.price });
+    else state.selected.delete(p.id);
+    updateTotal();
+  });
+  return row;
 }
 
 function renderCatalog(data) {
@@ -54,26 +73,31 @@ function renderCatalog(data) {
 
   hint.textContent =
     data.matched === data.total
-      ? `Mostrando ${data.productos.length} de ${data.total} vapers.`
+      ? `${data.productos.length} vapers disponibles.`
       : `${data.matched} resultados de ${data.total} vapers.`;
 
+  // Agrupa por cantidad de puffs (de mayor a menor) para que la vidriera se
+  // vea ordenada en vez de una lista plana de cientos de ítems. Lo que no
+  // tiene un dato de puffs reconocible (kits, accesorios, líquidos, modelos
+  // que se nombran por versión y no por puffs) va en un grupo aparte al final.
+  const groups = new Map(); // puffsLabel|null -> { puffsSort, items }
   for (const p of data.productos) {
-    const row = document.createElement('label');
-    row.className = 'select-item';
-    const checked = state.selected.has(p.id);
-    row.innerHTML = `
-      <input type="checkbox" data-id="${p.id}" ${checked ? 'checked' : ''}>
-      <div class="thumb"><img src="${p.image}" alt="" loading="lazy" onerror="this.src='/piel/img/placeholder.svg'"></div>
-      <div class="info">
-        <div class="name">${p.name}</div>
-        <div class="price">${money(p.price)}</div>
-      </div>`;
-    row.querySelector('input').addEventListener('change', (e) => {
-      if (e.target.checked) state.selected.set(p.id, { id: p.id, name: p.name, price: p.price });
-      else state.selected.delete(p.id);
-      updateTotal();
-    });
-    list.appendChild(row);
+    const key = p.puffsLabel || '__otros__';
+    if (!groups.has(key)) groups.set(key, { label: p.puffsLabel, puffsSort: p.puffsSort, items: [] });
+    groups.get(key).items.push(p);
+  }
+  const ordered = [...groups.values()].sort((a, b) => b.puffsSort - a.puffsSort);
+
+  for (const group of ordered) {
+    const heading = document.createElement('h3');
+    heading.className = 'puffs-heading';
+    heading.textContent = group.label ? `${group.label} puffs` : 'Otros (kits, accesorios y líquidos)';
+    list.appendChild(heading);
+
+    const sub = document.createElement('div');
+    sub.className = 'select-list';
+    for (const p of group.items) sub.appendChild(renderItem(p));
+    list.appendChild(sub);
   }
 }
 

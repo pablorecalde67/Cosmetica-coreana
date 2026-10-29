@@ -5,12 +5,35 @@ import { config } from '../config.js';
 
 const router = Router();
 
+// Saca la cantidad de puffs del nombre del producto para poder agrupar la
+// vidriera por puffs (ej. "40K", "8000 PUFFS"). Solo reconoce los dos
+// formatos que usa el catálogo real - nunca adivina a partir de un modelo
+// (ej. "V300", "P100" NO son puffs, aunque tengan un número adentro), así
+// que lo que no tiene un dato claro va a un grupo aparte en vez de agruparse
+// mal.
+function extractPuffs(name) {
+  const kMatch = name.match(/(\d[\d.,]*)\s*K\b/i);
+  if (kMatch) {
+    const n = Math.round(parseFloat(kMatch[1].replace(',', '.')));
+    if (n > 0) return { puffsSort: n * 1000, puffsLabel: `${n}K` };
+  }
+  const puffsMatch = name.match(/(\d{3,6})\s*PUFFS/i);
+  if (puffsMatch) {
+    const n = Number(puffsMatch[1]);
+    if (n > 0) return { puffsSort: n, puffsLabel: n >= 1000 ? `${Math.round(n / 1000)}K` : `${n}` };
+  }
+  return { puffsSort: -1, puffsLabel: null };
+}
+
 // Catálogo público de /vapers - foto, descripción y precio en pesos
-// argentinos, igual que el resto de la tienda.
+// argentinos, igual que el resto de la tienda. Sin límite real (tope alto
+// solo para no mandar un payload infinito si el catálogo crece mucho más) -
+// la vidriera necesita TODOS los productos para agruparlos por puffs, no
+// una muestra parcial.
 router.get('/productos', (req, res) => {
   const all = listCatalog({ onlyActive: true });
   const q = (req.query.q || '').toString().trim().toLowerCase();
-  const limit = Math.min(Number(req.query.limit) || 60, 200);
+  const limit = Math.min(Number(req.query.limit) || 2000, 2000);
 
   let filtered = all;
   if (q) {
@@ -29,6 +52,7 @@ router.get('/productos', (req, res) => {
       image: p.image,
       price: p.price,
       brand: p.brand,
+      ...extractPuffs(p.name),
     })),
   });
 });

@@ -10,6 +10,13 @@ function list(value) {
 
 export const config = {
   port: Number(process.env.PORT || 3000),
+  // Opcional: si se carga, el panel admin (/, /productos.html, /pedidos.html,
+  // /fronting.html, /whatsapp-setup) pide usuario/clave por Basic Auth antes
+  // de mostrar nada - hoy cualquiera que encuentre la URL puede ver pedidos
+  // con nombre/telefono/direccion o editar precios sin loguearse. Si se deja
+  // vacio (como hasta ahora) el panel sigue abierto, sin romper nada.
+  adminUser: process.env.ADMIN_USER || 'coca',
+  adminPassword: process.env.ADMIN_PASSWORD || '',
   // Token de USUARIO de larga duracion (60 dias). Se lee primero de
   // settings.js (lo que guarda el renovador automático) y si no hay nada
   // ahí, de la variable de entorno - así una renovación automática no

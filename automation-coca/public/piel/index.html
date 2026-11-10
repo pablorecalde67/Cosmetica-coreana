@@ -49,6 +49,7 @@ en 30 segundos</h1>
     </div>
 
     <button id="btn-start" class="btn btn-primary">Descubrir mi tipo de piel</button>
+    <button id="btn-browse" class="btn btn-secondary">Ver catálogo sin selfie</button>
     <p class="fineprint" id="site-fineprint">Gratis · Sin registro · Tu foto no se almacena</p>
   </div>
 </section>
@@ -136,8 +137,8 @@ en 30 segundos</h1>
 <!-- ============ SELECT PRODUCTS ============ -->
 <section id="screen-select" class="screen">
   <div class="wrap">
-    <button class="btn-back" data-back="screen-result">← Volver</button>
-    <h2>Elegí qué productos querés</h2>
+    <button id="btn-back-select" class="btn-back" data-back="screen-result">← Volver</button>
+    <h2 id="select-titulo">Elegí qué productos querés</h2>
     <div id="select-productos" class="select-list"></div>
     <p class="total-row">Total: <strong id="select-total">$0</strong></p>
     <button id="btn-want" class="btn btn-primary">Quiero tenerlo</button>
@@ -151,7 +152,7 @@ en 30 segundos</h1>
     <h2>Último paso</h2>
 
     <div class="legal-box small">
-      <p>Confirmás que estos productos fueron sugeridos por Inteligencia Artificial en base a tu selfie, que no reemplazan una consulta dermatológica, y que los adquirís bajo tu <strong>absoluta responsabilidad</strong>.</p>
+      <p id="form-legal-text">Confirmás que estos productos fueron sugeridos por Inteligencia Artificial en base a tu selfie, que no reemplazan una consulta dermatológica, y que los adquirís bajo tu <strong>absoluta responsabilidad</strong>.</p>
     </div>
 
     <form id="form-pedido">

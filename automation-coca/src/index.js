@@ -36,6 +36,28 @@ app.use((req, res, next) => {
   next();
 });
 
+// Protege el panel admin (precios, pedidos con nombre/telefono/direccion,
+// portada editable) con usuario/clave si se cargó ADMIN_PASSWORD. Si no se
+// cargó, queda igual que antes (sin login) para no romper nada de un día
+// para el otro - pero es fuertemente recomendable cargarla, porque hoy
+// cualquiera con la URL puede ver o editar todo esto sin loguearse.
+const ADMIN_PATHS = ['/', '/productos.html', '/pedidos.html', '/fronting.html', '/whatsapp-setup'];
+function requireAdminAuth(req, res, next) {
+  if (!config.adminPassword) return next();
+  const isAdminPath = ADMIN_PATHS.some((p) => req.path === p || req.path.startsWith(`${p}/`));
+  if (!isAdminPath) return next();
+
+  const header = req.headers.authorization || '';
+  const [scheme, encoded] = header.split(' ');
+  if (scheme === 'Basic' && encoded) {
+    const [user, pass] = Buffer.from(encoded, 'base64').toString('utf8').split(':');
+    if (user === config.adminUser && pass === config.adminPassword) return next();
+  }
+  res.set('WWW-Authenticate', 'Basic realm="COCA admin"');
+  return res.status(401).send('Autenticación requerida.');
+}
+app.use(requireAdminAuth);
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/media', express.static(MEDIA_DIR));
 

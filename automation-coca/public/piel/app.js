@@ -48,6 +48,37 @@ loadSite();
 // ---------- Home → Consent ----------
 $('btn-start').addEventListener('click', () => showScreen('screen-consent'));
 
+// ---------- Home → Catálogo directo (sin selfie) ----------
+// Pedido explícito del dueño: la selfie tiene que ser una opción, no un
+// paso obligatorio para poder ver qué hay y el precio.
+$('btn-browse').addEventListener('click', async () => {
+  const btn = $('btn-browse');
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Cargando catálogo…';
+  try {
+    const res = await fetch('/api/piel/productos');
+    if (!res.ok) throw new Error('No se pudo cargar el catálogo.');
+    const { productos } = await res.json();
+
+    state.analysis = { skinType: null, concerns: [], recommendations: productos };
+    state.selectedIds = new Set();
+    state.fromCatalog = true;
+    $('select-titulo').textContent = 'Catálogo completo';
+    $('btn-back-select').dataset.back = 'screen-home';
+    $('form-legal-text').textContent =
+      'Confirmás que elegiste estos productos vos mismo/a del catálogo y que los adquirís bajo tu absoluta responsabilidad.';
+
+    renderSelect();
+    showScreen('screen-select');
+  } catch (err) {
+    alert('Error: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+});
+
 $('chk-consent').addEventListener('change', (e) => {
   $('btn-open-camera').disabled = !e.target.checked;
 });
@@ -207,6 +238,11 @@ $('btn-no').addEventListener('click', () => {
 });
 
 $('btn-yes').addEventListener('click', () => {
+  state.fromCatalog = false;
+  $('select-titulo').textContent = 'Elegí qué productos querés';
+  $('btn-back-select').dataset.back = 'screen-result';
+  $('form-legal-text').textContent =
+    'Confirmás que estos productos fueron sugeridos por Inteligencia Artificial en base a tu selfie, que no reemplazan una consulta dermatológica, y que los adquirís bajo tu absoluta responsabilidad.';
   renderSelect();
   showScreen('screen-select');
 });

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { analyzeSkin, isAiConfigured } from '../skinAnalysis.js';
-import { getProduct } from '../products.js';
+import { getProduct, listProducts } from '../products.js';
 import { createOrder } from '../orders.js';
 import { getSite } from '../site.js';
 import { config } from '../config.js';
@@ -9,6 +9,22 @@ const router = Router();
 
 router.get('/sitio', (req, res) => {
   res.json(getSite());
+});
+
+// Catálogo completo, sin pasar por la selfie/IA - para quien solo quiere
+// ver qué hay y el precio, sin hacer el análisis de piel (pedido explícito
+// del dueño: la selfie tiene que ser una opción, no un paso obligatorio
+// para poder ver un producto).
+router.get('/productos', (req, res) => {
+  const productos = listProducts({ onlyActive: true }).map((p) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    image: p.image,
+    price: p.price,
+    brand: p.brand || '',
+  }));
+  res.json({ productos });
 });
 
 function stripDataUrl(imageBase64) {
